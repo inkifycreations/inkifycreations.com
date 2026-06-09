@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-section">
+  <div class="container">
+    <div class="auth-card glass-panel">
+      <div class="auth-panel-header">
+        <span class="badge">Join Inkify</span>
+        <h2>Create Your Account</h2>
+        <p class="auth-status">Share your details to save your orders, manage your wallet, and personalize every print.</p>
+      </div>
+      <form id="signup-form" class="auth-form">
+        <div>
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your full name" required>
+        </div>
+
+        <div>
+          <label for="phone">Phone Number</label>
+          <input type="text" id="phone" name="phone" maxlength="10" placeholder="9876543210" required>
+        </div>
+
+        <div>
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" min="1" placeholder="Your age" required>
+        </div>
+
+        <div>
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+
+        <div>
+          <label for="address">Shipping Address</label>
+          <textarea id="address" name="address" rows="3" placeholder="House no, street, city, pincode" required></textarea>
+        </div>
+
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="At least 12 characters" required>
+        </div>
+
+        <div>
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="Repeat your password" required>
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn-primary">Create Account</button>
+          <a href="/login/" class="auth-link">Already have an account?</a>
+        </div>
+      </form>
+      <div id="signup-error" class="form-error"></div>
+    </div>
+  </div>
+</section>
+<script>
+document.getElementById('signup-form').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const age = document.getElementById('age').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+  const errorEl = document.getElementById('signup-error');
+  errorEl.textContent = '';
+
+  if (!name) {
+    errorEl.textContent = 'Please enter your full name.';
+    return;
+  }
+  if (!phone || phone.length !== 10 || isNaN(phone)) {
+    errorEl.textContent = 'Please enter a valid 10-digit phone number.';
+    return;
+  }
+  if (!age || isNaN(age) || Number(age) <= 0) {
+    errorEl.textContent = 'Please enter your age.';
+    return;
+  }
+  if (!email) {
+    errorEl.textContent = 'Please provide your email address.';
+    return;
+  }
+  if (!address) {
+    errorEl.textContent = 'Please provide your shipping address.';
+    return;
+  }
+  if (!password || password.length < 12) {
+    errorEl.textContent = 'Password must be at least 12 characters long.';
+    return;
+  }
+  if (password !== confirmPassword) {
+    errorEl.textContent = 'Passwords do not match.';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/auth/register/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        mobile: phone,
+        age: Number(age),
+        email,
+        address,
+        password
+      })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      errorEl.textContent = data.error || 'Registration failed. Please try again.';
+      return;
+    }
+    window.location.href = '/products/';
+  } catch (err) {
+    errorEl.textContent = 'Server error. Please try again later.';
+  }
+});
+</script>
+{% endblock %}

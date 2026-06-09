@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="products-section" style="padding-top: 60px; padding-bottom: 60px;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">Product Catalog</span>
+      <h2 class="section-title">Inkify Products</h2>
+      <p class="section-desc">All products are managed from the Django backend. Add items in the admin panel and they appear here automatically.</p>
+    </div>
+    <div class="product-grid">
+      {% for product in products %}
+      <article class="product-card glass-panel">
+        <img class="product-image" src="{% static product.image %}" alt="{{ product.name }}">
+        <div class="product-card-content">
+          <h3>{{ product.name }}</h3>
+          <p class="product-category">{{ product.category }}</p>
+          <p class="product-desc">{{ product.description }}</p>
+          <div class="product-pricing">
+            <span class="product-price">₹{{ product.price }}</span>
+            {% if product.cart_price %}
+            <span class="product-original">₹{{ product.cart_price }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <p>No products are available yet. Add products from the Django admin panel.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

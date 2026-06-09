@@ -1,0 +1,1191 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Inkify Creations - Express your soul, print your identity. Premium custom printing on t-shirts, polo shirts, mugs, and caps. Stop wearing their brands, start printing your vibe.">
+  <title>Inkify Creations | Print Your Vibe & Identity</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Core Premium Style -->
+  <link rel="stylesheet" href="{% static 'index.css' %}?v=510" >
+
+</head>
+<body>
+
+  <!-- --- HEADER NAVIGATION --- -->
+  <header class="main-header" id="main-header">
+    <div class="container header-container">
+      <div class="logo" id="header-logo" onclick="appRouter.navigate('home')">
+        <i class="fa-solid fa-wand-magic-sparkles text-glow"></i>
+        <span>Inkify</span> Creations
+      </div>
+      
+      <!-- Nav Links -->
+      <nav class="nav-menu" id="nav-menu">
+        <span class="nav-link active" data-view="home" onclick="appRouter.navigate('home')">Home</span>
+        <span class="nav-link" data-view="products" onclick="appRouter.navigate('products')">Products</span>
+        <span class="nav-link" data-view="about" onclick="appRouter.navigate('about')">About Us</span>
+      </nav>
+      
+      <!-- Action buttons -->
+      <div class="nav-actions">
+        <!-- Cart Widget -->
+        <div class="cart-icon-btn" onclick="appRouter.navigate('cart')" title="View Cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge" id="cart-badge-count">0</span>
+        </div>
+        <div class="wallet-balance-btn" id="wallet-balance-display" onclick="walletManager.openModal()" title="Your Wallet Balance">
+          <i class="fa-solid fa-wallet"></i>
+          <span id="wallet-balance-text">â‚¹0</span>
+        </div>
+        <!-- Auth Button Container for Dropdown -->
+        <div class="auth-dropdown" id="auth-dropdown">
+          <button class="auth-btn" id="header-auth-btn" onclick="authManager.handleAuthClick()">
+            <i class="fa-solid fa-user"></i>
+            <span id="auth-btn-text">Sign In</span>
+          </button>
+          <div class="auth-dropdown-menu" id="auth-dropdown-menu">
+            <div class="auth-dropdown-item" onclick="ordersManager.navigateToOrders()">
+              <i class="fa-solid fa-box-open"></i> Your Orders
+            </div>
+            <div class="auth-dropdown-item" onclick="authManager.logout()">
+              <i class="fa-solid fa-right-from-bracket"></i> Log Out
+            </div>
+          </div>
+        </div>        
+        
+        <!-- Mobile Toggle Hamburger -->
+        <div class="hamburger" id="mobile-menu-toggle" onclick="appRouter.toggleMobileMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- --- MAIN VIEW ROUTER --- -->
+  <main>
+    
+    <!-- 1. HOME VIEW -->
+    <section id="home-view" class="view-section active">
+      
+      <!-- Premium Hero Carousel -->
+      <div class="hero-carousel-container">
+        <div class="carousel-track" id="carousel-track">
+          
+          <!-- Slide 1: Brand Identity -->
+          <div class="carousel-slide active" data-index="0">
+            <img src="{% static 'assets/brand_identity.png' %}" alt="Stop Wearing Their Brands" class="slide-bg">
+            <div class="carousel-overlay"></div>
+            <div class="container slide-content-wrapper">
+              <div class="slide-content">
+                <span class="slide-tagline">Stop Wearing Their Brands</span>
+                <h1 class="slide-title">Start Building<br><span>Your Own Identity</span></h1>
+                <p class="slide-desc">Why pay to advertise corporate logos? Print your vibes, your quotes, and your personal design. Take control of your apparel today.</p>
+                <div class="slide-cta-group">
+                  <button class="btn-primary" onclick="appRouter.navigate('products')">
+                    Start Printing <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                  <button class="btn-outline" onclick="productCatalog.openCustomizer(5)">
+                    Get Whole Set
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Slide 2: Gifting Box -->
+          <div class="carousel-slide" data-index="1">
+            <img src="{% static 'assets/gift_box.jpg' %}" alt="Yours Story Premium Box" class="slide-bg">
+            <div class="carousel-overlay"></div>
+            <div class="container slide-content-wrapper">
+              <div class="slide-content">
+                <span class="slide-tagline">Emotional Gifting Redefined</span>
+                <h1 class="slide-title">Stop Giving Normal<br><span>Give Personal Stories</span></h1>
+                <p class="slide-desc">Delight your loved ones with bespoke printed products featuring custom names, pets, or cherished photos inside our signature luxurious Purple Gift Set.</p>
+                <div class="slide-cta-group">
+                  <button class="btn-primary" onclick="productCatalog.openCustomizer(5)">
+                    Get Signature Set <i class="fa-solid fa-gift"></i>
+                  </button>
+                  <button class="btn-outline" onclick="appRouter.navigate('about')">
+                    Our Story
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Slide : Mug-->
+          <div class="carousel-slide" data-index="2">
+
+            <img src="{% static 'assets/mug_photo_print_original.png' %}" alt="Custom Celebrity and Superhero Wear" class="slide-bg">
+            <div class="carousel-overlay"></div>
+            <div class="container slide-content-wrapper">
+              <div class="slide-content">
+                <span class="slide-tagline">Print Your Story</span>
+                <h1 class="slide-title">Share your emotions<br><span>Family</span></h1>
+                <p class="slide-desc">Create personalized mugs that reflect your unique style and memories.</p>
+                <div class="slide-cta-group">
+                  <button class="btn-primary" onclick="productCatalog.openCustomizer(1)">
+                    Customize Mug <i class="fa-solid fa-mug-hot"></i>
+                  </button>
+                  <button class="btn-outline" onclick="appRouter.navigate('products')">
+                    Explore Caps
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Slide 4: Anime / Superhero Tees -->
+          <div class="carousel-slide" data-index="3">
+
+            <img src="{% static 'assets/hero_tshirt_print.png' %}" alt="Custom Celebrity and Superhero Wear" class="slide-bg">
+            <div class="carousel-overlay"></div>
+            <div class="container slide-content-wrapper">
+              <div class="slide-content">
+                <span class="slide-tagline">Fan Culture & Style</span>
+                <h1 class="slide-title">Wear Your Inspiration<br><span>Heroize Your Style</span></h1>
+                <p class="slide-desc">Rep your favorite celebrities, heroes, or personal champions. Upload high-res images or print glowing purple slogans on premium streetwear cotton.</p>
+                <div class="slide-cta-group">
+                  <button class="btn-primary" onclick="productCatalog.openCustomizer(1)">
+                    Customize T-Shirt <i class="fa-solid fa-shirt"></i>
+                  </button>
+                  <button class="btn-outline" onclick="appRouter.navigate('products')">
+                    Explore Caps
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- Controls -->
+        <button class="carousel-arrow arrow-left" onclick="carousel.prev()" aria-label="Previous slide">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="carousel-arrow arrow-right" onclick="carousel.next()" aria-label="Next slide">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        
+        <!-- Indicators -->
+        <div class="carousel-indicators" id="carousel-indicators">
+          <span class="carousel-dot active" onclick="carousel.goTo(0)"></span>
+          <span class="carousel-dot" onclick="carousel.goTo(1)"></span>
+          <span class="carousel-dot" onclick="carousel.goTo(2)"></span>
+          <span class="carousel-dot" onclick="carousel.goTo(3)"></span>
+        </div>
+      </div>
+
+      <!-- Part-Time Job Referral Banner -->
+      <div class="referral-banner-section" style="margin-top: 40px; margin-bottom: 20px;">
+        <div class="container">
+          <div class="referral-banner-card glass-panel" style="background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(13, 11, 23, 0.6)); border: 1px solid rgba(108,99,255,0.3); border-radius: 16px; padding: 40px 30px; display: flex; align-items: center; gap: 30px; flex-wrap: wrap; box-shadow: 0 8px 32px rgba(108,99,255,0.08);">
+            <div class="referral-banner-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-glow)); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: white; box-shadow: 0 0 20px rgba(108,99,255,0.4); flex-shrink: 0;">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <div class="referral-banner-text" style="flex: 1; min-width: 280px;">
+              <span style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-light); font-weight: bold; display: block; margin-bottom: 8px;">Earn Unlimited Cash</span>
+              <h3 style="font-size: 1.8rem; font-weight: 700; margin: 0 0 10px 0; color: white; line-height: 1.2;">Refer Friends. Earn 50 for Every Successful Referral.</h3>
+              <p style="font-size: 1rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">Earn 50 wallet cash on every single referral order. There's no limit refer as many friends as you can. Simply place your first order today to activate your profile, get your unique referral code, and start your high-paying side hustle!</p>
+            </div>
+            <div class="referral-banner-action" style="flex-shrink: 0;">
+              <button class="btn-primary" onclick="appRouter.navigate('products')" style="padding: 14px 28px; font-size: 1rem; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 15px rgba(108,99,255,0.3);">
+                Activate Your Code Now <i class="fa-solid fa-circle-arrow-right" style="margin-left: 8px;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Emotional Teaser Marketing -->
+      <div class="emotional-teaser">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-subtitle">Why Inkify Creations?</span>
+            <h2 class="section-title">Printed For Emotion, Crafted For Identity</h2>
+            <p class="section-desc">We don't sell blank merchandise. We create tangible representations of your vibes, memories, and personal heroes.</p>
+          </div>
+          
+          <div class="teaser-grid">
+            <div class="teaser-card glass-panel">
+              <div class="teaser-icon">
+                <i class="fa-solid fa-face-laugh-beam"></i>
+              </div>
+              <h3 class="teaser-card-title">Reject Blank Brands</h3>
+              <p class="teaser-card-desc">"Stop wearing their brands, start building yours." Wear clothing that spells out your own life philosophies, names, or quotes.</p>
+            </div>
+            
+            <div class="teaser-card glass-panel">
+              <div class="teaser-icon">
+                <i class="fa-solid fa-heart"></i>
+              </div>
+              <h3 class="teaser-card-title">Personalized Stories</h3>
+              <p class="teaser-card-desc">"Stop giving boring gifts." Put the name of your best friend, a photo of your cute pet, or custom graphics that display deep sentiment.</p>
+            </div>
+            
+            <div class="teaser-card glass-panel">
+              <div class="teaser-icon">
+                <i class="fa-solid fa-masks-theater"></i>
+              </div>
+              <h3 class="teaser-card-title">Vibe Fan Culture</h3>
+              <p class="teaser-card-desc">Showcase your ultimate inspiration. Print your favorite anime heroes, rock artists, or sports legends with elegant, rich graphics.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Catalog Quick View -->
+      <div class="products-section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-subtitle">Our Customized Gear</span>
+            <h2 class="section-title">Select Your Canvas</h2>
+            <p class="section-desc">Pick a product below to customize with your photos or custom text. High quality guaranteed.</p>
+          </div>
+          
+          <div class="product-grid" id="featured-products-grid">
+            <!-- Dynamically populated, plus the hardcoded whole set -->
+          </div>
+        </div>
+      </div>
+      
+    </section>
+    
+    <!-- 2. PRODUCTS VIEW -->
+    <section id="products-view" class="view-section">
+      <div class="products-section" style="padding-top: 50px;">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-subtitle">Full Custom Catalog</span>
+            <h2 class="section-title">Design What You Vibe</h2>
+            <p class="section-desc">Upload photos, type quotes, and build custom layouts on T-Shirts, Polo Shirts, Mugs, or Caps. Handcrafted in purple elegance.</p>
+          </div>
+          
+          <div class="product-grid" id="full-products-grid">
+            <!-- Full catalog populated here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN STUDIO VIEW -->
+    <section id="design-studio-view" class="view-section" style="background: #0a0a10;">
+      <div class="container" style="padding-top: 50px; padding-bottom: 60px;">
+
+        <!-- Back button + product title -->
+        <div class="ds-header" style="display:flex; align-items:center; gap:16px; margin-bottom:32px; flex-wrap:wrap;">
+          <button class="ds-back-btn" onclick="designStudio.close()" title="Back to Products">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <div>
+            <span class="section-subtitle" id="ds-product-type-label" style="font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;">Select Product</span>
+            <h1 class="section-title" id="ds-page-title" style="font-size:2rem; margin:4px 0 0; font-weight:800; color:#fff;">Pick a Design</h1>
+          </div>
+        </div>
+
+        <!-- Category filter pills -->
+        <div id="ds-filter-bar" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;"></div>
+
+        <!-- Designs grid -->
+        <div id="ds-designs-grid" class="ds-grid">
+          <div class="ds-loading">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-purple);"></i>
+            <p style="margin-top:12px; color:var(--text-secondary);">Loading designsâ€¦</p>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div style="display:flex; align-items:center; gap:16px; margin:40px 0 32px;">
+          <div style="flex:1; height:1px; background:rgba(255,255,255,0.08);"></div>
+          <span style="color:var(--text-secondary); font-size:0.85rem; white-space:nowrap; font-weight:600;">OR CREATE YOUR OWN</span>
+          <div style="flex:1; height:1px; background:rgba(255,255,255,0.08);"></div>
+        </div>
+
+        <!-- Custom design section -->
+        <div class="ds-custom-box glass-panel" style="padding:32px; border-radius:20px;">
+          <h2 style="font-size:1.4rem; font-weight:800; color:#fff; margin:0 0 8px;">Custom Design Studio</h2>
+          <p style="color:var(--text-secondary); margin:0 0 12px; font-size:0.9rem;">Don't see what you want? Upload your photo, type your message, or both â€” we'll print it perfectly.</p>
+          <div id="ds-selected-design-summary" style="display:none; color:#a5efff; font-size:0.92rem; margin-bottom:20px; padding:14px 16px; border:1px solid rgba(165,239,255,0.18); border-radius:14px; background:rgba(10,17,30,0.85);">
+            <strong>Selected Design:</strong> <span id="ds-selected-design-name"></span>
+          </div>
+
+          <!-- Tab selector -->
+          <div class="ds-tabs" id="ds-custom-tabs">
+            <button class="ds-tab active" data-tab="photo" onclick="designStudio.switchTab('photo')">
+              <i class="fa-solid fa-image"></i> Upload Photo
+            </button>
+            <button class="ds-tab" data-tab="text" onclick="designStudio.switchTab('text')">
+              <i class="fa-solid fa-font"></i> Add Text
+            </button>
+            <button class="ds-tab" data-tab="both" onclick="designStudio.switchTab('both')">
+              <i class="fa-solid fa-layer-group"></i> Photo + Text
+            </button>
+          </div>
+
+          <!-- Photo tab -->
+          <div class="ds-tab-panel active" id="ds-tab-photo">
+            <div class="ds-upload-zone" id="ds-upload-zone" onclick="document.getElementById('ds-file-input').click()">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size:2.5rem; color:var(--accent-purple); display:block; margin-bottom:12px;"></i>
+              <p style="margin:0; font-weight:600; color:#fff;">Click or drag & drop your image here</p>
+              <p style="margin:6px 0 0; color:var(--text-secondary); font-size:0.82rem;">PNG, JPG, WEBP â€” max 10 MB</p>
+            </div>
+            <input type="file" id="ds-file-input" accept="image/*" style="display:none;" onchange="designStudio.handlePhotoUpload(this)">
+            <div id="ds-photo-preview" style="display:none; margin-top:16px; text-align:center;">
+              <img id="ds-photo-preview-img" style="max-height:180px; border-radius:12px; border:2px solid rgba(168,85,247,0.4);">
+              <p style="color:var(--accent-light); margin:8px 0 0; font-size:0.85rem;" id="ds-photo-name"></p>
+            </div>
+          </div>
+
+          <!-- Text tab -->
+          <div class="ds-tab-panel" id="ds-tab-text">
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div>
+                <label style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; display:block; margin-bottom:6px;">Your Message / Name / Quote</label>
+                <textarea id="ds-custom-text" class="input-field" rows="3" placeholder="e.g. Happy Birthday Priya! ðŸŽ‚&#10;Best mom in the world â¤ï¸&#10;Stay hungry, stay foolish." style="resize:vertical; font-size:0.95rem; line-height:1.6;"></textarea>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div>
+                  <label style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; display:block; margin-bottom:6px;">Font Style</label>
+                  <select id="ds-custom-font" class="input-field" style="height:42px;">
+                    <option value="Classic">Classic (Serif)</option>
+                    <option value="Modern" selected>Modern (Sans-serif)</option>
+                    <option value="Script">Script / Cursive</option>
+                    <option value="Bold">Bold Impact</option>
+                    <option value="Minimal">Minimal Clean</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; display:block; margin-bottom:6px;">Text Color</label>
+                  <select id="ds-custom-color" class="input-field" style="height:42px;">
+                    <option value="White">White</option>
+                    <option value="Black">Black</option>
+                    <option value="Purple">Purple</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Red">Red</option>
+                    <option value="Blue">Blue</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Both tab -->
+          <div class="ds-tab-panel" id="ds-tab-both">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start;">
+              <div>
+                <p style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; margin:0 0 10px;">Photo</p>
+                <div class="ds-upload-zone" style="padding:20px;" onclick="document.getElementById('ds-file-input-both').click()">
+                  <i class="fa-solid fa-image" style="font-size:1.8rem; color:var(--accent-purple); display:block; margin-bottom:8px;"></i>
+                  <p style="margin:0; font-size:0.85rem; color:#fff;">Upload image</p>
+                </div>
+                <input type="file" id="ds-file-input-both" accept="image/*" style="display:none;" onchange="designStudio.handlePhotoUploadBoth(this)">
+                <div id="ds-photo-preview-both" style="display:none; margin-top:10px; text-align:center;">
+                  <img id="ds-photo-preview-img-both" style="max-height:100px; border-radius:8px; border:2px solid rgba(168,85,247,0.4);">
+                </div>
+              </div>
+              <div>
+                <p style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; margin:0 0 10px;">Text</p>
+                <textarea id="ds-custom-text-both" class="input-field" rows="3" placeholder="Your name or messageâ€¦" style="resize:vertical;"></textarea>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                  <select id="ds-custom-font-both" class="input-field" style="height:38px; font-size:0.8rem;">
+                    <option value="Modern" selected>Modern</option>
+                    <option value="Classic">Classic</option>
+                    <option value="Script">Script</option>
+                    <option value="Bold">Bold</option>
+                  </select>
+                  <select id="ds-custom-color-both" class="input-field" style="height:38px; font-size:0.8rem;">
+                    <option value="White">White</option>
+                    <option value="Black">Black</option>
+                    <option value="Purple">Purple</option>
+                    <option value="Gold">Gold</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div style="margin-top:28px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <button class="btn-primary" id="ds-custom-add-btn" onclick="designStudio.addCustomToCart()" style="padding:14px 32px; font-size:1rem; font-weight:700; border-radius:30px;">
+              Add Custom Design to Cart <i class="fa-solid fa-cart-plus" style="margin-left:8px;"></i>
+            </button>
+            <p id="ds-custom-status" style="color:var(--text-secondary); font-size:0.85rem; margin:0;"></p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    
+    <!-- 3. ABOUT US VIEW -->
+    <section id="about-view" class="view-section">
+      <div class="about-hero">
+        <div class="container">
+          <h1 class="section-title text-gradient-purple" style="font-size: 2.6rem; line-height: 1.3;">Inkify Creations Ã¢â‚¬â€œ Where Ideas Become Memories</h1>
+          <p class="section-desc" style="max-width: 800px; margin: 20px auto 0; font-size: 1.15rem; font-weight: 500; color: var(--accent-light);">Every print has a story. Every design carries an emotion. At Inkify Creations, we turn your ideas into memories that last forever</p>
+        </div>
+      </div>
+      
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-content-left" style="display: flex; flex-direction: column; gap: 14px;">
+            <p>At Inkify Creations, we believe every design tells a story and every print carries an emotion. We are more than just a printing businessÃ¢â‚¬â€we help people express love, celebrate special moments, and create lasting memories through personalized products.</p>
+            <p>Whether it's a custom T-shirt, mug, cap, or gift, each item is crafted with care, creativity, and attention to detail. We understand that behind every order is a person, a dream, a celebration, or a message that matters.</p>
+            <p>Our mission is simple: to transform your ideas into beautiful creations that bring smiles, strengthen connections, and leave a lasting impression. Thank you for trusting Inkify Creations to be a part of your special moments.</p>
+            <p style="font-weight: 700; color: var(--accent-light); margin-top: 6px;">Inkify Creations Ã¢â‚¬â€œ Printing Emotions, Creating Memories.</p>
+            <button class="btn-primary" onclick="appRouter.navigate('products')" style="margin-top: 16px; align-self: flex-start;">
+              Explore Our Canvas <i class="fa-solid fa-shirt"></i>
+            </button>
+          </div>
+          
+          <div class="about-image-right">
+            <img src="{% static 'assets/gift_box.jpg' %}" alt="Premium Purple Gift Set Box">
+          </div>
+        </div>
+        
+        <div class="values-grid">
+          <div class="value-card glass-panel">
+            <h3 class="value-title text-gradient"><i class="fa-solid fa-shield-halved" style="color: var(--accent-light); margin-right: 10px;"></i> Premium Quality</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">Combed cotton for apparel, scratch-resistant ceramic for mugs, and double-stitched paneling for our caps.</p>
+          </div>
+          <div class="value-card glass-panel">
+            <h3 class="value-title text-gradient"><i class="fa-solid fa-bolt" style="color: var(--accent-light); margin-right: 10px;"></i> Advanced Print Tech</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">Direct-to-Film (DTF) apparel printing and sublimation heat transfer for vivid, wash-resistant colors.</p>
+          </div>
+          <div class="value-card glass-panel">
+            <h3 class="value-title text-gradient"><i class="fa-solid fa-people-carry-box" style="color: var(--accent-light); margin-right: 10px;"></i> Affiliate Driven</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">Earn â‚¹100 cash back rewards when friends purchase custom prints using your personalized referral codes.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style="height: 80px;"></div>
+    </section>
+    
+    <!-- 4. CART & CHECKOUT VIEW -->
+    <section id="cart-view" class="view-section">
+      <div class="container">
+        <div class="cart-layout">
+          
+          <!-- Left side: Cart Items -->
+          <div class="cart-items-panel glass-panel">
+            <div class="cart-title-row">
+              <h2>Shopping Bag</h2>
+              <span id="cart-items-count-indicator" style="color: var(--accent-light); font-weight: 600;">(0 items)</span>
+            </div>
+            
+            <!-- Items list -->
+            <div id="cart-items-list-container">
+              <!-- Rendered via JS -->
+            </div>
+            
+            <!-- Shipping address form (Becomes active once cart has items) -->
+            <div class="shipping-container" id="cart-shipping-address-container" style="display: none;">
+              <h3 class="shipping-title">Shipping & Delivery Details</h3>
+              <form id="shipping-address-form" onsubmit="event.preventDefault();">
+                <!-- Delivery Mode Radio Selection -->
+                <div id="checkout-delivery-mode" style="display: none; margin-bottom: 20px; background: rgba(147, 51, 234, 0.04); border: 1px solid rgba(147, 51, 234, 0.15); padding: 16px; border-radius: 10px;">
+                  <label style="font-weight: 600; color: var(--text-primary); font-size: 0.95rem; display: block; margin-bottom: 12px;">Where should we ship your order?</label>
+                  <div style="display: flex; gap: 20px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: white; cursor: pointer;">
+                      <input type="radio" name="checkout-delivery-type" id="delivery-type-saved" checked onchange="cartManager.toggleDeliveryType()" style="accent-color: var(--accent-purple); width: 18px; height: 18px;">
+                      Ship to my saved details
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: white; cursor: pointer;">
+                      <input type="radio" name="checkout-delivery-type" id="delivery-type-other" onchange="cartManager.toggleDeliveryType()" style="accent-color: var(--accent-purple); width: 18px; height: 18px;">
+                      Ship to someone else (different address)
+                    </label>
+                  </div>
+                  
+                  <div id="checkout-saved-details-display" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 10px;">
+                    <!-- Filled dynamically: Recipient Name, Mobile, and Address -->
+                  </div>
+                </div>
+
+                <!-- Input fields container -->
+                <div id="checkout-shipping-input-fields">
+                  <div class="shipping-form-grid">
+                    <div class="form-group">
+                      <label for="shipping-name">Full Recipient Name *</label>
+                      <input type="text" id="shipping-name" class="input-field" placeholder="Enter recipient's full name" required>
+                    </div>
+                    
+                    <div class="form-row-2">
+                      <div class="form-group">
+                        <label for="shipping-phone">Contact Mobile Number *</label>
+                        <input type="tel" id="shipping-phone" class="input-field" placeholder="10-digit mobile number" required pattern="[0-9]{10}" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="10">
+                      </div>
+                      <div class="form-group">
+                        <label for="shipping-email">Email Address *</label>
+                        <input type="email" id="shipping-email" class="input-field" placeholder="yourname@example.com" required>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 16px;">
+                      <label for="shipping-street">Street Address & Landmark *</label>
+                      <input type="text" id="shipping-street" class="input-field" placeholder="House/Flat No, Apartment, Street name" required>
+                    </div>
+                    
+                    <div class="form-row-2">
+                      <div class="form-group">
+                        <label for="shipping-city">City *</label>
+                        <input type="text" id="shipping-city" class="input-field" placeholder="e.g. New Delhi" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="shipping-pincode">PIN Code (6 digits) *</label>
+                        <input type="text" id="shipping-pincode" class="input-field" placeholder="e.g. 110001" required pattern="[0-9]{6}" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="6">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Right side: Summary & Referral Payout Strategy -->
+          <div class="checkout-panel glass-panel" id="cart-summary-checkout-panel" style="display: none;">
+            <h3 class="checkout-title">Order Summary</h3>
+            
+            <div class="summary-list">
+              <div class="summary-row">
+                <span style="color: var(--text-secondary);">Items Total</span>
+                <span id="summary-items-subtotal">0</span>
+              </div>
+              <div class="summary-row">
+                <span style="color: var(--text-secondary);">Shipping Charges</span>
+                <span style="color: var(--success); font-weight: 600;">FREE</span>
+              </div>
+              <div class="summary-row" id="summary-referral-discount-row" style="display: none; color: var(--success);">
+                <span>Referral Code Discount</span>
+                <span id="summary-referral-discount-val">-0</span>
+              </div>
+              <div class="summary-row" id="summary-wallet-credit-row" style="display: none; color: var(--accent-light);">
+                <span>Wallet Credit Earned</span>
+                <span id="summary-wallet-credit-val">+0</span>
+              </div>
+              <div class="summary-row" id="summary-wallet-use-row" style="display: none; color: var(--accent-light);">
+                <span>Wallet Used</span>
+                <span id="summary-wallet-use-val">-0</span>
+              </div>
+              <div class="summary-row total-row">
+                <span>Grand Total</span>
+                <span id="summary-grand-total">0</span>
+              </div>
+            </div>
+            
+            <!-- Affiliate Referral Coupon Input -->
+            <div class="coupon-container">
+              <label class="coupon-label" for="checkout-coupon">
+                <i class="fa-solid fa-tags" style="color: var(--accent-light); margin-right: 6px;"></i> 
+                Apply Referral Coupon Code
+              </label>
+              <div class="coupon-input-group">
+                <input type="text" id="checkout-coupon" class="input-field" style="text-transform: uppercase;">
+                <button class="btn-coupon-apply" id="btn-apply-coupon" onclick="cartManager.applyCoupon()">Apply</button>
+              </div>
+              <p class="coupon-status-msg" id="coupon-msg"></p>
+              <div class="wallet-usage-panel" id="wallet-usage-panel" style="display: none; margin-top: 16px;">
+                <label style="display:flex; align-items:center; gap:10px; font-size:0.9rem; color: var(--text-secondary);">
+                  <input type="checkbox" id="wallet-use-checkbox" onchange="cartManager.toggleWalletUse()">
+                  Use wallet balance to reduce payment on checkout (<strong>Available:<span id="checkout-wallet-available">0.00</span></strong>)
+                </label>
+              </div>
+              <!-- Referral business strategy explainer -->
+              <div style="background: rgba(147, 51, 234, 0.05); border: 1px dashed rgba(147, 51, 234, 0.2); padding: 12px; border-radius: 8px; margin-top: 14px; font-size: 0.78rem; color: var(--text-secondary);">
+                <span style="font-weight: 600; color: var(--accent-light); display: block; margin-bottom: 4px;">Referral Hack Active!</span>
+                Buy the <strong>Whole Set</strong>. Enter your friend's referral code to pay 1149 for the set and earn 50 back into your wallet. The referrer also earns 50 in their wallet.
+              </div>
+            </div>
+            
+            <!-- Payment Gateway Selector -->
+            <div class="shipping-container" style="margin-top: 20px; padding-top: 16px;">
+              <h4 class="payment-title">Select Payment Mode</h4>
+              <div class="payment-options">
+                <div class="payment-card active" data-payment="cod" onclick="cartManager.selectPayment('cod')">
+                  <div class="radio-circle"></div>
+                  <div class="payment-details">
+                    <h5>Cash on Delivery</h5>
+                    <p>Pay cash or UPI upon delivery</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Checkout Action -->
+            <button class="btn-primary btn-checkout-place" onclick="cartManager.placeOrder()">
+              Place Order <i class="fa-solid fa-circle-check"></i>
+            </button>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    
+    <!-- 5. ORDERS VIEW -->
+    <section id="orders-view" class="view-section">
+      <div class="tracking-search-hero" style="padding: 60px 0 40px 0;">
+        <div class="container" style="text-align: center;">
+          <span class="section-subtitle">Your Print Studio</span>
+          <h1 class="section-title">Your Customized Orders</h1>
+          <p class="section-desc">Monitor your bespoke blueprint designs, printing conveyor status, and live logistics pipelines.</p>
+        </div>
+      </div>
+      
+      <div class="container">
+        <div id="orders-list-container">
+          <!-- Orders list with dynamic progress steppers and items populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. TRACKING VIEW -->
+    <section id="tracking-view" class="view-section">
+      <div class="tracking-search-hero" style="padding: 60px 0 40px 0;">
+        <div class="container" style="text-align: center;">
+          <span class="section-subtitle">Track Your Order</span>
+          <h1 class="section-title">Live Order Status</h1>
+          <p class="section-desc">Enter your order tracking ID to see the current shipping status and product details.</p>
+          <div class="tracking-search-box">
+            <input id="tracking-input-id" class="input-field" type="text" placeholder="Enter tracking ID, e.g. INK-ABC123" />
+            <button class="btn-primary" onclick="trackingManager.searchOrder()">Track</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tracking-result-panel glass-panel" id="tracking-dashboard" style="display: none;">
+        <div class="tracking-header-details">
+          <div class="track-detail-col">
+            <label>Tracking ID</label>
+            <span id="track-id-val"></span>
+          </div>
+          <div class="track-detail-col">
+            <label>Estimated Delivery</label>
+            <span id="track-delivery-val"></span>
+          </div>
+          <div class="track-detail-col">
+            <label>Payment Mode</label>
+            <span id="track-payment-val"></span>
+          </div>
+          <div class="track-detail-col">
+            <label>Current Status</label>
+            <span id="track-status-val"></span>
+          </div>
+        </div>
+
+        <div class="stepper-container" style="margin-top: 30px;">
+          <div class="stepper-line-bg"></div>
+          <div class="stepper-line-fill" id="track-stepper-fill"></div>
+
+          <div class="step-node" id="step-0">
+            <div class="step-circle">1</div>
+            <div class="step-label">Placed</div>
+          </div>
+          <div class="step-node" id="step-1">
+            <div class="step-circle">2</div>
+            <div class="step-label">Printing</div>
+          </div>
+          <div class="step-node" id="step-2">
+            <div class="step-circle">3</div>
+            <div class="step-label">Dispatched</div>
+          </div>
+          <div class="step-node" id="step-3">
+            <div class="step-circle">4</div>
+            <div class="step-label">Delivery</div>
+          </div>
+        </div>
+
+        <div id="tracking-spec-items-container"></div>
+      </div>
+    </section>
+    
+    <!-- 7. SUCCESS VIEW -->
+    <section id="success-view" class="view-section">
+      <div class="container">
+        <div class="success-view-content glass-panel">
+          <div class="success-icon-badge">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <h1 class="success-title">Order Placed Successfully!</h1>
+          <p class="success-subtitle">Your emotional vibe blueprint is locked in! We have transmitted confirmation logs to your phone, email, and the printer warehouse.</p>
+          
+          <div class="success-order-box">
+            <p>Estimated Delivery Date</p>
+            <span id="success-delivery-date-text" style="font-weight: 800; font-size: 1.6rem; color: var(--accent-light); text-shadow: 0 0 10px rgba(108,99,255,0.4);">9/6/2026</span>
+            <span id="success-tracking-id-text" style="display: none;"></span>
+          </div>
+          
+          <div class="slide-cta-group" style="justify-content: center;">
+            <button class="btn-outline" onclick="appRouter.navigate('home')">
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+
+  <!-- --- FOOTER --- -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="logo" style="margin-bottom: 20px;">
+            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-light);"></i>
+            <span>Inkify</span> Creations
+          </div>
+          <p style="margin-bottom: 20px;">Reject blank consumerism. Embrace emotional storytelling. We print high-quality custom shirts, polo shirts, mugs, and caps that convey your vibes, pet stories, favorite heroes, and emotional memories.</p>
+          <div class="social-icons" style="display: flex; gap: 16px; font-size: 1.2rem;">
+            <a href="https://www.instagram.com/jayaprakash.porapu/" style="color: var(--text-secondary);"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://wa.me/7013114549?text=Your%20pre-filled%20message" style="color: var(--text-secondary);"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="" style="color: var(--text-secondary);"><i class="fa-brands fa-facebook"></i></a>
+          </div>
+        </div>
+        
+        
+        <div class="footer-col">
+          <h4>Company Policies</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="appRouter.navigate('about')">About Inkify Manifesto</a></li>
+            <li><a href="#">Print Washing Care Guidelines</a></li>
+            <li><a href="#">Shipping & Refund Terms</a></li>
+            <li><a href="#">Referral Partner Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 Inkify Creations. Engineered with pure emotional design. All rights reserved.</p>
+        <p>Built with <i class="fa-solid fa-heart" style="color: var(--accent-light);"></i> for beautiful souls.</p>
+      </div>
+    </div>
+  </footer>
+  <!-- --- MODAL 1: AUTHENTICATION DIALOG (MOBILE LOGIN) --- -->
+  <div class="modal-overlay" id="auth-modal-overlay">
+    <div class="modal-content glass-panel">
+      <div class="modal-close-btn" onclick="authManager.closeModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div class="modal-header">
+        <h3>Account Authentication</h3>
+        <p>Log in to your existing account or register to secure your custom blueprint and handle order tracking.</p>
+      </div>
+
+      <!-- Auth Mode Selection -->
+      <div class="tab-selection-container" style="margin-bottom: 24px;">
+        <div class="custom-tab-btn active" id="auth-tab-login" onclick="authManager.switchTab('login')">
+          <i class="fa-solid fa-right-to-bracket" style="margin-right: 8px;"></i> Log In
+        </div>
+        <div class="custom-tab-btn" id="auth-tab-register" onclick="authManager.switchTab('register')">
+          <i class="fa-solid fa-user-plus" style="margin-right: 8px;"></i> Register
+        </div>
+      </div>
+      
+      <!-- PANEL 1: LOGIN (EXISTING USER) -->
+      <div class="auth-content-panel active" id="auth-panel-login">
+        <form id="auth-login-form" onsubmit="authManager.handleLoginSubmit(event)">
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label for="login-mobile-number">10-Digit Mobile Number *</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <span style="position: absolute; left: 16px; color: var(--text-muted); font-weight: 600;">+91</span>
+              <input type="tel" id="login-mobile-number" class="input-field" placeholder="9876543210" required pattern="[6-9][0-9]{9}" style="padding-left: 55px;" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="10" autofocus>
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 28px;">
+            <label for="login-password">Password *</label>
+            <input type="password" id="login-password" class="input-field" placeholder="Enter your password" required>
+          </div>
+          
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 14px;">
+            Log In <i class="fa-solid fa-right-to-bracket"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- PANEL 2: REGISTER (NEW USER) -->
+      <div class="auth-content-panel" id="auth-panel-register">
+        <form id="auth-register-form" onsubmit="authManager.handleRegisterSubmit(event)">
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="register-name">Full Name *</label>
+            <input type="text" id="register-name" class="input-field" placeholder="e.g. Mukesh Kumar" required>
+          </div>
+          
+          <div class="form-row-2" style="margin-bottom: 16px;">
+            <div class="form-group">
+              <label for="register-age">Age *</label>
+              <input type="text" id="register-age" class="input-field" placeholder="e.g. 25" required pattern="[0-9]+" oninput="this.value = this.value.replace(/\D/g, '')">
+            </div>
+            <div class="form-group">
+              <label for="register-mobile">Mobile Number *</label>
+              <div style="position: relative; display: flex; align-items: center;">
+                <span style="position: absolute; left: 16px; color: var(--text-muted); font-weight: 600;">+91</span>
+                <input type="tel" id="register-mobile" class="input-field" placeholder="9876543210" required pattern="[6-9][0-9]{9}" style="padding-left: 55px;" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="10">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="register-email">Email Address *</label>
+            <input type="email" id="register-email" class="input-field" placeholder="mukesh@example.com" required>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="register-address">Shipping Address *</label>
+            <textarea id="register-address" class="input-field" placeholder="House No, Street name, City, Pincode" style="min-height: 80px; resize: vertical;" required></textarea>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="register-password">Password * (Minimum 12 characters)</label>
+            <input type="password" id="register-password" class="input-field" placeholder="Choose a secure password" required minlength="12">
+            <span style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Must be at least 12 characters with one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&* etc.).</span>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 28px;">
+            <label for="register-password-repeat">Repeat Password *</label>
+            <input type="password" id="register-password-repeat" class="input-field" placeholder="Repeat your secure password" required>
+          </div>
+          
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 14px;">
+            Create Account & Log In <i class="fa-solid fa-user-plus"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- --- MODAL 2: BESPOKE CUSTOMIZATION POPUP (UPLOAD / TEXT INPUT) --- -->
+  <div class="modal-overlay" id="customizer-modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 540px; padding: 24px;">
+      <div class="modal-close-btn" onclick="productCatalog.closeCustomizer()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      
+      <div class="customizer-layout">
+        <!-- COLUMN 3: CONTROLS & FORM (SIMPLIFIED ROW PANEL) -->
+        <div class="customizer-controls-panel">
+          <div>
+            <div class="modal-header" style="margin-bottom: 15px;">
+              <h3 id="customizer-product-title" style="margin-bottom: 4px;">Customize Premium Gear</h3>
+              <p id="customizer-product-sub" style="font-size: 0.8rem; color: var(--text-secondary);"></p>
+            </div>
+            
+            <!-- Customization Type Selection Tabs -->
+            <div class="tab-selection-container" style="margin-bottom: 20px; display: flex; gap: 8px;">
+              <div class="custom-tab-btn active" id="tab-btn-photo" onclick="productCatalog.switchTab('photo')" style="flex: 1; text-align: center; justify-content: center; padding: 10px 4px; font-size: 0.82rem;">
+                <i class="fa-solid fa-image" style="margin-right: 6px;"></i> Photo
+              </div>
+              <div class="custom-tab-btn" id="tab-btn-text" onclick="productCatalog.switchTab('text')" style="flex: 1; text-align: center; justify-content: center; padding: 10px 4px; font-size: 0.82rem;">
+                <i class="fa-solid fa-font" style="margin-right: 6px;"></i> Text
+              </div>
+              <div class="custom-tab-btn" id="tab-btn-both" onclick="productCatalog.switchTab('both')" style="flex: 1; text-align: center; justify-content: center; padding: 10px 4px; font-size: 0.82rem;">
+                <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 6px;"></i> Both
+              </div>
+            </div>
+            
+            <!-- Customization Inputs Form Group -->
+            <div class="customizer-inputs-container">
+              <!-- Upload Image Dropzone -->
+              <div id="form-group-upload" class="form-group" style="margin-bottom: 16px; display: none;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; display: block;">Upload Photograph</label>
+                <div class="file-upload-dropzone" onclick="document.getElementById('customizer-file-input').click()" style="padding: 24px 16px; border-radius: 12px; border: 1.5px dashed rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.2); text-align: center; cursor: pointer; transition: border-color 0.2s ease;">
+                  <i class="fa-solid fa-cloud-arrow-up file-upload-icon" style="font-size: 1.8rem; margin-bottom: 8px; color: var(--accent-purple);"></i>
+                  <p class="file-upload-text" style="font-size: 0.82rem; margin: 0 0 4px 0;">Drag & Drop or Click to upload</p>
+                  <p class="file-upload-subtext" style="font-size: 0.72rem; color: var(--text-secondary); margin: 0;">PNG, JPG (up to 10MB)</p>
+                  <input type="file" id="customizer-file-input" style="display: none;" accept="image/*" onchange="productCatalog.handleFileSelect(event)">
+                </div>
+                <!-- File Preview/Info -->
+                <div id="customizer-photo-preview-info" style="display: none; align-items: center; justify-content: space-between; margin-top: 10px; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                  <span style="font-size: 0.8rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 80%;" id="customizer-photo-name">Photo selected</span>
+                  <i class="fa-regular fa-trash-can" onclick="productCatalog.clearSelectedFile(event)" style="color: var(--accent-light); cursor: pointer;" title="Remove Photo"></i>
+                </div>
+              </div>
+
+              <!-- Custom Text Input -->
+              <div id="form-group-text" class="form-group" style="margin-bottom: 16px; display: none;">
+                <label for="customizer-text-input" style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; display: block;">Custom Name / Text</label>
+                <input type="text" id="customizer-text-input" class="input-field" placeholder="e.g. Printing Memories" oninput="productCatalog.updateTextContent(this.value)">
+              </div>
+            </div>
+
+            <!-- Fabric Color Selection Container -->
+            <div id="customizer-color-container" style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; display: none;">
+              <label style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; display: block;">Select Fabric Color</label>
+              <div class="color-selector-row" style="display: flex; gap: 14px; flex-wrap: wrap;">
+                <div class="color-swatch-option active" data-color="Light Blue" style="background-color: #bae6fd;" title="Light Blue"></div>
+                <div class="color-swatch-option" data-color="White" style="background-color: #ffffff;" title="White"></div>
+                <div class="color-swatch-option" data-color="Light Pink" style="background-color: #fbcfe8;" title="Light Pink"></div>
+                <div class="color-swatch-option" data-color="Light Yellow" style="background-color: #fef08a;" title="Light Yellow"></div>
+              </div>
+            </div>
+            
+            <!-- Size Selection Container -->
+            <div id="customizer-size-container" style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; display: none;">
+              <label style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; display: block;">Select Size</label>
+              <div class="size-selector-row" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="size-swatch-option" data-size="S">S</div>
+                <div class="size-swatch-option" data-size="M">M</div>
+                <div class="size-swatch-option" data-size="L">L</div>
+                <div class="size-swatch-option" data-size="XL">XL</div>
+                <div class="size-swatch-option" data-size="XXL">XXL</div>
+                <div class="size-swatch-option" data-size="XXXL">XXXL</div>
+              </div>
+            </div>
+
+            <!-- Product Details Container -->
+            <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+              <label style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px; display: block;">Product Details</label>
+              <p id="customizer-product-desc" style="font-size: 0.78rem; line-height: 1.4; color: var(--text-secondary); margin: 0;"></p>
+            </div>
+          </div>
+          
+          <!-- Action panel -->
+          <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px;">
+            <div style="text-align: left;">
+              <span style="font-size: 0.72rem; color: var(--text-secondary); display: block;">Estimated Price:</span>
+              <span id="customizer-product-price" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-purple);">â‚¹399</span>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-outline" onclick="productCatalog.closeCustomizer()" style="padding: 10px 16px; justify-content: center; min-height: auto;">
+                Cancel
+              </button>
+              <button class="btn-primary" onclick="productCatalog.applyCustomization()" style="padding: 10px 20px; justify-content: center; min-height: auto;">
+                Save & Proceed <i class="fa-solid fa-arrow-right-to-bracket"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- --- MODAL 3: WALLET DETAILS & WITHDRAWAL --- -->
+  <div class="modal-overlay" id="wallet-modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 480px;">
+      <div class="modal-close-btn" onclick="walletManager.closeModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-wallet text-glow" style="margin-right: 10px; color: var(--accent-light);"></i>Your Wallet</h3>
+        <p>Monitor your affiliate earnings, cash back, and request payouts.</p>
+      </div>
+      
+      <div class="wallet-modal-body" style="text-align: center; padding: 10px 0;">
+        <div class="wallet-balance-card" style="background: rgba(147, 51, 234, 0.08); border: 1px solid rgba(147, 51, 234, 0.25); border-radius: 16px; padding: 26px; margin-bottom: 22px;">
+          <span style="color: var(--text-secondary); font-size: 0.85rem; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Available Balance</span>
+          <h2 style="font-size: 3rem; color: var(--text-primary); font-weight: 800; margin: 0; font-family: var(--font-display);" id="wallet-modal-balance">â‚¹0.00</h2>
+        </div>
+
+        <!-- Progress to withdrawal -->
+        <div id="wallet-withdrawal-progress-container" style="margin-bottom: 24px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500;">
+            <span>Payout Threshold Progress</span>
+            <span id="wallet-progress-text" style="color: white; font-weight: 600;">â‚¹0 / â‚¹500</span>
+          </div>
+          <div class="progress-bar-bg" style="background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden; width: 100%;">
+            <div id="wallet-progress-fill" style="background: linear-gradient(90deg, var(--accent-purple), var(--accent-glow)); height: 100%; width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+          </div>
+        </div>
+
+        <div id="wallet-withdraw-action-area" style="min-height: 48px; display: flex; align-items: center; justify-content: center;">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); padding: 18px; border-radius: 12px; margin-top: 24px; font-size: 0.85rem; text-align: left; color: var(--text-secondary); line-height: 1.5;">
+          <span style="font-weight: 700; color: var(--accent-light); display: block; margin-bottom: 6px; font-family: var(--font-display);"><i class="fa-solid fa-gift"></i> How to earn wallet cash?</span>
+          Share your referral code with friends. When they buy the <strong>Purple Gift Set</strong> using your code, they save â‚¹100 (paying â‚¹1099) and get â‚¹50 in their wallet. You also earn â‚¹50 in your wallet!
+          <div style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+            <span style="font-size: 0.8rem;">Your Affiliate Code: <strong style="color: white; font-size: 0.95rem; font-family: var(--font-display);" id="wallet-modal-refcode">-</strong></span>
+            <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem; min-height: auto; border-radius: 6px;" onclick="walletManager.copyReferralCode()">Copy Code</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- --- MODAL 3B: WITHDRAWAL BANK DETAILS FORM --- -->
+  <div class="modal-overlay" id="withdraw-bank-modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 480px; padding: 30px;">
+      <div class="modal-close-btn" onclick="walletManager.closeBankModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div class="modal-header" style="margin-bottom: 22px;">
+        <h3><i class="fa-solid fa-building-columns text-glow" style="margin-right: 10px; color: var(--accent-light);"></i>Bank Details</h3>
+        <p>Please enter your bank account details where the funds will be transferred.</p>
+      </div>
+
+      <form id="withdraw-bank-form" onsubmit="walletManager.submitBankDetails(event)" style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+        <div class="input-group">
+          <label for="withdraw-bank-holder" style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px;">Account Holder Name <span style="color: var(--accent-purple);">*</span></label>
+          <input type="text" id="withdraw-bank-holder" class="input-field" placeholder="e.g. John Doe" required style="width: 100%;">
+        </div>
+
+        <div class="input-group">
+          <label for="withdraw-bank-name" style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px;">Bank Name <span style="color: var(--accent-purple);">*</span></label>
+          <input type="text" id="withdraw-bank-name" class="input-field" placeholder="e.g. State Bank of India" required style="width: 100%;">
+        </div>
+
+        <div class="input-group">
+          <label for="withdraw-bank-account" style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px;">Account Number <span style="color: var(--accent-purple);">*</span></label>
+          <input type="text" id="withdraw-bank-account" class="input-field" placeholder="e.g. 123456789012" required maxlength="20" oninput="this.value = this.value.replace(/\D/g, '')" style="width: 100%;">
+        </div>
+
+        <div class="input-group">
+          <label for="withdraw-bank-ifsc" style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px;">IFSC Code <span style="color: var(--accent-purple);">*</span></label>
+          <input type="text" id="withdraw-bank-ifsc" class="input-field" placeholder="e.g. SBIN0001234" required maxlength="11" style="width: 100%; text-transform: uppercase;">
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 10px;">
+          <button type="submit" class="btn-primary" style="flex: 1; justify-content: center; padding: 12px; font-weight: 700;">
+            Confirm & Withdraw
+          </button>
+          <button type="button" class="btn-outline" onclick="walletManager.closeBankModal()" style="padding: 12px; border-color: rgba(255,255,255,0.1); color: var(--text-secondary);">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- --- MODAL 4: SIMULATED PAYMENT GATEWAY --- -->
+  <div class="modal-overlay" id="payment-gateway-modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 480px; padding: 30px;">
+      <div class="modal-close-btn" onclick="paymentGatewayManager.closeGateway()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      
+      <!-- MAIN VIEW -->
+      <div id="gateway-main-view">
+        <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.3); margin-bottom: 12px; color: var(--accent-light); font-size: 1.4rem;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3>Secure Online Payment</h3>
+          <p>Inkify Checkout Payment Gateway (Simulation)</p>
+          <div style="margin-top: 10px; font-size: 1.2rem; font-weight: 700; color: white;">
+            Amount to Pay: <span style="color: var(--accent-light); font-family: var(--font-display);">â‚¹<span id="gateway-total-amount">0</span></span>
+          </div>
+        </div>
+
+        <!-- Payment tabs -->
+        <div class="tab-selection-container" style="margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+          <div class="custom-tab-btn active" id="gateway-tab-upi" onclick="paymentGatewayManager.switchTab('upi')" style="padding: 10px 0; font-size: 0.9rem; justify-content: center; flex: 1;">
+            <i class="fa-solid fa-mobile-screen-button" style="margin-right: 8px;"></i> UPI Payment
+          </div>
+          <div class="custom-tab-btn" id="gateway-tab-card" onclick="paymentGatewayManager.switchTab('card')" style="padding: 10px 0; font-size: 0.9rem; justify-content: center; flex: 1;">
+            <i class="fa-regular fa-credit-card" style="margin-right: 8px;"></i> Debit/Credit Card
+          </div>
+        </div>
+
+        <!-- UPI PANEL -->
+        <div id="gateway-panel-upi" style="display: block;">
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="gateway-upi-id" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; display: block;">Enter Your UPI ID *</label>
+            <input type="text" id="gateway-upi-id" class="input-field" placeholder="e.g. name@upi" style="background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08);">
+          </div>
+          <p style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 12px 0;">OR Scan QR Code in any UPI App</p>
+          <div class="simulated-qr-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; padding: 16px; border-radius: 12px; width: 160px; height: 160px; margin: 0 auto 16px; border: 4px solid var(--accent-purple);">
+            <!-- Elegant simulated QR SVG -->
+            <svg viewBox="0 0 100 100" width="100%" height="100%">
+              <rect x="0" y="0" width="25" height="25" fill="#581c87" />
+              <rect x="5" y="5" width="15" height="15" fill="#fff" />
+              <rect x="8" y="8" width="9" height="9" fill="#581c87" />
+              <rect x="75" y="0" width="25" height="25" fill="#581c87" />
+              <rect x="80" y="5" width="15" height="15" fill="#fff" />
+              <rect x="83" y="8" width="9" height="9" fill="#581c87" />
+              <rect x="0" y="75" width="25" height="25" fill="#581c87" />
+              <rect x="5" y="80" width="15" height="15" fill="#fff" />
+              <rect x="8" y="83" width="9" height="9" fill="#581c87" />
+              <rect x="35" y="35" width="30" height="30" fill="#581c87" />
+              <rect x="40" y="40" width="20" height="20" fill="#fff" />
+              <rect x="45" y="45" width="10" height="10" fill="#581c87" />
+              <rect x="30" y="10" width="8" height="8" fill="#581c87" />
+              <rect x="50" y="5" width="12" height="12" fill="#581c87" />
+              <rect x="10" y="35" width="15" height="5" fill="#581c87" />
+              <rect x="85" y="45" width="10" height="15" fill="#581c87" />
+              <rect x="45" y="75" width="20" height="8" fill="#581c87" />
+              <rect x="70" y="75" width="15" height="15" fill="#581c87" />
+            </svg>
+          </div>
+          <div style="display: flex; justify-content: center; gap: 12px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 20px;">
+            <span><i class="fa-solid fa-lock" style="color:var(--success);"></i> 256-Bit SSL</span>
+            <span><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> UPI Certified</span>
+          </div>
+        </div>
+
+        <!-- CARD PANEL -->
+        <div id="gateway-panel-card" style="display: none;">
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="gateway-card-number" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px; display: block;">Card Number *</label>
+            <input type="text" id="gateway-card-number" class="input-field" placeholder="1234 5678 9012 3456" maxlength="19" style="background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08);">
+          </div>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="gateway-card-name" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px; display: block;">Cardholder Name *</label>
+            <input type="text" id="gateway-card-name" class="input-field" placeholder="e.g. MUKESH KUMAR" style="background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08);">
+          </div>
+          <div class="form-row-2" style="margin-bottom: 20px;">
+            <div class="form-group">
+              <label for="gateway-card-expiry" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px; display: block;">Expiry Date *</label>
+              <input type="text" id="gateway-card-expiry" class="input-field" placeholder="MM/YY" maxlength="5" style="background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08);">
+            </div>
+            <div class="form-group">
+              <label for="gateway-card-cvv" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px; display: block;">CVV *</label>
+              <input type="password" id="gateway-card-cvv" class="input-field" placeholder="123" maxlength="4" style="background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08);">
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkout Action -->
+        <button class="btn-primary" style="width: 100%; justify-content: center; padding: 14px;" onclick="paymentGatewayManager.handlePaymentSubmit()">
+          Proceed to Pay Securely <i class="fa-solid fa-lock-open"></i>
+        </button>
+      </div>
+
+      <!-- PROCESSING VIEW -->
+      <div id="gateway-processing-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center;">
+        <div class="gateway-spinner" style="width: 60px; height: 60px; border: 4px solid rgba(168, 85, 247, 0.1); border-top: 4px solid var(--accent-glow); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
+        <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Processing Transaction</h4>
+        <p style="color: var(--text-secondary); font-size: 0.85rem;">Communicating with secure banking gateway. Please do not close this modal or refresh the page.</p>
+      </div>
+
+      <!-- SUCCESS VIEW -->
+      <div id="gateway-success-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center;">
+        <div class="gateway-success-icon" style="width: 60px; height: 60px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; color: var(--success); font-size: 2rem; margin-bottom: 20px;">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--success);">Payment Authorized</h4>
+        <p style="color: var(--text-secondary); font-size: 0.85rem;">Your transaction was successful. Redirecting to order receipt...</p>
+      </div>
+    </div>
+  </div>
+  <!-- System email log UI removed -->
+
+  <!-- --- MODAL 5: PREMIUM CUSTOM POPUP DIALOG --- -->
+  <div class="modal-overlay" id="custom-dialog-overlay" style="z-index: 9999;">
+    <div class="modal-content glass-panel" id="custom-dialog-box" style="max-width: 420px; padding: 30px; text-align: center; border: 1.5px solid var(--accent-purple); box-shadow: 0 10px 30px rgba(147, 51, 234, 0.25);">
+      <div id="custom-dialog-icon" style="font-size: 2.8rem; color: var(--accent-light); margin-bottom: 18px;">
+        <i class="fa-solid fa-circle-question"></i>
+      </div>
+      <h3 id="custom-dialog-title" style="font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; margin-bottom: 10px; color: white;">Confirm Action</h3>
+      <p id="custom-dialog-message" style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 26px;"></p>
+      
+      <!-- Action buttons -->
+      <div id="custom-dialog-actions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+<!-- Core JavaScript Logic -->
+  <script>
+    window.BASE_STATIC_URL = "{% static 'app.js' %}".replace('app.js', '');
+   </script> 
+  <script src="{% static 'app.js' %}?v=510" defer></script>
+
+</body>
+</html>

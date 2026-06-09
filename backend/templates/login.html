@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-section">
+  <div class="container">
+    <div class="auth-card glass-panel">
+      <div class="auth-panel-header">
+        <span class="badge">Secure Sign-In</span>
+        <h2>Welcome Back</h2>
+        <p class="auth-status">Use your phone number or email address and password to sign in and continue your custom printing journey.</p>
+      </div>
+      <form id="login-form" class="auth-form">
+        <div>
+          <label for="login">Phone or Email</label>
+          <input type="text" id="login" name="login" placeholder="9876543210 or you@example.com" required>
+        </div>
+
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn-primary">Sign In</button>
+          <a href="/signup/" class="auth-link">Create a new account</a>
+        </div>
+      </form>
+      <div id="login-error" class="form-error"></div>
+    </div>
+  </div>
+</section>
+<script>
+document.getElementById('login-form').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const identifier = document.getElementById('login').value.trim();
+  const password = document.getElementById('password').value;
+  const errorEl = document.getElementById('login-error');
+  errorEl.textContent = '';
+
+  if (!identifier) {
+    errorEl.textContent = 'Please enter your phone number or email address.';
+    return;
+  }
+  if (!password) {
+    errorEl.textContent = 'Please enter your password.';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/auth/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ login: identifier, password })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      errorEl.textContent = data.error || 'Login failed. Please try again.';
+      return;
+    }
+    window.location.href = '/products/';
+  } catch (err) {
+    errorEl.textContent = 'Server error. Please try again later.';
+  }
+});
+</script>
+{% endblock %}
