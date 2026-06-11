@@ -11,7 +11,13 @@
     <div class="product-grid">
       {% for product in products %}
       <article class="product-card glass-panel">
-        <img class="product-image" src="{% static product.image %}" alt="{{ product.name }}">
+        {% if product.image|slice:":4" == "<svg" %}
+          <div class="product-image-svg">{{ product.image|safe }}</div>
+        {% elif "http://" in product.image or "https://" in product.image or product.image|slice:":7" == "/media/" or product.image|slice:":6" == "media/" %}
+          <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+        {% else %}
+          <img class="product-image" src="{% static product.image %}" alt="{{ product.name }}">
+        {% endif %}
         <div class="product-card-content">
           <h3>{{ product.name }}</h3>
           <p class="product-category">{{ product.category }}</p>

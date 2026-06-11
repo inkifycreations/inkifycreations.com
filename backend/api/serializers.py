@@ -1,15 +1,39 @@
 from rest_framework import serializers
-from .models import CustomUser, Product, Order, OrderItem, ProductDesign
+from .models import CustomUser, Product, Order, OrderItem, ProductDesign, ProductReview, TrendingDesign
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['mobile', 'name', 'age', 'email', 'address', 'wallet_balance', 'referral_code']
+        fields = ['mobile', 'name', 'age', 'email', 'address', 'wallet_balance', 'referral_code', 'is_staff']
 
 class ProductSerializer(serializers.ModelSerializer):
+    trending_image_url = serializers.SerializerMethodField()
+    average_rating = serializers.SerializerMethodField()
+    reviews_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
-        fields = ['id', 'name', 'category', 'original_price', 'price', 'cart_price', 'image', 'description']
+        fields = [
+            'id', 'name', 'category', 'original_price', 'price', 'cart_price', 
+            'image', 'description', 'is_trending', 'trending_tagline', 'trending_image_url',
+            'average_rating', 'reviews_count'
+        ]
+
+    def get_trending_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.trending_image and hasattr(obj.trending_image, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.trending_image.url)
+            return obj.trending_image.url
+        return None
+
+    def get_average_rating(self, obj):
+        from django.db.models import Avg
+        avg = ProductReview.objects.filter(product=obj).aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg is not None else 0.0
+
+    def get_reviews_count(self, obj):
+        return ProductReview.objects.filter(product=obj).count()
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
@@ -65,4 +89,83 @@ class ProductDesignSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.image.url)
             return obj.image.url
         return None
+
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.name', read_only=True)
+    user_mobile = serializers.SerializerMethodField()
+    helpful_count = serializers.IntegerField(source='helpful_users.count', read_only=True)
+    has_marked_helpful = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductReview
+        fields = [
+            'id', 'product', 'username', 'user_mobile', 'rating', 'title',
+            'comment', 'image_url', 'is_verified', 'helpful_count',
+            'has_marked_helpful', 'created_at'
+        ]
+        read_only_fields = ['id', 'username', 'user_mobile', 'is_verified', 'helpful_count', 'created_at']
+
+    def get_user_mobile(self, obj):
+        # Mask the mobile number for privacy (e.g. 98******12)
+        mobile = obj.user.mobile
+        if len(mobile) >= 10:
+            return f"{mobile[:2]}******{mobile[-2:]}"
+        return mobile
+
+    def get_has_marked_helpful(self, obj):
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated:
+            return obj.helpful_users.filter(id=request.user.id).exists()
+        return False
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image and hasattr(obj.image, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
+
+class TrendingDesignSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='product.id', read_only=True)
+    name = serializers.SerializerMethodField()
+    price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2, read_only=True)
+    trending_image_url = serializers.SerializerMethodField()
+    trending_tagline = serializers.SerializerMethodField()
+    image = serializers.CharField(source='product.image', read_only=True)
+    description = serializers.CharField(source='product.description', read_only=True)
+    average_rating = serializers.SerializerMethodField()
+    reviews_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TrendingDesign
+        fields = [
+            'id', 'name', 'price', 'trending_image_url', 'trending_tagline',
+            'image', 'description', 'average_rating', 'reviews_count'
+        ]
+
+    def get_name(self, obj):
+        return obj.name if obj.name else obj.product.name
+
+    def get_trending_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image and hasattr(obj.image, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
+    def get_trending_tagline(self, obj):
+        return obj.tagline if obj.tagline else obj.product.description
+
+    def get_average_rating(self, obj):
+        from django.db.models import Avg
+        avg = ProductReview.objects.filter(product=obj.product).aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg is not None else 0.0
+
+    def get_reviews_count(self, obj):
+        return ProductReview.objects.filter(product=obj.product).count()
 

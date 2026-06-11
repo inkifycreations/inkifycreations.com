@@ -3,9 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model as _get_user_model
+User = _get_user_model()
 from django.db import transaction
 from django.views.generic import TemplateView
+from typing import cast, Dict, Any
 import uuid
 from decimal import Decimal
 import urllib.request
@@ -20,10 +22,10 @@ from django.db import close_old_connections
 
 
 
-from .models import Product, Order, OrderItem, generate_referral_code, WalletWithdrawal, ProductDesign
-from .serializers import CustomUserSerializer, ProductSerializer, OrderSerializer, ProductDesignSerializer
+from .models import Product, Order, OrderItem, generate_referral_code, WalletWithdrawal, ProductDesign, CustomUser, ProductReview, TrendingDesign
+from .serializers import CustomUserSerializer, ProductSerializer, OrderSerializer, ProductDesignSerializer, ProductReviewSerializer, TrendingDesignSerializer
 
-User = get_user_model()
+# User is already defined on line 7
 
 def decode_base64_image(data_str):
     if not data_str or "," not in data_str:
@@ -335,6 +337,7 @@ def send_withdrawal_notifications_bg(withdrawal_id):
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         mobile = request.data.get('mobile')
@@ -431,14 +434,14 @@ class RegisterView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        user = User.objects.create_user(
+        user = cast(CustomUser, User.objects.create_user(  # type: ignore
             mobile=mobile,
             name=name,
             age=age,
             address=address,
             email=email,
             password=password
-        )
+        ))
         token, _ = Token.objects.get_or_create(user=user)
         user_serializer = CustomUserSerializer(user)
         return Response({
@@ -449,6 +452,7 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         identifier = request.data.get('login') or request.data.get('email') or request.data.get('mobile')
@@ -507,6 +511,7 @@ class LoginView(APIView):
 
 class RegisterLoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         action = request.data.get('action')
@@ -525,7 +530,8 @@ class RegisterLoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        user, created = User.objects.get_or_create(mobile=mobile)
+        user_obj, created = User.objects.get_or_create(mobile=mobile)
+        user = cast(CustomUser, user_obj)
         
         if name and (created or not user.name):
             user.name = name
@@ -685,8 +691,9 @@ class OrderCreateView(APIView):
             user.save(update_fields=['wallet_balance'])
 
         if eligible_referrer and referrer_wallet_credit > Decimal('0.00'):
-            eligible_referrer.wallet_balance += referrer_wallet_credit
-            eligible_referrer.save(update_fields=['wallet_balance'])
+            eligible_referrer_obj = cast(CustomUser, eligible_referrer)
+            eligible_referrer_obj.wallet_balance += referrer_wallet_credit
+            eligible_referrer_obj.save(update_fields=['wallet_balance'])
 
         # Create OrderItems
         for payload_item in payload_items:
@@ -714,10 +721,10 @@ class OrderCreateView(APIView):
         ).start())
 
 
-        response_data = serializer.data
+        response_data = serializer.data  # type: ignore
         if user:
-            response_data['user'] = CustomUserSerializer(user).data
-            response_data['wallet_used'] = str(wallet_used)
+            response_data['user'] = CustomUserSerializer(user).data  # type: ignore
+            response_data['wallet_used'] = str(wallet_used)  # type: ignore
 
         return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -814,8 +821,9 @@ class ReferralCodeVerifyView(APIView):
         if code.endswith('99') and len(code) >= 3:
             return Response({"valid": True, "referrer": "Affiliate Partner"})
         
-        referrer = User.objects.filter(referral_code__iexact=code).first()
-        if referrer:
+        referrer_obj = User.objects.filter(referral_code__iexact=code).first()
+        if referrer_obj:
+            referrer = cast(CustomUser, referrer_obj)
             return Response({"valid": True, "referrer": referrer.name or referrer.mobile})
         
         return Response({"valid": False, "error": "Invalid referral code."})
@@ -858,6 +866,252 @@ class ProductDesignListView(APIView):
             qs = qs.filter(product_type=product_type)
         serializer = ProductDesignSerializer(qs, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+class TrendingProductListView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        qs = TrendingDesign.objects.filter(is_active=True)
+        if not qs.exists():
+            products = Product.objects.filter(is_trending=True)
+            if not products.exists():
+                products = Product.objects.all()[:4]
+            serializer = ProductSerializer(products, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = TrendingDesignSerializer(qs, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProductDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        serializer = ProductSerializer(product, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProductReviewListCreateView(APIView):
+    """
+    GET  /api/products/<product_id>/reviews/  - list reviews with stats
+    POST /api/products/<product_id>/reviews/  - create a new review
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, product_id):
+        product = get_object_or_404(Product, pk=product_id)
+        reviews_qs = ProductReview.objects.filter(product=product).select_related('user')
+
+        # Sorting
+        sort = request.query_params.get('sort', 'most_recent')
+        if sort == 'most_helpful':
+            from django.db.models import Count
+            reviews_qs = reviews_qs.annotate(h_count=Count('helpful_users')).order_by('-h_count', '-created_at')
+        elif sort == 'highest_rated':
+            reviews_qs = reviews_qs.order_by('-rating', '-created_at')
+        elif sort == 'lowest_rated':
+            reviews_qs = reviews_qs.order_by('rating', '-created_at')
+        else:
+            reviews_qs = reviews_qs.order_by('-created_at')
+
+        # Filter by verified
+        if request.query_params.get('verified') == 'true':
+            reviews_qs = reviews_qs.filter(is_verified=True)
+
+        # Rating filter (e.g., ?rating=5)
+        rating_filter = request.query_params.get('rating')
+        if rating_filter and rating_filter.isdigit():
+            reviews_qs = reviews_qs.filter(rating=int(rating_filter))
+
+        total = ProductReview.objects.filter(product=product).count()
+        from django.db.models import Avg, Count
+        avg_data = ProductReview.objects.filter(product=product).aggregate(avg=Avg('rating'))
+        average_rating = round(avg_data['avg'], 1) if avg_data['avg'] else 0.0
+
+        # Distribution breakdown
+        distribution = {}
+        for star in range(1, 6):
+            count = ProductReview.objects.filter(product=product, rating=star).count()
+            distribution[str(star)] = {
+                'count': count,
+                'percent': round((count / total * 100), 1) if total > 0 else 0
+            }
+
+        serializer = ProductReviewSerializer(reviews_qs, many=True, context={'request': request})
+        return Response({
+            'total': total,
+            'average_rating': average_rating,
+            'distribution': distribution,
+            'reviews': serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request, product_id):
+        # Must be authenticated
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        token_key = auth_header.replace('Token ', '').strip() if auth_header.startswith('Token ') else None
+        if not token_key:
+            return Response({'error': 'Authentication required to submit a review.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            from rest_framework.authtoken.models import Token
+            token_obj = Token.objects.select_related('user').get(key=token_key)
+            reviewer = token_obj.user
+        except Exception:
+            return Response({'error': 'Invalid authentication token.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        product = get_object_or_404(Product, pk=product_id)
+
+        # Prevent duplicate reviews
+        if ProductReview.objects.filter(product=product, user=reviewer).exists():
+            return Response({'error': 'You have already reviewed this product.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        rating = request.data.get('rating')
+        title = (request.data.get('title') or '').strip()
+        comment = (request.data.get('comment') or '').strip()
+
+        if not rating or not title or not comment:
+            return Response({'error': 'Rating, title, and comment are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            rating = int(rating)
+            if not (1 <= rating <= 5):
+                raise ValueError
+        except (ValueError, TypeError):
+            return Response({'error': 'Rating must be a number between 1 and 5.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Determine if verified purchase
+        is_verified = OrderItem.objects.filter(
+            order__user=reviewer,
+            product=product
+        ).exists()
+
+        review = ProductReview(
+            product=product,
+            user=reviewer,
+            rating=rating,
+            title=title,
+            comment=comment,
+            is_verified=is_verified
+        )
+
+        # Handle optional image upload
+        if 'image' in request.FILES:
+            review.image = request.FILES['image']
+
+        review.save()
+        serializer = ProductReviewSerializer(review, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ReviewHelpfulToggleView(APIView):
+    """
+    POST /api/reviews/<review_id>/helpful/  - toggle helpful vote for authenticated user
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, review_id):
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        token_key = auth_header.replace('Token ', '').strip() if auth_header.startswith('Token ') else None
+        if not token_key:
+            return Response({'error': 'Authentication required.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            from rest_framework.authtoken.models import Token
+            token_obj = Token.objects.select_related('user').get(key=token_key)
+            voter = token_obj.user
+        except Exception:
+            return Response({'error': 'Invalid authentication token.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        review = get_object_or_404(ProductReview, pk=review_id)
+
+        if review.helpful_users.filter(id=voter.id).exists():
+            review.helpful_users.remove(voter)
+            marked = False
+        else:
+            review.helpful_users.add(voter)
+            marked = True
+
+
+        return Response({
+            'helpful_count': review.helpful_users.count(),
+            'has_marked_helpful': marked
+        }, status=status.HTTP_200_OK)
+
+
+# ─────────────────────────────────────────────
+#  STAFF DASHBOARD — protected by IsAdminUser
+# ─────────────────────────────────────────────
+
+from django.contrib.auth.mixins import UserPassesTestMixin
+
+class StaffDashboardPageView(UserPassesTestMixin, TemplateView):
+    """Serves the custom staff dashboard HTML page."""
+    template_name = 'staff_dashboard.html'
+    login_url = '/admin/login/'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
+
+
+
+class StaffStatsView(APIView):
+    """GET /api/staff/stats/ — summary KPIs for the dashboard header cards."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from django.db.models import Sum, Count
+        total_orders   = Order.objects.count()
+        total_revenue  = Order.objects.aggregate(s=Sum('amount'))['s'] or Decimal('0.00')
+        total_customers = User.objects.filter(is_staff=False).count()
+        pending_orders  = Order.objects.filter(status='Placed').count()
+        return Response({
+            'total_orders':    total_orders,
+            'total_revenue':   str(total_revenue),
+            'total_customers': total_customers,
+            'pending_orders':  pending_orders,
+        }, status=status.HTTP_200_OK)
+
+
+class StaffOrdersView(APIView):
+    """GET /api/staff/orders/ — full paginated order list for the staff table."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        orders = Order.objects.select_related('user').prefetch_related('items__product').order_by('-created_at')[:200]
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StaffOrderStatusUpdateView(APIView):
+    """PATCH /api/staff/orders/<tracking_id>/status/ — update order status."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def patch(self, request, tracking_id):
+        order = get_object_or_404(Order, tracking_id__iexact=tracking_id)
+        new_status = request.data.get('status', '').strip()
+        valid = [s[0] for s in Order.STATUS_CHOICES]
+        if new_status not in valid:
+            return Response(
+                {'error': f'Invalid status. Must be one of: {", ".join(valid)}.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        order.status = new_status
+        order.save(update_fields=['status'])
+        return Response({'tracking_id': tracking_id, 'status': new_status}, status=status.HTTP_200_OK)
+
+
+class StaffCustomersView(APIView):
+    """GET /api/staff/customers/ — list all non-staff users."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        customers = User.objects.filter(is_staff=False).order_by('-date_joined')[:500]
+        serializer = CustomUserSerializer(customers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 
 

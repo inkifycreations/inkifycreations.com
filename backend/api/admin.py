@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.html import format_html
-from .models import CustomUser, Product, Order, OrderItem, ProductDesign
+from .models import CustomUser, Product, Order, OrderItem, ProductDesign, TrendingDesign
 
 @admin.register(CustomUser)
 class CustomUserAdmin(DjangoUserAdmin):
@@ -72,5 +72,23 @@ class ProductDesignAdmin(admin.ModelAdmin):
                 obj.image.url
             )
         return '—'
-    image_preview.short_description = 'Preview'
+    image_preview.short_description = 'Preview'  # type: ignore
+
+
+@admin.register(TrendingDesign)
+class TrendingDesignAdmin(admin.ModelAdmin):
+    list_display = ('product', 'name', 'tagline', 'sort_order', 'is_active', 'image_preview')
+    list_filter = ('is_active', 'product')
+    search_fields = ('name', 'tagline', 'product__name')
+    list_editable = ('sort_order', 'is_active')
+    ordering = ('sort_order', '-created_at')
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:50px; border-radius:4px; object-fit:cover;" />',
+                obj.image.url
+            )
+        return '—'
+    image_preview.short_description = 'Preview'  # type: ignore
 

@@ -10,10 +10,12 @@ from __future__ import annotations
 
 import re
 import uuid
+from decimal import Decimal
 from typing import Any
 
 from django.conf import settings
 from django.db import models
+from django.db.models import QuerySet
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 
@@ -65,7 +67,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     age = models.IntegerField(null=True, blank=True)
     email = models.EmailField(blank=True)
     address = models.TextField(blank=True)
-    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     referral_code = models.CharField(max_length=20, unique=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -93,6 +95,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Product(models.Model):
     """Product available for purchase."""
 
+    id: int
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=50)
     original_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -100,6 +103,9 @@ class Product(models.Model):
     cart_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     image = models.TextField()  # Stores SVG string or asset path
     description = models.TextField()
+    is_trending = models.BooleanField(default=False)
+    trending_tagline = models.CharField(max_length=255, blank=True, default="")
+    trending_image = models.ImageField(upload_to='products/', null=True, blank=True, help_text="High-quality image for the trending popup")
 
     def __str__(self) -> str:
         return self.name
@@ -110,6 +116,9 @@ class Product(models.Model):
 
 class Order(models.Model):
     """Order placed by a user or guest."""
+
+    id: int
+    items: QuerySet[OrderItem]
 
     STATUS_CHOICES = [
         ("Placed", "Placed"),
@@ -153,8 +162,10 @@ class Order(models.Model):
 class OrderItem(models.Model):
     """Individual item within an order."""
 
+    id: int
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product_id: int | None
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     CUSTOMIZATION_CHOICES = [
@@ -179,6 +190,7 @@ class OrderItem(models.Model):
 class WalletWithdrawal(models.Model):
     """Model to track user wallet withdrawals along with bank details."""
 
+    id: int
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="withdrawals")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     account_number = models.CharField(max_length=50)
@@ -200,11 +212,12 @@ class ProductDesign(models.Model):
     Managed entirely from Django admin — admins upload images and set metadata.
     """
 
+    id: int
     PRODUCT_TYPES = [
         ('mug',    'Mug'),
         ('tshirt', 'T-Shirt'),
         ('polo',   'Polo T-Shirt'),
-        ('cup',    'Cup'),
+        ('bottle', 'Bottle'),
     ]
 
     CATEGORY_CHOICES = [
@@ -222,12 +235,15 @@ class ProductDesign(models.Model):
     name           = models.CharField(max_length=120)
     category       = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='general')
     image          = models.ImageField(upload_to='designs/', help_text="Upload the design wrap image")
-    price          = models.DecimalField(max_digits=10, decimal_places=2, default=219)
-    original_price = models.DecimalField(max_digits=10, decimal_places=2, default=299)
+    price          = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('239.00'))
+    original_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('299.00'))
     description    = models.TextField(blank=True, default="")
     sort_order     = models.PositiveIntegerField(default=0, help_text="Lower numbers appear first")
     is_active      = models.BooleanField(default=True)
     created_at     = models.DateTimeField(auto_now_add=True)
+
+    def get_product_type_display(self) -> str:
+        return dict(self.PRODUCT_TYPES).get(self.product_type, self.product_type)
 
     class Meta:
         ordering = ['sort_order', '-created_at']
@@ -239,4 +255,55 @@ class ProductDesign(models.Model):
 
     def __repr__(self) -> str:
         return f"<ProductDesign id={self.id!r} type={self.product_type!r} name={self.name!r}>"
+
+
+class ProductReview(models.Model):
+    """
+    Flipkart/Amazon style product review and rating model.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews', db_index=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveIntegerField(default=5)  # 1 to 5 stars
+    title = models.CharField(max_length=150)
+    comment = models.TextField()
+    image = models.ImageField(upload_to='reviews/', null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    helpful_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='helpful_reviews')
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self) -> str:
+        return f"{self.product.name} - {self.rating}* by {self.user.mobile}"
+
+    def __repr__(self) -> str:
+        return f"<ProductReview id={self.id!r} product={self.product.name!r} rating={self.rating}>"
+
+
+class TrendingDesign(models.Model):
+    """
+    A trending design template linked to a Product, with a custom tagline,
+    image, and ordering for display in the Hot Collections / Trending Vibe Blueprints.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="trending_designs")
+    name = models.CharField(max_length=100, blank=True, help_text="Custom name for this trending design (blank to use product's name)")
+    tagline = models.CharField(max_length=255, blank=True, help_text="Catchy tagline for this trending design (blank to use product's description)")
+    image = models.ImageField(upload_to='trending/', help_text="Upload high-quality image for the trending blueprints display")
+    sort_order = models.PositiveIntegerField(default=0, help_text="Lower numbers appear first")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['sort_order', '-created_at']
+        verbose_name = "Trending Design"
+        verbose_name_plural = "Trending Designs"
+
+    def __str__(self) -> str:
+        return f"[{self.product.name}] {self.name or 'Trending Design'}"
+
+    def __repr__(self) -> str:
+        return f"<TrendingDesign id={self.id!r} product={self.product.name!r} name={self.name!r}>"
+
+
 

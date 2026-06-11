@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px; margin-bottom: 80px;">
+  <!-- Dashboard Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
+    <div>
+      <span class="badge badge-outline" style="margin-bottom: 10px;">Staff Area</span>
+      <h1 class="text-gradient" style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; margin: 0; line-height: 1.2;">
+        Operations Control Center
+      </h1>
+      <p style="color: var(--text-secondary); margin-top: 6px; font-size: 1.05rem;">
+        Monitor real-time sales, manage pending orders, and view registered customers.
+      </p>
+    </div>
+    <div>
+      <button class="btn-primary" onclick="refreshDashboard()" style="padding: 12px 24px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-rotate animate-spin-hover"></i> Sync Data
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Stats Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 40px;">
+    <!-- Card 1: Revenue -->
+    <div class="glass-panel" style="padding: 24px; position: relative; overflow: hidden; display: flex; align-items: center; gap: 20px;">
+      <div style="background: rgba(16, 185, 129, 0.1); color: var(--success); width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+      </div>
+      <div>
+        <span style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Total Revenue</span>
+        <h2 id="stat-revenue" style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin: 2px 0 0 0; color: white;">₹0.00</h2>
+      </div>
+    </div>
+
+    <!-- Card 2: Total Orders -->
+    <div class="glass-panel" style="padding: 24px; position: relative; overflow: hidden; display: flex; align-items: center; gap: 20px;">
+      <div style="background: rgba(147, 51, 234, 0.1); color: var(--accent-light); width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid rgba(147, 51, 234, 0.2);">
+        <i class="fa-solid fa-boxes-stacked"></i>
+      </div>
+      <div>
+        <span style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Total Orders</span>
+        <h2 id="stat-orders" style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin: 2px 0 0 0; color: white;">0</h2>
+      </div>
+    </div>
+
+    <!-- Card 3: Pending Orders -->
+    <div class="glass-panel" style="padding: 24px; position: relative; overflow: hidden; display: flex; align-items: center; gap: 20px;">
+      <div style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid rgba(245, 158, 11, 0.2);">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <div>
+        <span style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Pending Actions</span>
+        <h2 id="stat-pending" style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin: 2px 0 0 0; color: white;">0</h2>
+      </div>
+    </div>
+
+    <!-- Card 4: Customers -->
+    <div class="glass-panel" style="padding: 24px; position: relative; overflow: hidden; display: flex; align-items: center; gap: 20px;">
+      <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid rgba(59, 130, 246, 0.2);">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div>
+        <span style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Total Customers</span>
+        <h2 id="stat-customers" style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin: 2px 0 0 0; color: white;">0</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Workspace Tabs -->
+  <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px;">
+    <button class="tab-btn active" id="tab-orders-btn" onclick="switchTab('orders')" 
+      style="padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-receipt"></i> Orders Management
+    </button>
+    <button class="tab-btn" id="tab-customers-btn" onclick="switchTab('customers')" 
+      style="padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+      <i class="fa-solid fa-user-group"></i> Customer Accounts
+    </button>
+  </div>
+
+  <!-- Tab Contents -->
+  <div>
+    <!-- Orders Panel -->
+    <div id="panel-orders" class="tab-panel active">
+      <div class="glass-panel" style="overflow-x: auto; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 900px;">
+          <thead>
+            <tr style="border-bottom: 1.5px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.15);">
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display); color: var(--accent-light);">Tracking ID</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Customer</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Date</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Amount</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Payment</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Current Status</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display); text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orders-table-body">
+            <!-- Dynamically populated -->
+            <tr>
+              <td colspan="7" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--accent-purple); margin-bottom: 12px; display: block;"></i>
+                Retrieving order manifests...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Customers Panel -->
+    <div id="panel-customers" class="tab-panel" style="display: none;">
+      <div class="glass-panel" style="overflow-x: auto; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 800px;">
+          <thead>
+            <tr style="border-bottom: 1.5px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.15);">
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display); color: var(--accent-light);">Mobile/Username</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Full Name</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Email Address</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Wallet Balance</th>
+              <th style="padding: 16px 20px; font-weight: 700; font-family: var(--font-display);">Referral Code</th>
+            </tr>
+          </thead>
+          <tbody id="customers-table-body">
+            <!-- Dynamically populated -->
+            <tr>
+              <td colspan="5" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--accent-purple); margin-bottom: 12px; display: block;"></i>
+                Retrieving customer records...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Premium Toast Notifications -->
+<div id="dashboard-toast" style="position: fixed; bottom: 30px; right: 30px; background: rgba(20, 18, 25, 0.95); border: 1.5px solid var(--accent-purple); box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3); padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 12px; z-index: 9999; transform: translateY(150px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+  <div id="toast-icon" style="font-size: 1.3rem;"></div>
+  <div>
+    <h4 id="toast-title" style="margin: 0; font-size: 0.95rem; font-weight: 700; color: white;">Success</h4>
+    <p id="toast-message" style="margin: 2px 0 0 0; font-size: 0.82rem; color: var(--text-secondary);"></p>
+  </div>
+</div>
+
+<!-- Custom Page Styling -->
+<style>
+  .tab-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: var(--font-display);
+  }
+  .tab-btn.active {
+    color: white;
+    background: rgba(147, 51, 234, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(168, 85, 247, 0.25);
+  }
+  .tab-btn:hover {
+    color: white;
+  }
+  .animate-spin-hover:hover {
+    animation: spin-anim 1s ease-in-out;
+  }
+  @keyframes spin-anim {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .order-row {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: var(--transition-fast);
+  }
+  .order-row:hover {
+    background: rgba(255,255,255,0.015);
+  }
+  .status-select {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    outline: none;
+  }
+  .status-select:focus {
+    border-color: var(--accent-light);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+  }
+  .order-details-drawer {
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1.5px solid rgba(147, 51, 234, 0.15);
+  }
+</style>
+
+<!-- Dashboard Logic Script -->
+<script>
+  let currentTab = 'orders';
+
+  function showToast(title, message, type = 'success') {
+    const toast = document.getElementById('dashboard-toast');
+    const icon = document.getElementById('toast-icon');
+    const titleEl = document.getElementById('toast-title');
+    const messageEl = document.getElementById('toast-message');
+
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    if (type === 'success') {
+      icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color: var(--success);"></i>';
+      toast.style.borderColor = 'var(--success)';
+    } else {
+      icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color: var(--error);"></i>';
+      toast.style.borderColor = 'var(--error)';
+    }
+
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+
+    setTimeout(() => {
+      toast.style.transform = 'translateY(150px)';
+      toast.style.opacity = '0';
+    }, 4000);
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.style.display = 'none';
+    });
+
+    if (tab === 'orders') {
+      document.getElementById('tab-orders-btn').classList.add('active');
+      document.getElementById('panel-orders').style.display = 'block';
+    } else {
+      document.getElementById('tab-customers-btn').classList.add('active');
+      document.getElementById('panel-customers').style.display = 'block';
+    }
+  }
+
+  async function fetchStats() {
+    try {
+      const res = await fetch('/api/staff/stats/');
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('stat-revenue').textContent = '₹' + parseFloat(data.total_revenue).toFixed(2);
+        document.getElementById('stat-orders').textContent = data.total_orders;
+        document.getElementById('stat-pending').textContent = data.pending_orders;
+        document.getElementById('stat-customers').textContent = data.total_customers;
+      }
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    }
+  }
+
+  async function updateOrderStatus(trackingId, selectElement) {
+    const newStatus = selectElement.value;
+    try {
+      const res = await fetch(`/api/staff/orders/${trackingId}/status/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        showToast('Status Updated', `Order ${trackingId} set to ${newStatus}.`, 'success');
+        fetchStats(); // Update pending actions count
+      } else {
+        const data = await res.json();
+        showToast('Error', data.error || 'Failed to update order status.', 'error');
+      }
+    } catch (err) {
+      showToast('Connection Error', 'Could not reach server to update status.', 'error');
+    }
+  }
+
+  function toggleOrderDetails(id) {
+    const drawer = document.getElementById(`details-${id}`);
+    const icon = document.getElementById(`toggle-icon-${id}`);
+    if (drawer.style.display === 'none') {
+      drawer.style.display = 'table-row';
+      icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    } else {
+      drawer.style.display = 'none';
+      icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    }
+  }
+
+  async function fetchOrders() {
+    const tbody = document.getElementById('orders-table-body');
+    try {
+      const res = await fetch('/api/staff/orders/');
+      if (res.ok) {
+        const orders = await res.json();
+        if (orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="padding: 40px; text-align: center; color: var(--text-secondary);">No orders have been placed yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        orders.forEach(order => {
+          // Format Date
+          const date = new Date(order.created_at).toLocaleDateString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+
+          // Build item rows
+          let itemsHtml = '';
+          order.items.forEach(item => {
+            let customizationDetails = '';
+            if (item.customization_type !== 'None') {
+              customizationDetails = `
+                <div style="font-size: 0.78rem; background: rgba(147, 51, 234, 0.08); padding: 6px 12px; border-radius: 8px; margin-top: 6px; border: 1px solid rgba(147, 51, 234, 0.15); display: inline-block;">
+                  <strong>Custom ${item.customization_type}:</strong> ${item.customization_summary || 'Custom print requested'}
+                  ${item.customization_font ? `<span style="margin-left: 8px; color: var(--accent-light);">Font: ${item.customization_font}</span>` : ''}
+                  ${item.customization_color ? `<span style="margin-left: 8px; color: var(--accent-light);">Color: ${item.customization_color}</span>` : ''}
+                </div>
+              `;
+            }
+            itemsHtml += `
+              <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;">
+                <div style="width: 48px; height: 48px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; overflow: hidden;">
+                  ${item.product_image ? `<img src="${item.product_image}" style="width:100%; height:100%; object-fit:cover;">` : '<i class="fa-solid fa-box"></i>'}
+                </div>
+                <div style="flex: 1;">
+                  <span style="font-weight: 700; color: white; font-size: 0.9rem;">${item.product_name}</span>
+                  <span style="color: var(--text-secondary); font-size: 0.82rem; margin-left: 8px;">Qty: ${item.quantity} × ₹${parseFloat(item.price).toFixed(0)}</span>
+                  ${customizationDetails}
+                </div>
+              </div>
+            `;
+          });
+
+          // Dropdown status options
+          const statuses = ["Placed", "Printing", "Dispatched", "Delivery"];
+          let optionsHtml = '';
+          statuses.forEach(s => {
+            const label = s === 'Delivery' ? 'Out for Delivery' : s;
+            optionsHtml += `<option value="${s}" ${order.status === s ? 'selected' : ''}>${label}</option>`;
+          });
+
+          const rowHtml = `
+            <tr class="order-row" id="row-${order.id}">
+              <td style="padding: 16px 20px; font-weight: 700; color: white;">
+                <span style="cursor:pointer;" onclick="toggleOrderDetails(${order.id})">
+                  <i id="toggle-icon-${order.id}" class="fa-solid fa-chevron-down" style="margin-right: 8px; font-size: 0.8rem; color: var(--accent-light);"></i>
+                  ${order.tracking_id}
+                </span>
+              </td>
+              <td style="padding: 16px 20px;">
+                <div style="font-weight: 600; color: white;">${order.customer_name}</div>
+                <div style="font-size: 0.78rem; color: var(--text-secondary);">${order.customer_email}</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">${order.customer_phone}</div>
+              </td>
+              <td style="padding: 16px 20px; font-size: 0.85rem; color: var(--text-secondary);">${date}</td>
+              <td style="padding: 16px 20px; font-weight: 700; color: white;">₹${parseFloat(order.amount).toFixed(2)}</td>
+              <td style="padding: 16px 20px; font-size: 0.82rem; text-transform: uppercase;">
+                <span class="badge badge-outline" style="font-size: 0.7rem;">${order.payment_mode}</span>
+              </td>
+              <td style="padding: 16px 20px;">
+                <select class="status-select" onchange="updateOrderStatus('${order.tracking_id}', this)">
+                  ${optionsHtml}
+                </select>
+              </td>
+              <td style="padding: 16px 20px; text-align: center;">
+                <button class="btn-outline" onclick="toggleOrderDetails(${order.id})" style="padding: 6px 12px; font-size: 0.75rem; min-height: auto; border-radius: 8px;">
+                  Items
+                </button>
+              </td>
+            </tr>
+            <tr class="order-details-drawer" id="details-${order.id}" style="display: none;">
+              <td colspan="7" style="padding: 20px 40px; background: rgba(0,0,0,0.15);">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                  <div>
+                    <h4 style="font-family: var(--font-display); font-weight: 700; color: white; margin-bottom: 12px; font-size: 0.95rem;">Order Manifest Items</h4>
+                    ${itemsHtml}
+                  </div>
+                  <div style="border-left: 1px solid rgba(255,255,255,0.06); padding-left: 30px;">
+                    <h4 style="font-family: var(--font-display); font-weight: 700; color: white; margin-bottom: 12px; font-size: 0.95rem;">Delivery Credentials</h4>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 8px 0;">
+                      <strong>Address:</strong><br>${order.shipping_address}
+                    </p>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0;">
+                      <strong>Referral Applied:</strong> ${order.referral_code || 'None'}
+                    </p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+          tbody.insertAdjacentHTML('beforeend', rowHtml);
+        });
+      }
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="7" style="padding: 40px; text-align: center; color: var(--error);">Error retrieving order manifest from server database.</td></tr>`;
+    }
+  }
+
+  async function fetchCustomers() {
+    const tbody = document.getElementById('customers-table-body');
+    try {
+      const res = await fetch('/api/staff/customers/');
+      if (res.ok) {
+        const users = await res.json();
+        if (users.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; text-align: center; color: var(--text-secondary);">No customers registered yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        users.forEach(user => {
+          tbody.innerHTML += `
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+              <td style="padding: 16px 20px; font-weight: 600; color: white;">${user.mobile}</td>
+              <td style="padding: 16px 20px; color: var(--text-primary);">${user.name || 'Not provided'}</td>
+              <td style="padding: 16px 20px; color: var(--text-secondary);">${user.email || 'Not provided'}</td>
+              <td style="padding: 16px 20px; font-weight: 700; color: var(--accent-light);">₹${parseFloat(user.wallet_balance).toFixed(2)}</td>
+              <td style="padding: 16px 20px; font-family: monospace; font-size: 0.9rem; color: var(--text-secondary);">${user.referral_code || '-'}</td>
+            </tr>
+          `;
+        });
+      }
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; text-align: center; color: var(--error);">Failed to load customer database.</td></tr>`;
+    }
+  }
+
+  function refreshDashboard() {
+    fetchStats();
+    fetchOrders();
+    fetchCustomers();
+    showToast('Dashboard Synchronized', 'Stats and lists have been updated in real-time.', 'success');
+  }
+
+  // Initial load
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchStats();
+    fetchOrders();
+    fetchCustomers();
+  });
+</script>
+{% endblock %}

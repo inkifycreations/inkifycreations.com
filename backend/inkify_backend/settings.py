@@ -12,12 +12,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'change-me-in-production')
+# Generate a new key with: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+SECRET_KEY = os.getenv(
+    'DJANGO_SECRET_KEY',
+    'y-%81#x)r+zq780m6m)e4#zpv5*9q4=h)3eyhlrc_s*y&li7&('
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
+# Restrict allowed hosts — set DJANGO_ALLOWED_HOSTS env var in production
+# e.g. DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+_default_hosts = 'localhost,127.0.0.1' if DEBUG else ''
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', _default_hosts).split(',')
 
 # Application definition
 
@@ -104,11 +111,35 @@ AUTH_USER_MODEL = 'api.CustomUser'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
 }
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS','True').lower() == 'true'
+# In production, set CORS_ALLOW_ALL_ORIGINS=False and specify CORS_ALLOWED_ORIGINS
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True' if DEBUG else 'False').lower() == 'true'
+if not CORS_ALLOW_ALL_ORIGINS:
+    _cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]
+
+# ── Security hardening (active only in production / when DEBUG=False) ──────────
+if not DEBUG:
+    # Force HTTPS
+    SECURE_SSL_REDIRECT = True
+    # HSTS — browsers will enforce HTTPS for 1 year after first visit
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    # Secure cookies
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Prevent browsers from sniffing content-type
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    # XSS protection header
+    SECURE_BROWSER_XSS_FILTER = True
+    # Proxy header for HTTPS detection behind a load-balancer
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

@@ -233,6 +233,77 @@ const SVG_MOCKUPS = {
       <path d="M 182,128 L 162,135" fill="none" stroke="#2b1145" stroke-width="2.5" opacity="0.8" />
     </svg>`
   },
+  bottle: {
+    front: `<svg viewBox="0 0 300 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#131317;">
+      <defs>
+        <radialGradient id="bottle-shading" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="#2a2a32" />
+          <stop offset="50%" stop-color="#16161a" />
+          <stop offset="100%" stop-color="#09090b" />
+        </radialGradient>
+        <linearGradient id="bottle-cap" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#475569" />
+          <stop offset="50%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+      </defs>
+      <rect x="135" y="35" width="30" height="20" rx="3" fill="url(#bottle-cap)" stroke="#334155" stroke-width="1"/>
+      <rect x="130" y="55" width="40" height="10" rx="2" fill="url(#bottle-cap)" />
+      <path d="M 132,65 L 168,65 L 168,90 Q 168,110 190,120 L 190,250 C 190,260 180,265 170,265 L 130,265 C 120,265 110,260 110,250 L 110,120 Q 132,110 132,90 Z" fill="url(#bottle-shading)" stroke="#222" stroke-width="1.5" id="bottle-body-path" />
+      <path d="M 118,130 L 118,245 C 118,252 122,255 125,255" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.12" stroke-linecap="round" />
+    </svg>`,
+    back: `<svg viewBox="0 0 300 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#131317;">
+      <defs>
+        <radialGradient id="bottle-shading" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="#2a2a32" />
+          <stop offset="50%" stop-color="#16161a" />
+          <stop offset="100%" stop-color="#09090b" />
+        </radialGradient>
+        <linearGradient id="bottle-cap" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#475569" />
+          <stop offset="50%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+      </defs>
+      <rect x="135" y="35" width="30" height="20" rx="3" fill="url(#bottle-cap)" stroke="#334155" stroke-width="1"/>
+      <rect x="130" y="55" width="40" height="10" rx="2" fill="url(#bottle-cap)" />
+      <path d="M 132,65 L 168,65 L 168,90 Q 168,110 190,120 L 190,250 C 190,260 180,265 170,265 L 130,265 C 120,265 110,260 110,250 L 110,120 Q 132,110 132,90 Z" fill="url(#bottle-shading)" stroke="#222" stroke-width="1.5" id="bottle-body-path" />
+    </svg>`,
+    left: `<svg viewBox="0 0 300 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#131317;">
+      <defs>
+        <radialGradient id="bottle-shading" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="#2a2a32" />
+          <stop offset="50%" stop-color="#16161a" />
+          <stop offset="100%" stop-color="#09090b" />
+        </radialGradient>
+        <linearGradient id="bottle-cap" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#475569" />
+          <stop offset="50%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+      </defs>
+      <rect x="135" y="35" width="30" height="20" rx="3" fill="url(#bottle-cap)" stroke="#334155" stroke-width="1"/>
+      <rect x="130" y="55" width="40" height="10" rx="2" fill="url(#bottle-cap)" />
+      <path d="M 132,65 L 168,65 L 168,90 Q 168,110 190,120 L 190,250 C 190,260 180,265 170,265 L 130,265 C 120,265 110,260 110,250 L 110,120 Q 132,110 132,90 Z" fill="url(#bottle-shading)" stroke="#222" stroke-width="1.5" id="bottle-body-path" />
+    </svg>`,
+    right: `<svg viewBox="0 0 300 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#131317;">
+      <defs>
+        <radialGradient id="bottle-shading" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="#2a2a32" />
+          <stop offset="50%" stop-color="#16161a" />
+          <stop offset="100%" stop-color="#09090b" />
+        </radialGradient>
+        <linearGradient id="bottle-cap" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#475569" />
+          <stop offset="50%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+      </defs>
+      <rect x="135" y="35" width="30" height="20" rx="3" fill="url(#bottle-cap)" stroke="#334155" stroke-width="1"/>
+      <rect x="130" y="55" width="40" height="10" rx="2" fill="url(#bottle-cap)" />
+      <path d="M 132,65 L 168,65 L 168,90 Q 168,110 190,120 L 190,250 C 190,260 180,265 170,265 L 130,265 C 120,265 110,260 110,250 L 110,120 Q 132,110 132,90 Z" fill="url(#bottle-shading)" stroke="#222" stroke-width="1.5" id="bottle-body-path" />
+    </svg>`
+  },
   cap: {
     front: `<svg viewBox="0 0 300 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#131317;">
       <defs>
@@ -442,7 +513,7 @@ let CATALOG = [
     category: "Drinkware",
     originalPrice: 299,
     price: 239,
-    image: "assets/mug.png",
+    image: "assets/mugcat.png",
     description: "High-gloss ceramic mug with vivid personal photo printing for your favorite mornings."
   },
   {
@@ -466,8 +537,11 @@ const appRouter = {
 
   getAssetUrl(relativePath) {
     if (!relativePath) return "";
-    if (relativePath.startsWith('<svg') || relativePath.startsWith('data:')) {
+    if (relativePath.startsWith('<svg') || relativePath.startsWith('data:') || relativePath.includes('://') || relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
       return relativePath;
+    }
+    if (relativePath.startsWith('/media/') || relativePath.startsWith('media/')) {
+      return relativePath.startsWith('/') ? relativePath : '/' + relativePath;
     }
     const staticBase = window.BASE_STATIC_URL || '/static/';
     const cleanRelative = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
@@ -523,6 +597,12 @@ const appRouter = {
   navigate(viewId, pushToHistory = true) {
     // Update Active View state
     this.activeView = viewId;
+
+    // Prevent accessing design-studio directly without a product context
+    if (viewId === 'design-studio' && !designStudio.activeProductId) {
+      viewId = 'products';
+      this.activeView = viewId;
+    }
 
     if (pushToHistory) {
       // Find the base path (without the trailing view ID if present)
@@ -598,6 +678,23 @@ const appRouter = {
     const menuToggle = document.getElementById('mobile-menu-toggle');
     navMenu.classList.toggle('active');
     menuToggle.classList.toggle('active');
+  },
+
+  showGlobalImagePreview(src, title = '', category = '') {
+    const overlay = document.getElementById('design-preview-overlay');
+    const nameEl = document.getElementById('design-preview-name');
+    const categoryEl = document.getElementById('design-preview-category');
+    const imgEl = document.getElementById('design-preview-image');
+
+    if (overlay && nameEl && categoryEl && imgEl) {
+      nameEl.textContent = title;
+      nameEl.style.display = title ? 'block' : 'none';
+      categoryEl.textContent = category;
+      categoryEl.style.display = category ? 'block' : 'none';
+      imgEl.src = src;
+      imgEl.alt = title || 'Image Preview';
+      overlay.classList.add('active');
+    }
   }
 };
 
@@ -760,6 +857,7 @@ const authManager = {
         address: data.user.address,
         wallet_balance: data.user.wallet_balance || 0,
         referral_code: data.user.referral_code || null,
+        is_staff: data.user.is_staff || false,
         token: data.token
       };
 
@@ -865,6 +963,7 @@ const authManager = {
         address: data.user.address,
         wallet_balance: data.user.wallet_balance || 0,
         referral_code: data.user.referral_code || null,
+        is_staff: data.user.is_staff || false,
         token: data.token
       };
 
@@ -912,6 +1011,7 @@ const authManager = {
     const menu = document.getElementById('auth-dropdown-menu');
     const walletText = document.getElementById('wallet-balance-text');
     const authSummary = document.getElementById('auth-dropdown-summary');
+    const staffLink = document.getElementById('staff-dashboard-link');
 
     if (STATE.currentUser) {
       if (btnText) btnText.textContent = STATE.currentUser.name;
@@ -925,6 +1025,10 @@ const authManager = {
         authSummary.innerHTML = `<strong>Wallet:</strong> ₹${Number(STATE.currentUser.wallet_balance || 0).toFixed(2)}<br><strong>Referral Code:</strong> ${referralText}`;
         authSummary.style.display = 'block';
       }
+      // Show Admin Dashboard link only for staff users
+      if (staffLink) {
+        staffLink.style.display = STATE.currentUser.is_staff ? 'flex' : 'none';
+      }
     } else {
       if (btnText) btnText.textContent = "Sign In";
       if (headerBtn) headerBtn.title = "Sign In with Mobile";
@@ -935,6 +1039,7 @@ const authManager = {
       if (authSummary) {
         authSummary.style.display = 'none';
       }
+      if (staffLink) staffLink.style.display = 'none';
     }
   }
 };
@@ -991,7 +1096,9 @@ const productCatalog = {
           price: parseFloat(p.price),
           cartPrice: p.cart_price ? parseFloat(p.cart_price) : null,
           image: p.image,
-          description: p.description
+          description: p.description,
+          average_rating: parseFloat(p.average_rating || 0),
+          reviews_count: parseInt(p.reviews_count || 0)
         }));
       }
     } catch (err) {
@@ -1009,6 +1116,15 @@ const productCatalog = {
     CATALOG.forEach(product => {
       // 1. Core Card elements
       const isSet = product.id === 5;
+      const ratingHtml = product.reviews_count > 0 ? `
+        <span style="font-size: 0.8rem; color: #fbbf24; display: flex; align-items: center; gap: 4px; font-weight: 600;">
+          <i class="fa-solid fa-star"></i> ${Number(product.average_rating).toFixed(1)} (${product.reviews_count})
+        </span>
+      ` : `
+        <span style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+          <i class="fa-regular fa-star"></i> No reviews
+        </span>
+      `;
 
       const cardHtml = `
         <div class="product-card glass-panel ${isSet ? 'whole-set-card' : ''}">
@@ -1022,7 +1138,10 @@ const productCatalog = {
             ` : ''}
             
             <div class="product-info">
-              <span class="product-category">${product.category}</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="product-category">${product.category}</span>
+                ${ratingHtml}
+              </div>
               <h3 class="product-name">${product.name}</h3>
               <p class="product-meta-desc">${product.description}</p>
               
@@ -1055,7 +1174,10 @@ const productCatalog = {
               ${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}" class="product-image">`}
             </div>
             <div class="product-info">
-              <span class="product-category">${product.category}</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="product-category">${product.category}</span>
+                ${ratingHtml}
+              </div>
               <h3 class="product-name">${product.name}</h3>
               <p class="product-meta-desc">${product.description}</p>
               <div class="product-delivery-date" style="font-size: 0.82rem; color: #10b981; font-weight: 600; margin: 8px 0; display: flex; align-items: center; gap: 6px;">
@@ -1386,16 +1508,140 @@ const designStudio = {
   activeProductType: null,
   activeProductName: null,
   allDesigns: [],
+  _designMap: {},
   activeCategory: 'all',
   selectedDesign: null,
   customPhotoBase64: null,
   customPhotoBothBase64: null,
   activeTab: 'photo',
+  modalPhotoBase64: null,
+  modalPhotoBothBase64: null,
+  modalActiveTab: 'photo',
+
+  FONT_MAP: {
+    Classic: "'Playfair Display', Georgia, serif",
+    Modern: "'Outfit', 'Inter', sans-serif",
+    Script: "'Dancing Script', 'Alex Brush', cursive",
+    Bold: "'Impact', 'Arial Black', sans-serif",
+    Minimal: "'Courier New', Courier, monospace"
+  },
+
+  COLOR_MAP: {
+    White: "#ffffff",
+    Black: "#111111",
+    Purple: "#a855f7",
+    Gold: "#fbbf24",
+    Red: "#ef4444",
+    Blue: "#3b82f6"
+  },
+
+  MOCKUP_PLACEMENT: {
+    tshirt: {
+      photo: { top: '90px', left: '105px', width: '70px', height: '70px', borderRadius: '4px' },
+      text: { top: '105px', left: '95px', width: '90px', fontSize: '0.8rem' }
+    },
+    polo: {
+      photo: { top: '92px', left: '108px', width: '65px', height: '65px', borderRadius: '4px' },
+      text: { top: '106px', left: '98px', width: '85px', fontSize: '0.75rem' }
+    },
+    cap: {
+      photo: { top: '110px', left: '120px', width: '40px', height: '35px', borderRadius: '2px' },
+      text: { top: '125px', left: '105px', width: '70px', fontSize: '0.65rem' }
+    },
+    bottle: {
+      photo: { top: '125px', left: '120px', width: '45px', height: '75px', borderRadius: '2px' },
+      text: { top: '145px', left: '112px', width: '60px', fontSize: '0.7rem' }
+    },
+    mug: {
+      photo: { top: '90px', left: '105px', width: '65px', height: '90px', borderRadius: '4px' },
+      text: { top: '115px', left: '98px', width: '80px', fontSize: '0.75rem' }
+    },
+    gift_set: {
+      photo: { top: '125px', left: '108px', width: '65px', height: '65px', borderRadius: '6px' },
+      text: { top: '142px', left: '98px', width: '85px', fontSize: '0.8rem' }
+    }
+  },
+
+  updateMockupPreview() {
+    const canvas = document.getElementById('ds-mockup-svg-canvas');
+    const photoLayer = document.getElementById('ds-mockup-photo-layer');
+    const textLayer = document.getElementById('ds-mockup-text-layer');
+    if (!canvas || !photoLayer || !textLayer) return;
+
+    // Render base SVG if not already matches
+    const type = this.activeProductType || 'mug';
+    const baseSvg = SVG_MOCKUPS[type]?.front || SVG_MOCKUPS['mug']?.front;
+    if (canvas.getAttribute('data-loaded-type') !== type) {
+      canvas.innerHTML = baseSvg;
+      canvas.setAttribute('data-loaded-type', type);
+    }
+
+    // Get placement settings
+    const placement = this.MOCKUP_PLACEMENT[type] || this.MOCKUP_PLACEMENT['mug'];
+
+    // Get inputs based on active tab
+    const tab = this.activeTab;
+    let photoSrc = null;
+    let textVal = '';
+    let fontVal = 'Modern';
+    let colorVal = 'White';
+
+    if (this.selectedDesign) {
+      photoSrc = this.selectedDesign.image_url;
+    }
+
+    if (tab === 'photo') {
+      if (!photoSrc) {
+        photoSrc = this.customPhotoBase64;
+      }
+      photoLayer.style.display = photoSrc ? 'block' : 'none';
+      textLayer.style.display = 'none';
+    } else if (tab === 'text') {
+      photoLayer.style.display = 'none';
+      textLayer.style.display = 'block';
+      textVal = (document.getElementById('ds-custom-text')?.value || '').trim();
+      fontVal = document.getElementById('ds-custom-font')?.value || 'Modern';
+      colorVal = document.getElementById('ds-custom-color')?.value || 'White';
+    } else { // both
+      if (!photoSrc) {
+        photoSrc = this.customPhotoBothBase64;
+      }
+      photoLayer.style.display = photoSrc ? 'block' : 'none';
+      textLayer.style.display = 'block';
+      textVal = (document.getElementById('ds-custom-text-both')?.value || '').trim();
+      fontVal = document.getElementById('ds-custom-font-both')?.value || 'Modern';
+      colorVal = document.getElementById('ds-custom-color-both')?.value || 'White';
+    }
+
+    // Apply Photo Layer Styling
+    if (photoSrc) {
+      photoLayer.src = photoSrc;
+      photoLayer.style.top = placement.photo.top;
+      photoLayer.style.left = placement.photo.left;
+      photoLayer.style.width = placement.photo.width;
+      photoLayer.style.height = placement.photo.height;
+      photoLayer.style.borderRadius = placement.photo.borderRadius;
+    }
+
+    // Apply Text Layer Styling
+    if (textVal) {
+      textLayer.textContent = textVal;
+      textLayer.style.top = placement.text.top;
+      textLayer.style.left = placement.text.left;
+      textLayer.style.width = placement.text.width;
+      textLayer.style.fontSize = placement.text.fontSize;
+      textLayer.style.fontFamily = this.FONT_MAP[fontVal] || fontVal;
+      textLayer.style.color = this.COLOR_MAP[colorVal] || colorVal;
+      textLayer.style.textShadow = colorVal === 'White' ? '0 2px 4px rgba(0,0,0,0.8)' : '0 2px 4px rgba(255,255,255,0.8)';
+    } else {
+      textLayer.style.display = 'none';
+    }
+  },
 
   PRODUCT_TYPE_MAP: {
     1: 'tshirt',
     2: 'polo',
-    3: 'cup',
+    3: 'bottle',
     4: 'mug',
     5: 'gift_set',
   },
@@ -1403,7 +1649,7 @@ const designStudio = {
   PRODUCT_LABEL_MAP: {
     1: 'T-Shirt Designs',
     2: 'Polo T-Shirt Designs',
-    3: 'Cup Designs',
+    3: 'Bottle Designs',
     4: 'Mug Designs',
     5: 'The Purple Gifting Set',
   },
@@ -1419,6 +1665,30 @@ const designStudio = {
     this.activeTab = 'photo';
     const summary = document.getElementById('ds-selected-design-summary');
     if (summary) summary.style.display = 'none';
+
+    // Clear Custom Design Studio page inputs
+    const fileIn = document.getElementById('ds-file-input');
+    const fileInBoth = document.getElementById('ds-file-input-both');
+    if (fileIn) fileIn.value = '';
+    if (fileInBoth) fileInBoth.value = '';
+    const preview = document.getElementById('ds-photo-preview');
+    const previewBoth = document.getElementById('ds-photo-preview-both');
+    if (preview) preview.style.display = 'none';
+    if (previewBoth) previewBoth.style.display = 'none';
+    const txt = document.getElementById('ds-custom-text');
+    const txtBoth = document.getElementById('ds-custom-text-both');
+    if (txt) txt.value = '';
+    if (txtBoth) txtBoth.value = '';
+    const font = document.getElementById('ds-custom-font');
+    const fontBoth = document.getElementById('ds-custom-font-both');
+    if (font) font.value = 'Modern';
+    if (fontBoth) fontBoth.value = 'Modern';
+    const color = document.getElementById('ds-custom-color');
+    const colorBoth = document.getElementById('ds-custom-color-both');
+    if (color) color.value = 'White';
+    if (colorBoth) colorBoth.value = 'White';
+    const status = document.getElementById('ds-custom-status');
+    if (status) status.textContent = '';
 
     // Update page header
     const label = document.getElementById('ds-product-type-label');
@@ -1440,6 +1710,23 @@ const designStudio = {
     // Reset custom tab
     this.switchTab('photo');
 
+    // Wire up inputs for live preview
+    const inputs = [
+      'ds-custom-text', 'ds-custom-font', 'ds-custom-color',
+      'ds-custom-text-both', 'ds-custom-font-both', 'ds-custom-color-both'
+    ];
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.getAttribute('data-has-listener')) {
+        el.addEventListener('input', () => this.updateMockupPreview());
+        el.addEventListener('change', () => this.updateMockupPreview());
+        el.setAttribute('data-has-listener', 'true');
+      }
+    });
+
+    // Render mockup preview
+    this.updateMockupPreview();
+
     // Navigate to the view
     appRouter.navigate('design-studio');
 
@@ -1453,6 +1740,9 @@ const designStudio = {
     } catch (e) {
       if (grid) grid.innerHTML = `<div class="ds-empty"><i class="fa-solid fa-triangle-exclamation"></i><p>Failed to load designs. Please try again.</p></div>`;
     }
+
+    // Load product reviews
+    reviewsController.loadReviews(productId);
   },
 
   close() {
@@ -1502,13 +1792,18 @@ const designStudio = {
       return;
     }
 
+    // Build a lookup map so we can retrieve design objects by id without
+    // embedding JSON.stringify in inline onclick attributes (which breaks on
+    // names/categories containing quotes or apostrophes).
+    designs.forEach(d => { this._designMap[d.id] = d; });
+
     grid.innerHTML = designs.map(d => {
       const save = Math.round((d.original_price - d.price) / d.original_price * 100);
       const isSelected = this.selectedDesign && this.selectedDesign.id === d.id;
       return `
-        <div class="ds-card ${isSelected ? 'ds-selected' : ''}" id="ds-card-${d.id}" onclick="designStudio.selectDesign(${JSON.stringify(JSON.stringify(d))})">
+        <div class="ds-card ${isSelected ? 'ds-selected' : ''}" id="ds-card-${d.id}" onclick="designStudio.selectDesignById(${d.id})">
           <div class="ds-selected-badge"><i class="fa-solid fa-check"></i></div>
-          <img class="ds-card-img" src="${d.image_url}" alt="${d.name}" loading="lazy" onerror="this.style.background='#1a1a2e';this.alt='Design'">
+          <img class="ds-card-img" src="${d.image_url}" alt="${d.name}" loading="lazy" onerror="this.style.background='#1a1a2e';this.alt='Design'" onclick="event.stopPropagation(); designStudio.showDesignPreviewById(${d.id});" style="cursor: pointer;">
           <div class="ds-card-info">
             <p class="ds-card-category">${d.category_label}</p>
             <h3 class="ds-card-name">${d.name}</h3>
@@ -1522,6 +1817,21 @@ const designStudio = {
         </div>
       `;
     }).join('');
+  },
+
+  showDesignPreview(designJson) {
+    const design = typeof designJson === 'string' ? JSON.parse(designJson) : designJson;
+    appRouter.showGlobalImagePreview(design.image_url, design.name, design.category_label || design.category);
+  },
+
+  showDesignPreviewById(id) {
+    const design = this._designMap[id];
+    if (design) this.showDesignPreview(design);
+  },
+
+  selectDesignById(id) {
+    const design = this._designMap[id];
+    if (design) this.selectDesign(design);
   },
 
   selectDesign(designJson) {
@@ -1541,6 +1851,12 @@ const designStudio = {
       if (btn) btn.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
     }
 
+    // Update mockup preview with selected design
+    this.updateMockupPreview();
+
+    // Show preview popup of the selected design
+    this.showDesignPreview(design);
+
     // Show bottom bar and guide the customer to upload photo/text
     this.showSelectedBar(design);
     this.promptCustomForSelectedDesign();
@@ -1548,25 +1864,195 @@ const designStudio = {
 
   promptCustomForSelectedDesign() {
     if (!this.selectedDesign) return;
-    this.switchTab('photo');
+    this.openCustomModal(this.selectedDesign);
+  },
 
-    const status = document.getElementById('ds-custom-status');
-    if (status) {
-      status.textContent = `Design "${this.selectedDesign.name}" selected. Upload a photo or add text below, then click Add Custom Design to Cart.`;
-      status.style.color = '#a5efff';
+  openCustomModal(design) {
+    // Reset state
+    this.modalPhotoBase64 = null;
+    this.modalPhotoBothBase64 = null;
+    this.modalActiveTab = 'photo';
+
+    // Populate header
+    const img = document.getElementById('ds-modal-design-img');
+    const name = document.getElementById('ds-modal-design-name');
+    if (img) { img.src = design.image_url; img.alt = design.name; }
+    if (name) name.textContent = design.name;
+
+    // Reset tabs to photo
+    this.switchModalTab('photo');
+
+    // Clear all inputs
+    const fileIn = document.getElementById('ds-modal-file-input');
+    const fileInBoth = document.getElementById('ds-modal-file-input-both');
+    if (fileIn) fileIn.value = '';
+    if (fileInBoth) fileInBoth.value = '';
+    const preview = document.getElementById('ds-modal-photo-preview');
+    const previewBoth = document.getElementById('ds-modal-photo-preview-both');
+    if (preview) preview.style.display = 'none';
+    if (previewBoth) previewBoth.style.display = 'none';
+    const txt = document.getElementById('ds-modal-custom-text');
+    const txtBoth = document.getElementById('ds-modal-custom-text-both');
+    if (txt) txt.value = '';
+    if (txtBoth) txtBoth.value = '';
+    const status = document.getElementById('ds-modal-status');
+    if (status) status.textContent = '';
+
+    // Open overlay
+    const overlay = document.getElementById('ds-customization-modal-overlay');
+    if (overlay) overlay.classList.add('active');
+  },
+
+  closeCustomModal() {
+    const overlay = document.getElementById('ds-customization-modal-overlay');
+    if (overlay) overlay.classList.remove('active');
+  },
+
+  switchModalTab(tab) {
+    this.modalActiveTab = tab;
+    const tabs = ['photo', 'text', 'both'];
+    tabs.forEach(t => {
+      const btn = document.getElementById(`ds-modal-tab-${t}`);
+      const panel = document.getElementById(`ds-modal-panel-${t}`);
+      if (t === tab) {
+        if (btn) {
+          btn.style.border = '1.5px solid rgba(168,85,247,0.4)';
+          btn.style.background = 'rgba(168,85,247,0.15)';
+          btn.style.color = '#fff';
+        }
+        if (panel) panel.style.display = 'block';
+      } else {
+        if (btn) {
+          btn.style.border = '1.5px solid rgba(255,255,255,0.1)';
+          btn.style.background = 'rgba(255,255,255,0.04)';
+          btn.style.color = 'var(--text-secondary)';
+        }
+        if (panel) panel.style.display = 'none';
+      }
+    });
+    const status = document.getElementById('ds-modal-status');
+    if (status) status.textContent = '';
+  },
+
+  handleModalPhotoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.modalPhotoBase64 = e.target.result;
+      const preview = document.getElementById('ds-modal-photo-preview');
+      const img = document.getElementById('ds-modal-photo-preview-img');
+      const nameLbl = document.getElementById('ds-modal-photo-name');
+      if (preview) preview.style.display = 'block';
+      if (img) img.src = e.target.result;
+      if (nameLbl) nameLbl.textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  },
+
+  handleModalPhotoUploadBoth(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.modalPhotoBothBase64 = e.target.result;
+      const preview = document.getElementById('ds-modal-photo-preview-both');
+      const img = document.getElementById('ds-modal-photo-preview-img-both');
+      if (preview) preview.style.display = 'block';
+      if (img) img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  },
+
+  clearModalPhoto() {
+    this.modalPhotoBase64 = null;
+    const fileIn = document.getElementById('ds-modal-file-input');
+    if (fileIn) fileIn.value = '';
+    const preview = document.getElementById('ds-modal-photo-preview');
+    if (preview) preview.style.display = 'none';
+  },
+
+  addCustomFromModal() {
+    const status = document.getElementById('ds-modal-status');
+    const tab = this.modalActiveTab || 'photo';
+    let customizationType = 'text';
+    let customizationData = '';
+    let font = '';
+    let color = '';
+    let summary = '';
+
+    if (tab === 'photo') {
+      if (!this.modalPhotoBase64) {
+        if (status) status.textContent = '⚠ Please upload a photo first.';
+        return;
+      }
+      customizationType = 'photo';
+      customizationData = this.modalPhotoBase64;
+      summary = 'Custom photo upload';
+    } else if (tab === 'text') {
+      const text = (document.getElementById('ds-modal-custom-text')?.value || '').trim();
+      if (!text) {
+        if (status) status.textContent = '⚠ Please enter your message or name.';
+        return;
+      }
+      font = document.getElementById('ds-modal-custom-font')?.value || 'Modern';
+      color = document.getElementById('ds-modal-custom-color')?.value || 'White';
+      customizationType = 'text';
+      customizationData = text;
+      summary = `Text: "${text.substring(0, 40)}" | Font: ${font} | Color: ${color}`;
+    } else { // both
+      const text = (document.getElementById('ds-modal-custom-text-both')?.value || '').trim();
+      if (!this.modalPhotoBothBase64 && !text) {
+        if (status) status.textContent = '⚠ Please upload a photo or enter text (or both).';
+        return;
+      }
+      font = document.getElementById('ds-modal-custom-font-both')?.value || 'Modern';
+      color = document.getElementById('ds-modal-custom-color-both')?.value || 'White';
+      if (this.modalPhotoBothBase64) {
+        customizationType = 'photo';
+        customizationData = this.modalPhotoBothBase64;
+      } else {
+        customizationType = 'text';
+        customizationData = text;
+      }
+      summary = text
+        ? `Photo + Text: "${text.substring(0, 30)}" | Font: ${font} | Color: ${color}`
+        : 'Custom photo upload';
     }
 
-    const summary = document.getElementById('ds-selected-design-summary');
-    const summaryName = document.getElementById('ds-selected-design-name');
-    if (summary && summaryName) {
-      summaryName.textContent = this.selectedDesign.name;
-      summary.style.display = 'block';
-    }
+    const activeId = Number(this.activeProductId);
+    const catalogProduct = productCatalog.getProductById(activeId);
+    const selected = this.selectedDesign;
+    const productName = selected
+      ? `${this.activeProductName?.replace(' Designs', '') || 'Product'} — ${selected.name}`
+      : `Custom ${this.activeProductName?.replace(' Designs', '') || 'Product'}`;
+    const productImage = selected ? selected.image_url : (catalogProduct?.image || '');
 
-    const customBox = document.querySelector('.ds-custom-box');
-    if (customBox) {
-      setTimeout(() => customBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
-    }
+    const product = {
+      id: activeId,
+      name: productName,
+      price: selected ? (parseFloat(selected.price) || catalogProduct?.price || 219) : (catalogProduct?.price || 219),
+      originalPrice: selected ? (parseFloat(selected.original_price) || catalogProduct?.originalPrice || 299) : (catalogProduct?.originalPrice || 299),
+      image: productImage,
+      category: this.PRODUCT_TYPE_MAP[activeId] || 'mug',
+      cartPrice: catalogProduct?.cartPrice || null,
+    };
+
+    const customization = {
+      type: customizationType,
+      data: customizationData,
+      font,
+      color,
+      size: '',
+      summary: selected ? `${summary} | Design: ${selected.name}` : summary,
+      designId: selected?.id,
+      designName: selected?.name,
+      designImageUrl: selected?.image_url,
+    };
+
+    this.closeCustomModal();
+    this.hideSelectedBar();
+    cartManager.addToCart(product, customization);
   },
 
   showSelectedBar(design) {
@@ -1604,6 +2090,19 @@ const designStudio = {
   hideSelectedBar() {
     const bar = document.getElementById('ds-selected-bar');
     if (bar) bar.classList.remove('visible');
+  },
+
+  resetState() {
+    this.selectedDesign = null;
+    this.customPhotoBase64 = null;
+    this.customPhotoBothBase64 = null;
+    this.hideSelectedBar();
+    // Hide the selected design summary block if present
+    const summary = document.getElementById('ds-selected-design-summary');
+    if (summary) summary.style.display = 'none';
+    const status = document.getElementById('ds-custom-status');
+    if (status) status.textContent = '';
+    this.updateMockupPreview();
   },
 
   addDesignToCart() {
@@ -1644,6 +2143,7 @@ const designStudio = {
     const activePanelEl = document.getElementById(`ds-tab-${tab}`);
     if (activeTabEl) activeTabEl.classList.add('active');
     if (activePanelEl) activePanelEl.classList.add('active');
+    this.updateMockupPreview();
   },
 
   handlePhotoUpload(input) {
@@ -1658,6 +2158,7 @@ const designStudio = {
       if (preview) preview.style.display = 'block';
       if (img) img.src = e.target.result;
       if (name) name.textContent = file.name;
+      this.updateMockupPreview();
     };
     reader.readAsDataURL(file);
   },
@@ -1672,6 +2173,7 @@ const designStudio = {
       const img = document.getElementById('ds-photo-preview-img-both');
       if (preview) preview.style.display = 'block';
       if (img) img.src = e.target.result;
+      this.updateMockupPreview();
     };
     reader.readAsDataURL(file);
   },
@@ -1840,9 +2342,50 @@ const cartManager = {
           if (id === 'shipping-email' && STATE.currentUser && !el.value) {
             el.value = STATE.currentUser.email || '';
           }
+          if (id === 'shipping-name' && STATE.currentUser && !el.value) {
+            el.value = STATE.currentUser.name || '';
+          }
+          if (id === 'shipping-phone' && STATE.currentUser && !el.value) {
+            el.value = STATE.currentUser.mobile || '';
+          }
         }
       });
     }
+  },
+
+  editSavedAddress() {
+    const savedRadio = document.getElementById('delivery-type-saved');
+    const otherRadio = document.getElementById('delivery-type-other');
+    const inputContainer = document.getElementById('checkout-shipping-input-fields');
+    const actionBar = document.getElementById('checkout-address-action-bar');
+    const inputs = ['shipping-name', 'shipping-phone', 'shipping-email', 'shipping-street', 'shipping-city', 'shipping-pincode'];
+
+    if (savedRadio) savedRadio.checked = false;
+    if (otherRadio) otherRadio.checked = true;
+    if (inputContainer) inputContainer.style.display = 'block';
+    if (actionBar) actionBar.style.display = 'none';
+
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (id === 'shipping-email' && STATE.currentUser && !el.value) {
+        el.value = STATE.currentUser.email || '';
+      }
+      if (id === 'shipping-name' && STATE.currentUser && !el.value) {
+        el.value = STATE.currentUser.name || '';
+      }
+      if (id === 'shipping-phone' && STATE.currentUser && !el.value) {
+        el.value = STATE.currentUser.mobile || '';
+      }
+      if (id === 'shipping-street' && STATE.currentUser && STATE.currentUser.address && !el.value) {
+        el.value = STATE.currentUser.address;
+      }
+      el.required = true;
+    });
+
+    this.toggleDeliveryType();
+    const firstField = document.getElementById('shipping-street');
+    if (firstField) firstField.focus();
   },
 
   async applyCoupon() {
@@ -2043,10 +2586,16 @@ const cartManager = {
     const savedDisplay = document.getElementById('checkout-saved-details-display');
     const inputFields = document.getElementById('checkout-shipping-input-fields');
 
+    const addressActionBar = document.getElementById('checkout-address-action-bar');
     if (STATE.currentUser && STATE.currentUser.address) {
       if (modeSelector) modeSelector.style.display = 'block';
+      if (addressActionBar) {
+        addressActionBar.style.display = 'none';
+        addressActionBar.innerHTML = '';
+      }
       if (savedDisplay) {
         savedDisplay.innerHTML = `
+          <button class="btn-secondary" onclick="cartManager.editSavedAddress()" style="margin-bottom: 12px;">Change Address</button>
           <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
             <div style="margin-bottom: 4px;"><strong>Recipient Name:</strong> ${STATE.currentUser.name || '-'}</div>
             <div style="margin-bottom: 4px;"><strong>Contact Mobile:</strong> +91-${STATE.currentUser.mobile || '-'}</div>
@@ -2058,6 +2607,17 @@ const cartManager = {
       this.toggleDeliveryType();
     } else {
       if (modeSelector) modeSelector.style.display = 'none';
+      if (addressActionBar) {
+        addressActionBar.style.display = 'block';
+        addressActionBar.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; background: rgba(255,255,255,0.02); padding: 14px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04);">
+            <div style="font-size: 0.92rem; color: var(--text-secondary);">
+              ${STATE.currentUser ? 'No saved shipping address found. Add your delivery address below.' : 'Enter your shipping information below to proceed.'}
+            </div>
+            ${STATE.currentUser ? '<button class="btn-secondary" onclick="cartManager.editSavedAddress()">Add Address</button>' : ''}
+          </div>
+        `;
+      }
       if (inputFields) inputFields.style.display = 'block';
       const inputs = ['shipping-name', 'shipping-phone', 'shipping-email', 'shipping-street', 'shipping-city', 'shipping-pincode'];
       inputs.forEach(id => {
@@ -2263,6 +2823,8 @@ const cartManager = {
       // Show success view
       document.getElementById('success-tracking-id-text').textContent = data.tracking_id;
       document.getElementById('success-delivery-date-text').textContent = data.est_delivery;
+      // Reset design studio selection so the bar doesn't persist on success screen
+      designStudio.resetState();
       appRouter.navigate('success');
     } catch (err) {
       alert(`Checkout error: ${err.message}`);
@@ -3192,6 +3754,487 @@ const emailSimulator = {
 };
 
 // --- INITIALIZE APPLICATION ON LOAD ---
+/* =========================================================
+   TRENDING POPUP CONTROLLER
+   ========================================================= */
+const trendingPopup = {
+  overlay: null,
+  hasShown: false,
+
+  init() {
+    this.overlay = document.getElementById('trending-popup-overlay');
+    // Safety: always clear any stale scroll lock from previous state
+    this._resetBodyScroll();
+    if (!this.overlay) return;
+
+    // Show every time on page load / reload
+    this._fetchAndRender().then(() => {
+      setTimeout(() => this.open(), 600);
+    });
+  },
+
+  open() {
+    if (!this.overlay) return;
+    this.overlay.classList.add('active');
+    document.body.classList.add('no-scroll');
+    this.hasShown = true;
+  },
+
+  close() {
+    // Always reset scroll even if overlay ref is stale
+    this._resetBodyScroll();
+    if (this.overlay) this.overlay.classList.remove('active');
+  },
+
+  _resetBodyScroll() {
+    document.body.classList.remove('no-scroll');
+  },
+
+  async _fetchAndRender() {
+    const grid = document.getElementById('trending-products-grid');
+    if (!grid) return;
+
+    try {
+      const res = await fetch('/api/trending-products/');
+      if (!res.ok) throw new Error('API error');
+      const products = await res.json();
+
+      if (!products || products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:40px 0;">
+            <i class="fa-solid fa-fire" style="font-size:2.5rem;color:var(--accent-purple);display:block;margin-bottom:12px;"></i>
+            <p style="color:var(--text-secondary);font-size:1rem;">No trending products right now. Check back soon!</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = products.map(p => {
+        const imgSrc = p.trending_image_url || p.image || '';
+        const tagline = p.trending_tagline || p.description || 'Premium quality, made to order.';
+        const price = p.price ? `₹${parseFloat(p.price).toFixed(2)}` : '';
+        return `
+          <div class="trending-card" onclick="trendingPopup._onCardClick(${p.id})" title="Customize ${p.name}">
+            <span class="trending-badge"><i class="fa-solid fa-fire" style="margin-right:4px;"></i>Trending</span>
+            <div class="trending-img-container">
+              ${imgSrc
+                ? `<img class="trending-img" src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\' style=\\'font-size:3rem;color:rgba(255,255,255,0.1)\\'></i>'">`
+                : `<i class="fa-solid fa-image" style="font-size:3rem;color:rgba(255,255,255,0.1);"></i>`}
+            </div>
+            <div class="trending-name">${p.name}</div>
+            <div class="trending-tagline">${tagline}</div>
+            ${price ? `<div style="font-size:1rem;font-weight:800;color:var(--accent-light);margin-bottom:14px;">${price}</div>` : ''}
+            <button class="trending-action-btn" onclick="event.stopPropagation();trendingPopup._onCardClick(${p.id})">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Customize Now
+            </button>
+          </div>`;
+      }).join('');
+
+    } catch (err) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:40px 0;">
+          <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;color:var(--error);display:block;margin-bottom:12px;"></i>
+          <p style="color:var(--text-secondary);">Couldn't load trending products. Please try again later.</p>
+        </div>`;
+      console.warn('[TrendingPopup] Fetch error:', err);
+    }
+  },
+
+  _onCardClick(productId) {
+    this.close();
+    // Navigate to the products page, optionally highlight / pre-select the product
+    setTimeout(() => {
+      appRouter.navigate('products');
+      // Give the products page a moment to render then scroll to the selected product card
+      setTimeout(() => {
+        const card = document.querySelector(`[data-product-id="${productId}"]`);
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.classList.add('product-highlight');
+          setTimeout(() => card.classList.remove('product-highlight'), 2000);
+        }
+      }, 600);
+    }, 350);
+  }
+};
+
+const reviewsController = {
+  productId: null,
+  avgRating: 0.0,
+  totalCount: 0,
+  distribution: {},
+  reviews: [],
+  currentFilters: {
+    star: null,
+    verified: false,
+    sort: 'most_recent'
+  },
+  writeRating: 5,
+  writeImageFile: null,
+
+  async loadReviews(productId) {
+    this.productId = productId;
+    this.currentFilters = {
+      star: null,
+      verified: false,
+      sort: 'most_recent'
+    };
+    
+    // Reset inputs
+    const verifiedFilter = document.getElementById('review-verified-filter');
+    if (verifiedFilter) verifiedFilter.checked = false;
+    const sortSelect = document.getElementById('review-sort-select');
+    if (sortSelect) sortSelect.value = 'most_recent';
+
+    await this.fetchAndRender();
+  },
+
+  async fetchAndRender() {
+    if (!this.productId) return;
+    
+    try {
+      let url = `/api/products/${this.productId}/reviews/?sort=${this.currentFilters.sort}`;
+      if (this.currentFilters.verified) {
+        url += '&verified=true';
+      }
+      if (this.currentFilters.star) {
+        url += `&rating=${this.currentFilters.star}`;
+      }
+
+      const headers = {};
+      if (STATE.currentUser && STATE.currentUser.token) {
+        headers['Authorization'] = `Token ${STATE.currentUser.token}`;
+      }
+
+      const res = await fetch(url, { headers });
+      if (!res.ok) throw new Error("Failed to load reviews");
+      
+      const data = await res.json();
+      this.avgRating = data.average_rating || 0.0;
+      this.totalCount = data.total || 0;
+      this.distribution = data.distribution || {};
+      this.reviews = data.reviews || [];
+
+      this.renderDashboard();
+      this.renderFilterBadges();
+      this.renderReviewsList();
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  renderDashboard() {
+    // 1. Avg rating
+    const avgRatingText = document.getElementById('reviews-avg-rating');
+    if (avgRatingText) avgRatingText.textContent = Number(this.avgRating).toFixed(1);
+
+    // 2. Avg stars
+    const avgStarsContainer = document.getElementById('reviews-avg-stars');
+    if (avgStarsContainer) {
+      avgStarsContainer.innerHTML = this.getStarsHtml(this.avgRating);
+    }
+
+    // 3. Total count
+    const totalCountText = document.getElementById('reviews-total-count');
+    if (totalCountText) {
+      totalCountText.textContent = `${this.totalCount} ratings`;
+    }
+
+    // 4. Progress bars distribution
+    for (let star = 1; star <= 5; star++) {
+      const distData = this.distribution[String(star)] || { count: 0, percent: 0 };
+      const fillBar = document.getElementById(`dist-fill-${star}`);
+      const percentText = document.getElementById(`dist-percent-${star}`);
+      const row = document.getElementById(`dist-row-${star}`);
+      
+      if (fillBar) fillBar.style.width = `${distData.percent}%`;
+      if (percentText) percentText.textContent = `${Math.round(distData.percent)}%`;
+      
+      // Toggle active class on rows
+      if (row) {
+        if (this.currentFilters.star === star) {
+          row.classList.add('active');
+        } else {
+          row.classList.remove('active');
+        }
+      }
+    }
+  },
+
+  renderFilterBadges() {
+    const container = document.getElementById('reviews-active-filters');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    if (this.currentFilters.star) {
+      const badge = document.createElement('div');
+      badge.className = 'review-filter-badge';
+      badge.innerHTML = `
+        <span>Rating: ${this.currentFilters.star} Star</span>
+        <i class="fa-solid fa-xmark" onclick="reviewsController.toggleStarFilter(${this.currentFilters.star})"></i>
+      `;
+      container.appendChild(badge);
+    }
+  },
+
+  renderReviewsList() {
+    const container = document.getElementById('product-reviews-list');
+    if (!container) return;
+
+    if (this.reviews.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 40px 0; color: var(--text-secondary);">
+          <i class="fa-solid fa-comments" style="font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.4;"></i>
+          <p>No reviews matching selected filters.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = this.reviews.map(review => {
+      const formattedDate = new Date(review.created_at).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+
+      const userDisplay = review.username ? `${review.username} (${review.user_mobile})` : review.user_mobile;
+      const avatarLetter = (review.username || review.user_mobile || 'U')[0].toUpperCase();
+
+      return `
+        <div class="review-card">
+          <div class="review-card-header">
+            <div class="review-user-info">
+              <div class="review-user-avatar">${avatarLetter}</div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="review-user-name">${userDisplay}</span>
+                  ${review.is_verified ? `
+                    <span class="review-verified-badge" title="Verified Buyer">
+                      <i class="fa-solid fa-circle-check"></i> Verified Purchase
+                    </span>
+                  ` : ''}
+                </div>
+                <span class="review-meta-date">Reviewed on ${formattedDate}</span>
+              </div>
+            </div>
+            
+            <div class="review-card-rating">
+              ${this.getStarsHtml(review.rating)}
+            </div>
+          </div>
+          
+          <div class="review-card-body">
+            <h4 class="review-card-title">${review.title}</h4>
+            <p class="review-card-comment">${review.comment}</p>
+            ${review.image_url ? `
+              <div class="review-card-image">
+                <img src="${review.image_url}" alt="Review photo" onclick="appRouter.showGlobalImagePreview('${review.image_url}', '${review.title}')">
+              </div>
+            ` : ''}
+          </div>
+          
+          <div class="review-card-footer">
+            <span>Was this review helpful?</span>
+            <button class="btn-review-helpful ${review.has_marked_helpful ? 'active' : ''}" onclick="reviewsController.toggleHelpful(${review.id})">
+              <i class="fa-regular fa-thumbs-up"></i> Helpful (${review.helpful_count || 0})
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  getStarsHtml(rating) {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
+    
+    let html = '';
+    for (let i = 0; i < fullStars; i++) {
+      html += '<i class="fa-solid fa-star"></i>';
+    }
+    if (halfStar) {
+      html += '<i class="fa-solid fa-star-half-stroke"></i>';
+    }
+    for (let i = 0; i < emptyStars; i++) {
+      html += '<i class="fa-regular fa-star"></i>';
+    }
+    return html;
+  },
+
+  toggleStarFilter(star) {
+    if (this.currentFilters.star === star) {
+      this.currentFilters.star = null;
+    } else {
+      this.currentFilters.star = star;
+    }
+    this.fetchAndRender();
+  },
+
+  toggleVerifiedFilter() {
+    const checkbox = document.getElementById('review-verified-filter');
+    this.currentFilters.verified = checkbox ? checkbox.checked : false;
+    this.fetchAndRender();
+  },
+
+  changeSort() {
+    const select = document.getElementById('review-sort-select');
+    this.currentFilters.sort = select ? select.value : 'most_recent';
+    this.fetchAndRender();
+  },
+
+  async toggleHelpful(reviewId) {
+    if (!STATE.currentUser) {
+      customAlert("Please sign in to vote a review as helpful.", "Authentication Required");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/reviews/${reviewId}/helpful/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${STATE.currentUser.token}`
+        }
+      });
+      if (res.ok) {
+        // Toggle client-side state of that specific review in our list
+        const review = this.reviews.find(r => r.id === reviewId);
+        if (review) {
+          const data = await res.json();
+          review.helpful_count = data.helpful_count;
+          review.has_marked_helpful = data.has_marked_helpful;
+          this.renderReviewsList();
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  openWriteModal() {
+    if (!STATE.currentUser) {
+      customAlert("Please sign in to write a review.", "Authentication Required");
+      return;
+    }
+
+    // Reset form fields
+    const form = document.getElementById('write-review-form');
+    if (form) form.reset();
+    
+    this.writeRating = 5;
+    this.setWriteRating(5);
+    this.clearWriteImage();
+    
+    const statusText = document.getElementById('write-review-status');
+    if (statusText) statusText.textContent = '';
+
+    document.getElementById('write-review-modal-overlay').classList.add('active');
+  },
+
+  closeWriteModal() {
+    document.getElementById('write-review-modal-overlay').classList.remove('active');
+  },
+
+  setWriteRating(rating) {
+    this.writeRating = rating;
+    const ratingInput = document.getElementById('write-review-rating-val');
+    if (ratingInput) ratingInput.value = rating;
+
+    const stars = document.querySelectorAll('#review-stars-select i');
+    stars.forEach(star => {
+      const r = parseInt(star.getAttribute('data-rating'));
+      if (r <= rating) {
+        star.classList.add('selected');
+      } else {
+        star.classList.remove('selected');
+      }
+    });
+  },
+
+  handleWriteImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      customAlert("File size must be less than 5MB.", "File Too Large");
+      return;
+    }
+
+    this.writeImageFile = file;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const previewContainer = document.getElementById('write-review-image-preview-container');
+      const previewImg = document.getElementById('write-review-image-preview-img');
+      const nameText = document.getElementById('write-review-image-name');
+      
+      if (previewContainer) previewContainer.style.display = 'flex';
+      if (previewImg) previewImg.src = e.target.result;
+      if (nameText) nameText.textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  },
+
+  clearWriteImage(event) {
+    if (event) event.stopPropagation();
+    this.writeImageFile = null;
+    const input = document.getElementById('write-review-image-input');
+    if (input) input.value = '';
+    const previewContainer = document.getElementById('write-review-image-preview-container');
+    if (previewContainer) previewContainer.style.display = 'none';
+  },
+
+  async submitReview(event) {
+    event.preventDefault();
+    if (!this.productId) return;
+
+    const title = document.getElementById('write-review-title').value.trim();
+    const comment = document.getElementById('write-review-comment').value.trim();
+    const rating = this.writeRating;
+    const statusText = document.getElementById('write-review-status');
+
+    if (!title || !comment || !rating) {
+      if (statusText) statusText.textContent = "Please fill in all required fields.";
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('rating', rating);
+      formData.append('title', title);
+      formData.append('comment', comment);
+      if (this.writeImageFile) {
+        formData.append('image', this.writeImageFile);
+      }
+
+      if (statusText) statusText.textContent = "Submitting review...";
+
+      const res = await fetch(`/api/products/${this.productId}/reviews/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${STATE.currentUser.token}`
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        this.closeWriteModal();
+        customAlert("Your review has been submitted successfully!", "Review Submitted");
+        
+        // Refresh reviews list
+        await this.fetchAndRender();
+      } else {
+        const errorData = await res.json();
+        if (statusText) statusText.textContent = errorData.error || "Failed to submit review.";
+      }
+    } catch (e) {
+      console.error(e);
+      if (statusText) statusText.textContent = "An error occurred. Please try again.";
+    }
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   appRouter.init();
   carousel.init();
@@ -3199,5 +4242,67 @@ document.addEventListener('DOMContentLoaded', () => {
   productCatalog.init();
   cartManager.init();
   ordersManager.init();
+  trendingPopup.init();
   trackingManager.searchOrder = trackingManager.searchOrder.bind(trackingManager);
+
+  // Global click event listener for previewing content images
+  document.addEventListener('click', (event) => {
+    const target = event.target.closest('img');
+    if (!target) return;
+
+    // Ignore decorative, UI elements or images that shouldn't be previewed
+    if (
+      target.closest('.logo') ||
+      target.closest('.social-icons') ||
+      target.closest('.payment-options') ||
+      target.closest('.dev-inbox-trigger') ||
+      target.closest('.modal-close-btn') ||
+      target.closest('.design-preview-close') ||
+      target.closest('.success-icon-badge') ||
+      target.closest('.slide-bg') ||
+      target.id === 'dev-inbox-logs-container'
+    ) {
+      return;
+    }
+
+    // Stop propagation so that clicking the image does not trigger parent actions
+    // (e.g. adding item to cart, opening configuration modals, etc.)
+    event.preventDefault();
+    event.stopPropagation();
+
+    const src = target.src;
+    let title = target.alt || '';
+    let category = '';
+
+    // Extrapolate rich context (title and category) based on image placement
+    const productCard = target.closest('.product-card');
+    if (productCard) {
+      const nameEl = productCard.querySelector('.product-name');
+      const catEl = productCard.querySelector('.product-category');
+      if (nameEl) title = nameEl.textContent.trim();
+      if (catEl) category = catEl.textContent.trim();
+    }
+
+    const dsCard = target.closest('.ds-card');
+    if (dsCard) {
+      const nameEl = dsCard.querySelector('.ds-card-name');
+      const catEl = dsCard.querySelector('.ds-card-category');
+      if (nameEl) title = nameEl.textContent.trim();
+      if (catEl) category = catEl.textContent.trim();
+    }
+
+    const cartItem = target.closest('.cart-item-row') || target.closest('.cart-item') || target.closest('.cart-item-thumb') || target.closest('tr');
+    if (cartItem) {
+      const nameEl = cartItem.querySelector('.cart-item-name') || cartItem.querySelector('.product-name') || cartItem.querySelector('.cart-item-title') || cartItem.querySelector('h4');
+      if (nameEl) title = nameEl.textContent.trim();
+    }
+
+    const trackingCard = target.closest('.tracking-summary-card');
+    if (trackingCard) {
+      const labelEl = trackingCard.querySelector('span') || trackingCard.querySelector('h4');
+      if (labelEl) title = labelEl.textContent.trim();
+    }
+
+    appRouter.showGlobalImagePreview(src, title, category);
+  });
 });

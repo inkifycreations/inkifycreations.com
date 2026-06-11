@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 "category": "Headwear",
                 "original_price": 350.00,
                 "price": 299.00,
-                "cart_price": None,
+                "cart_price": 299.00,
                 "image": "assets/cap.png",
                 "description": "Structured 6-panel snapback cap. Shown customized with stylized 'Your Hero' vectors in glowing purple."
             },
@@ -43,8 +43,8 @@ class Command(BaseCommand):
                 "category": "Drinkware",
                 "original_price": 350.00,
                 "price": 239.00,
-                "cart_price": None,
-                "image": "assets/mug.png",
+                "cart_price": 239.00,
+                "image": "assets/mugcat.png",
                 "description": "High-gloss ceramic mug. Shown customized with Ghibli-inspired family artwork printing."
             },
             {
@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 "name": "The Purple Gifting Set",
                 "category": "Signature Bundle",
                 "original_price": 1500.00,
-                "price": 1099.00,
+                "price": 1149.00,
                 "cart_price": 1199.00,
                 "image": "assets/gift_box.jpg",
                 "description": "Premium velvet-feel signature gift box containing T-Shirt, Polo, Mug, & Cap printed with your story."

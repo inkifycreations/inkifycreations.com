@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from decimal import Decimal
-from api.models import Product, Order, OrderItem, WalletWithdrawal
+from api.models import Product, Order, OrderItem, WalletWithdrawal, TrendingDesign
 from unittest.mock import patch
 
 
@@ -452,6 +452,42 @@ class InkifyAPITests(APITestCase):
         self.assertEqual(withdrawal.account_holder_name, "Test User")
         self.assertEqual(withdrawal.bank_name, "Test Bank")
         self.assertEqual(withdrawal.ifsc_code, "ABCD0123456")
+
+
+    def test_trending_designs_api(self):
+        # 1. Access the API when there are no TrendingDesign instances in DB.
+        # It should fall back to Product.objects.filter(is_trending=True) or first 4 products
+        url = reverse('trending_products_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Should return our test product
+        self.assertTrue(len(response.data) > 0)
+        self.assertEqual(response.data[0]['id'], self.product.id)
+
+        # 2. Create a TrendingDesign instance in the database
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        test_image = SimpleUploadedFile(
+            name='test_trending.png',
+            content=b'testimagecontent',
+            content_type='image/png'
+        )
+        trending_design = TrendingDesign.objects.create(
+            product=self.product,
+            name="Exclusive Trending Art",
+            tagline="Limited Edition Blueprint",
+            image=test_image,
+            sort_order=1,
+            is_active=True
+        )
+
+        # 3. Access the API again. It should now return the custom TrendingDesign serialized fields.
+        response2 = self.client.get(url)
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response2.data), 1)
+        self.assertEqual(response2.data[0]['id'], self.product.id)
+        self.assertEqual(response2.data[0]['name'], "Exclusive Trending Art")
+        self.assertEqual(response2.data[0]['trending_tagline'], "Limited Edition Blueprint")
+        self.assertIn("test_trending", response2.data[0]['trending_image_url'])
 
 
 
