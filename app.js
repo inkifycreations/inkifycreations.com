@@ -13,9 +13,7 @@ window.onerror = function(message, source, lineno, colno, error) {
       colno: colno || 0,
       stack: error ? error.stack : ''
     };
-    const logUrl = window.location.origin.includes('8000') 
-      ? '/api/log-error/' 
-      : 'http://127.0.0.1:8000/api/log-error/';
+    const logUrl = '/api/log-error/';
     fetch(logUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -41,7 +39,7 @@ const STATE = {
 
 // When running the frontend as a separate static server (e.g. :8080),
 // set the full backend URL so fetch() goes to the Django server.
-const API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:8000/api';
+const API_BASE_URL = window.API_BASE_URL || '/api';
 
 // Get formatted delivery date string (D/M/YYYY)
 function getDeliveryDateString(daysAhead = 5) {
