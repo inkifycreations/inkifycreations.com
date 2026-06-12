@@ -138,9 +138,9 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    # Secure cookies
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Secure cookies (Set to False for HTTP testing on EC2)
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
     # Prevent browsers from sniffing content-type
     SECURE_CONTENT_TYPE_NOSNIFF = True
     # XSS protection header
