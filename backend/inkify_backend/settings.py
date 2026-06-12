@@ -25,6 +25,14 @@ DEBUG = False
 # e.g. DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
 ALLOWED_HOSTS = ['inkifycreations.com', 'www.inkifycreations.com', '13.61.233.151', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://inkifycreations.com',
+    'https://www.inkifycreations.com',
+    'http://inkifycreations.com',
+    'http://www.inkifycreations.com',
+    'http://13.61.233.151',
+]
+
 # Application definition
 
 INSTALLED_APPS = [
