@@ -19,12 +19,11 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
+DEBUG = False
 
 # Restrict allowed hosts — set DJANGO_ALLOWED_HOSTS env var in production
 # e.g. DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-_default_hosts = 'localhost,127.0.0.1' if DEBUG else ''
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', _default_hosts).split(',')
+ALLOWED_HOSTS = ['inkifycreations.com', 'www.inkifycreations.com', '13.61.233.151', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -126,7 +125,7 @@ if not CORS_ALLOW_ALL_ORIGINS:
 # ── Security hardening (active only in production / when DEBUG=False) ──────────
 if not DEBUG:
     # Force HTTPS
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = False
     # HSTS — browsers will enforce HTTPS for 1 year after first visit
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -157,7 +156,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [PROJECT_ROOT]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = PROJECT_ROOT.parent / 'staticfiles'
 
 # Media files (uploaded design images managed via Django admin)
 MEDIA_URL = '/media/'

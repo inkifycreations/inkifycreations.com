@@ -2298,6 +2298,15 @@ footer {
     --header-height: 70px;
   }
 
+  .logo {
+    font-size: 1.35rem;
+    gap: 6px;
+  }
+
+  .nav-actions {
+    gap: 12px;
+  }
+
   .hamburger {
     display: flex;
   }
@@ -2431,6 +2440,47 @@ footer {
   .dev-inbox-panel {
     width: 320px;
     height: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-header .container {
+    padding: 0 12px;
+  }
+
+  .main-header .logo {
+    font-size: 1.2rem;
+  }
+
+  .main-header .logo-suffix {
+    display: none;
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .wallet-balance-btn {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+
+  #auth-btn-text {
+    display: none;
+  }
+
+  .auth-btn {
+    padding: 8px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .auth-btn i {
+    margin: 0;
   }
 }
 
