@@ -2704,6 +2704,23 @@ const cartManager = {
   },
 
   async placeOrder() {
+    // 0. Require login before placing order
+    if (!STATE.currentUser) {
+      const result = await showCustomDialog({
+        icon: '<i class="fa-solid fa-lock" style="color: var(--accent-light);"></i>',
+        title: 'Sign In Required',
+        message: 'You need to <strong>sign in or create an account</strong> to place an order.<br><br>It only takes a few seconds — your cart will be saved!',
+        actions: [
+          { label: '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register', value: 'login', type: 'primary' },
+          { label: 'Cancel', value: 'cancel', type: 'secondary' }
+        ]
+      });
+      if (result === 'login') {
+        authManager.openModal();
+      }
+      return;
+    }
+
     // 1. Validate Shipping Forms
     const radioSaved = document.getElementById('delivery-type-saved');
     const useSaved = radioSaved && radioSaved.checked && STATE.currentUser && STATE.currentUser.address;
