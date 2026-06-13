@@ -1096,23 +1096,31 @@ const productCatalog = {
 
     
 
-    // Wire up apparel color selector swatches
-    document.querySelectorAll('.color-swatch-option').forEach(swatch => {
-      swatch.addEventListener('click', () => {
-        document.querySelectorAll('.color-swatch-option').forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
-        this.selectedColor = swatch.getAttribute('data-color');
+    // Wire up apparel color selector swatches (scoped to customizer modal)
+    const colorContainer = document.getElementById('customizer-color-swatches');
+    if (colorContainer) {
+      colorContainer.querySelectorAll('.color-swatch-option').forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          colorContainer.querySelectorAll('.color-swatch-option').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          this.selectedColor = swatch.getAttribute('data-color');
+          const label = document.getElementById('customizer-color-label');
+          if (label) label.textContent = `Selected: ${this.selectedColor}`;
+        });
       });
-    });
+    }
 
-    // Wire up size selector swatches
-    document.querySelectorAll('.size-swatch-option').forEach(swatch => {
-      swatch.addEventListener('click', () => {
-        document.querySelectorAll('.size-swatch-option').forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
-        this.selectedSize = swatch.getAttribute('data-size');
+    // Wire up size selector swatches (scoped to customizer modal)
+    const sizeContainer = document.getElementById('customizer-size-swatches');
+    if (sizeContainer) {
+      sizeContainer.querySelectorAll('.size-swatch-option').forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          sizeContainer.querySelectorAll('.size-swatch-option').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          this.selectedSize = swatch.getAttribute('data-size');
+        });
       });
-    });
+    }
   },
 
   async fetchCatalog() {
@@ -1277,25 +1285,24 @@ const productCatalog = {
 
     // Set default color state & highlights
     const isApparel = productId === 1 || productId === 2 || productId === 5;
-    if (isApparel) {
-      this.selectedColor = 'Light Blue';
-    } else {
-      this.selectedColor = null;
+    this.selectedColor = null;
+    this.selectedSize = null;
+
+    // Reset color swatches in customizer modal
+    const colorSwatchCont = document.getElementById('customizer-color-swatches');
+    if (colorSwatchCont) {
+      colorSwatchCont.querySelectorAll('.color-swatch-option').forEach(el => el.classList.remove('active'));
     }
 
-    document.querySelectorAll('.color-swatch-option').forEach(el => {
-      if (this.selectedColor && el.getAttribute('data-color') === this.selectedColor) {
-        el.classList.add('active');
-      } else {
-        el.classList.remove('active');
-      }
-    });
+    // Reset size swatches in customizer modal
+    const sizeSwatchCont = document.getElementById('customizer-size-swatches');
+    if (sizeSwatchCont) {
+      sizeSwatchCont.querySelectorAll('.size-swatch-option').forEach(el => el.classList.remove('active'));
+    }
 
-    // Reset size state & highlights
-    this.selectedSize = null;
-    document.querySelectorAll('.size-swatch-option').forEach(el => {
-      el.classList.remove('active');
-    });
+    // Reset color label
+    const colorLabel = document.getElementById('customizer-color-label');
+    if (colorLabel) colorLabel.textContent = '';
 
     // Toggle color/size containers visibility
     const colorContainer = document.getElementById('customizer-color-container');
@@ -1331,14 +1338,20 @@ const productCatalog = {
   switchTab(tabName) {
     this.customizationType = tabName; // 'photo', 'text', or 'both'
 
-    // Update active class on tab buttons
-    document.querySelectorAll('.custom-tab-btn').forEach(btn => {
-      btn.classList.remove('active');
+    // Update active class on customizer tab buttons only
+    ['photo', 'text', 'both'].forEach(t => {
+      const btn = document.getElementById(`tab-btn-${t}`);
+      if (!btn) return;
+      if (t === tabName) {
+        btn.classList.add('active');
+        btn.style.background = 'rgba(108,99,255,0.85)';
+        btn.style.color = '#fff';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-secondary)';
+      }
     });
-    const targetBtn = document.getElementById(`tab-btn-${tabName}`);
-    if (targetBtn) {
-      targetBtn.classList.add('active');
-    }
 
     // Toggle inputs visibility
     const uploadGroup = document.getElementById('form-group-upload');
@@ -1430,7 +1443,7 @@ const productCatalog = {
         return;
       }
       if (!this.selectedSize) {
-        customAlert("Please select a size (S, M, L, XL, XXL, XXXL) to proceed!");
+        customAlert("Please select a size (XS, S, M, L, XL, XXL) to proceed!");
         return;
       }
     }
@@ -1551,16 +1564,16 @@ function getProductTypeById(productId) {
   const category = (product.category || '').toLowerCase().trim();
   const name = (product.name || '').toLowerCase().trim();
   
-  if (category === 'signature bundle' || name.includes('gift') || name.includes('set')) {
+  if (category === 'signature bundle' || name.includes('gift') || name.includes('set') || name.includes('box')) {
     return 'gift_set';
   }
   if (name.includes('polo')) {
     return 'polo';
   }
-  if (category === 'apparel' || name.includes('tshirt') || name.includes('t-shirt') || name.includes('t shirt')) {
+  if (category === 'apparel' || category === 'wear' || name.includes('tshirt') || name.includes('t-shirt') || name.includes('t shirt') || name.includes('shirt')) {
     return 'tshirt';
   }
-  if (name.includes('bottle') || name.includes('tumbler')) {
+  if (name.includes('bottle') || name.includes('tumbler') || category === 'drinkware') {
     return 'bottle';
   }
   return 'mug';

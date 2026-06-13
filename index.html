@@ -1507,6 +1507,134 @@
     </div>
   </div>
 
+  <!-- --- MODAL 5b: PRODUCT CUSTOMIZER POPUP --- -->
+  <div class="modal-overlay" id="customizer-modal-overlay" style="z-index: 9996;"
+    onclick="if(event.target===this) productCatalog.closeCustomizer()">
+    <div class="modal-content glass-panel" id="customizer-modal"
+      style="max-width:560px; width:94%; padding:0; border-radius:24px; overflow:hidden; border:1px solid rgba(168,85,247,0.35); box-shadow:0 24px 70px rgba(0,0,0,0.65); max-height:90vh; overflow-y:auto;">
+
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,rgba(108,99,255,0.3),rgba(13,11,23,0.75));padding:22px 26px 18px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <h3 id="customizer-product-title" style="margin:0;font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-0.3px;"></h3>
+          <p id="customizer-product-sub" style="margin:5px 0 0;font-size:0.8rem;color:var(--text-secondary);line-height:1.4;"></p>
+        </div>
+        <button onclick="productCatalog.closeCustomizer()"
+          style="background:rgba(255,255,255,0.07);border:none;color:var(--text-secondary);font-size:1.15rem;width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div style="padding:22px 26px 6px;">
+
+        <!-- Customization Type Tabs -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;background:rgba(255,255,255,0.04);border-radius:14px;padding:5px;">
+          <button class="custom-tab-btn active" id="tab-btn-photo" onclick="productCatalog.switchTab('photo')"
+            style="flex:1;padding:9px 12px;border:none;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.22s;background:rgba(108,99,255,0.85);color:#fff;">
+            <i class="fa-solid fa-image" style="margin-right:5px;"></i>Photo
+          </button>
+          <button class="custom-tab-btn" id="tab-btn-text" onclick="productCatalog.switchTab('text')"
+            style="flex:1;padding:9px 12px;border:none;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.22s;background:transparent;color:var(--text-secondary);">
+            <i class="fa-solid fa-font" style="margin-right:5px;"></i>Text
+          </button>
+          <button class="custom-tab-btn" id="tab-btn-both" onclick="productCatalog.switchTab('both')"
+            style="flex:1;padding:9px 12px;border:none;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.22s;background:transparent;color:var(--text-secondary);">
+            <i class="fa-solid fa-layer-group" style="margin-right:5px;"></i>Both
+          </button>
+        </div>
+
+        <!-- Upload Group -->
+        <div class="form-group" id="form-group-upload" style="margin-bottom:16px;">
+          <label style="color:var(--text-secondary);font-size:0.82rem;font-weight:600;display:block;margin-bottom:8px;">
+            <i class="fa-solid fa-upload" style="margin-right:5px;color:var(--accent-purple);"></i>Upload Your Photo / Design
+          </label>
+          <div class="ds-upload-zone" id="customizer-upload-zone"
+            onclick="document.getElementById('customizer-file-input').click()"
+            style="border:2px dashed rgba(168,85,247,0.45);border-radius:14px;padding:22px 16px;text-align:center;cursor:pointer;transition:all 0.22s;background:rgba(168,85,247,0.04);"
+            onmouseover="this.style.borderColor='rgba(168,85,247,0.8)';this.style.background='rgba(168,85,247,0.09)'"
+            onmouseout="this.style.borderColor='rgba(168,85,247,0.45)';this.style.background='rgba(168,85,247,0.04)'">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.6rem;color:var(--accent-purple);display:block;margin-bottom:6px;"></i>
+            <p style="margin:0;font-size:0.82rem;color:var(--text-secondary);">Click to upload or drag &amp; drop<br><span style="font-size:0.74rem;opacity:0.6;">PNG, JPG, WEBP · Max 4 MB</span></p>
+          </div>
+          <input type="file" id="customizer-file-input" accept="image/*" style="display:none;"
+            onchange="productCatalog.handleFileSelect(event)">
+          <!-- Photo preview info row -->
+          <div id="customizer-photo-preview-info" style="display:none;align-items:center;gap:10px;margin-top:10px;padding:8px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;">
+            <i class="fa-solid fa-circle-check" style="color:#10b981;"></i>
+            <span id="customizer-photo-name" style="font-size:0.8rem;color:#10b981;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+            <button onclick="productCatalog.clearSelectedFile(event)"
+              style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:0.8rem;padding:2px 6px;border-radius:6px;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Text Group -->
+        <div class="form-group" id="form-group-text" style="display:none;margin-bottom:16px;">
+          <label style="color:var(--text-secondary);font-size:0.82rem;font-weight:600;display:block;margin-bottom:8px;">
+            <i class="fa-solid fa-pen-nib" style="margin-right:5px;color:var(--accent-purple);"></i>Custom Text / Name
+          </label>
+          <input type="text" id="customizer-text-input" class="input-field"
+            placeholder="e.g. Inkify Creations / Your Name"
+            style="width:100%;box-sizing:border-box;font-size:0.9rem;padding:12px 14px;border-radius:12px;">
+        </div>
+
+        <!-- Fabric Color Selector (Apparel Only) -->
+        <div class="form-group" id="customizer-color-container" style="display:none;margin-bottom:16px;">
+          <label style="color:var(--text-secondary);font-size:0.82rem;font-weight:600;display:block;margin-bottom:10px;">
+            <i class="fa-solid fa-palette" style="margin-right:5px;color:var(--accent-purple);"></i>Select Fabric Color
+          </label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;" id="customizer-color-swatches">
+            <div class="color-swatch-option" data-color="White" style="background-color:#ffffff;" title="White"></div>
+            <div class="color-swatch-option" data-color="Light Yellow" style="background-color:#fef08a;" title="Light Yellow"></div>
+            <div class="color-swatch-option" data-color="Light Pink" style="background-color:#fbcfe8;" title="Light Pink"></div>
+            <div class="color-swatch-option" data-color="Sky Blue" style="background-color:#bae6fd;" title="Sky Blue"></div>
+            <div class="color-swatch-option" data-color="Gray" style="background-color:#9ca3af;" title="Gray"></div>
+            <div class="color-swatch-option" data-color="Light Green" style="background-color:#bbf7d0;" title="Light Green"></div>
+          </div>
+          <p id="customizer-color-label" style="margin:8px 0 0;font-size:0.76rem;color:var(--text-secondary);min-height:16px;"></p>
+        </div>
+
+        <!-- Size Selector (Apparel Only) -->
+        <div class="form-group" id="customizer-size-container" style="display:none;margin-bottom:20px;">
+          <label style="color:var(--text-secondary);font-size:0.82rem;font-weight:600;display:block;margin-bottom:10px;">
+            <i class="fa-solid fa-ruler-horizontal" style="margin-right:5px;color:var(--accent-purple);"></i>Select Garment Size
+          </label>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;" id="customizer-size-swatches">
+            <div class="size-swatch-option" data-size="XS">XS</div>
+            <div class="size-swatch-option" data-size="S">S</div>
+            <div class="size-swatch-option" data-size="M">M</div>
+            <div class="size-swatch-option" data-size="L">L</div>
+            <div class="size-swatch-option" data-size="XL">XL</div>
+            <div class="size-swatch-option" data-size="XXL">XXL</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Price & Description row -->
+      <div style="padding:0 26px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <p id="customizer-product-desc" style="margin:0;font-size:0.78rem;color:var(--text-secondary);max-width:340px;line-height:1.5;"></p>
+        <span id="customizer-product-price" style="font-size:1.3rem;font-weight:800;color:var(--accent-light);letter-spacing:-0.5px;"></span>
+      </div>
+
+      <!-- Footer CTA -->
+      <div style="padding:16px 26px 22px;display:flex;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.18);">
+        <button class="btn-outline" onclick="productCatalog.closeCustomizer()"
+          style="padding:12px 20px;font-size:0.88rem;border-radius:14px;min-height:auto;">
+          Cancel
+        </button>
+        <button class="btn-primary" onclick="productCatalog.applyCustomization()"
+          style="flex:1;padding:14px 20px;font-size:0.96rem;font-weight:700;border-radius:14px;justify-content:center;">
+          <i class="fa-solid fa-cart-plus" style="margin-right:8px;"></i>Save &amp; Add to Cart
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- --- MODAL 6: DESIGN IMAGE PREVIEW --- -->
   <div class="modal-overlay" id="design-preview-overlay" style="z-index: 9998;"
     onclick="if(event.target === this) { document.getElementById('design-preview-overlay').classList.remove('active'); }">
@@ -2133,7 +2261,7 @@
   <script>
     window.BASE_STATIC_URL = "{% static 'app.js' %}".replace('app.js', '');
   </script>
-  <script src="{% static 'app.js' %}?v=602" defer></script>
+  <script src="{% static 'app.js' %}?v=603" defer></script>
 
 </body>
 
