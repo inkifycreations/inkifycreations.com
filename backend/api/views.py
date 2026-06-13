@@ -875,8 +875,6 @@ class TrendingProductListView(APIView):
         qs = TrendingDesign.objects.filter(is_active=True)
         if not qs.exists():
             products = Product.objects.filter(is_trending=True)
-            if not products.exists():
-                products = Product.objects.all()[:4]
             serializer = ProductSerializer(products, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         serializer = TrendingDesignSerializer(qs, many=True, context={'request': request})

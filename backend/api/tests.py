@@ -20,7 +20,8 @@ class InkifyAPITests(APITestCase):
             original_price=500.00,
             price=399.00,
             image="assets/tshirt.png",
-            description="Ultra-soft 220 GSM combed cotton."
+            description="Ultra-soft 220 GSM combed cotton.",
+            is_trending=True
         )
         self.set_product = Product.objects.create(
             id=5,
