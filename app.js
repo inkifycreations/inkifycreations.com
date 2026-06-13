@@ -1148,7 +1148,7 @@ const productCatalog = {
 
     CATALOG.forEach(product => {
       // 1. Core Card elements
-      const isSet = product.id === 5;
+      const isSet = product.id === 5 || product.category === 'Signature Bundle';
       const ratingHtml = product.reviews_count > 0 ? `
         <span style="font-size: 0.8rem; color: #fbbf24; display: flex; align-items: center; gap: 4px; font-weight: 600;">
           <i class="fa-solid fa-star"></i> ${Number(product.average_rating).toFixed(1)} (${product.reviews_count})
@@ -1533,6 +1533,63 @@ const productCatalog = {
   },
 };
 
+// Dynamic product helpers to support products added via Django Admin
+function getProductTypeById(productId) {
+  const hardcodedMap = {
+    1: 'tshirt',
+    2: 'polo',
+    3: 'bottle',
+    4: 'mug',
+    5: 'gift_set',
+  };
+  const activeId = Number(productId);
+  if (hardcodedMap[activeId]) return hardcodedMap[activeId];
+  
+  const product = CATALOG.find(p => Number(p.id) === activeId);
+  if (!product) return 'mug';
+  
+  const category = (product.category || '').toLowerCase().trim();
+  const name = (product.name || '').toLowerCase().trim();
+  
+  if (category === 'signature bundle' || name.includes('gift') || name.includes('set')) {
+    return 'gift_set';
+  }
+  if (name.includes('polo')) {
+    return 'polo';
+  }
+  if (category === 'apparel' || name.includes('tshirt') || name.includes('t-shirt') || name.includes('t shirt')) {
+    return 'tshirt';
+  }
+  if (name.includes('bottle') || name.includes('tumbler')) {
+    return 'bottle';
+  }
+  return 'mug';
+}
+
+function getProductLabelById(productId) {
+  const hardcodedLabels = {
+    1: 'T-Shirt Designs',
+    2: 'Polo T-Shirt Designs',
+    3: 'Bottle Designs',
+    4: 'Mug Designs',
+    5: 'The Purple Gifting Set',
+  };
+  const activeId = Number(productId);
+  if (hardcodedLabels[activeId]) return hardcodedLabels[activeId];
+  
+  const product = CATALOG.find(p => Number(p.id) === activeId);
+  if (!product) return 'Designs';
+  
+  const type = getProductTypeById(activeId);
+  if (type === 'tshirt') return 'T-Shirt Designs';
+  if (type === 'polo') return 'Polo T-Shirt Designs';
+  if (type === 'bottle') return 'Bottle Designs';
+  if (type === 'mug') return 'Mug Designs';
+  if (type === 'gift_set') return 'The Purple Gifting Set';
+  return `${product.name} Designs`;
+}
+
+
 
 
 // --- 4.5 DESIGN STUDIO ---
@@ -1689,8 +1746,8 @@ const designStudio = {
 
   async open(productId) {
     this.activeProductId = productId;
-    this.activeProductType = this.PRODUCT_TYPE_MAP[productId] || 'mug';
-    this.activeProductName = this.PRODUCT_LABEL_MAP[productId] || 'Designs';
+    this.activeProductType = getProductTypeById(productId);
+    this.activeProductName = getProductLabelById(productId);
     this.selectedDesign = null;
     this.customPhotoBase64 = null;
     this.customPhotoBothBase64 = null;
@@ -1698,6 +1755,79 @@ const designStudio = {
     this.activeTab = 'photo';
     const summary = document.getElementById('ds-selected-design-summary');
     if (summary) summary.style.display = 'none';
+
+    // Reset garment selection state
+    this.selectedGarmentColor = 'White';
+    this.selectedGarmentSize = null;
+
+    // Reset page swatches UI
+    document.querySelectorAll('.ds-color-swatches .color-swatch-option').forEach(s => {
+      if (s.getAttribute('data-color') === 'White') s.classList.add('active');
+      else s.classList.remove('active');
+    });
+    document.querySelectorAll('.ds-size-swatches .size-swatch-option').forEach(s => s.classList.remove('active'));
+
+    // Reset modal swatches UI
+    document.querySelectorAll('.ds-modal-color-swatches .color-swatch-option').forEach(s => {
+      if (s.getAttribute('data-color') === 'White') s.classList.add('active');
+      else s.classList.remove('active');
+    });
+    document.querySelectorAll('.ds-modal-size-swatches .size-swatch-option').forEach(s => s.classList.remove('active'));
+
+    // Wire up customizer page color swatches
+    document.querySelectorAll('.ds-color-swatches .color-swatch-option').forEach(swatch => {
+      if (!swatch.getAttribute('data-has-listener')) {
+        swatch.addEventListener('click', () => {
+          document.querySelectorAll('.ds-color-swatches .color-swatch-option').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          this.selectedGarmentColor = swatch.getAttribute('data-color');
+        });
+        swatch.setAttribute('data-has-listener', 'true');
+      }
+    });
+
+    // Wire up customizer page size swatches
+    document.querySelectorAll('.ds-size-swatches .size-swatch-option').forEach(swatch => {
+      if (!swatch.getAttribute('data-has-listener')) {
+        swatch.addEventListener('click', () => {
+          document.querySelectorAll('.ds-size-swatches .size-swatch-option').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          this.selectedGarmentSize = swatch.getAttribute('data-size');
+        });
+        swatch.setAttribute('data-has-listener', 'true');
+      }
+    });
+
+    // Wire up modal color swatches
+    document.querySelectorAll('.ds-modal-color-swatches .color-swatch-option').forEach(swatch => {
+      if (!swatch.getAttribute('data-has-listener')) {
+        swatch.addEventListener('click', () => {
+          document.querySelectorAll('.ds-modal-color-swatches .color-swatch-option').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          this.selectedGarmentColor = swatch.getAttribute('data-color');
+        });
+        swatch.setAttribute('data-has-listener', 'true');
+      }
+    });
+
+    // Wire up modal size swatches
+    document.querySelectorAll('.ds-modal-size-swatches .size-swatch-option').forEach(swatch => {
+      if (!swatch.getAttribute('data-has-listener')) {
+        swatch.addEventListener('click', () => {
+          document.querySelectorAll('.ds-modal-size-swatches .size-swatch-option').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          this.selectedGarmentSize = swatch.getAttribute('data-size');
+        });
+        swatch.setAttribute('data-has-listener', 'true');
+      }
+    });
+
+    // Toggle color/size containers visibility on the page
+    const isApparel = this.activeProductType === 'tshirt' || this.activeProductType === 'polo' || this.activeProductType === 'gift_set';
+    const pageColorContainer = document.getElementById('ds-custom-color-container');
+    const pageSizeContainer = document.getElementById('ds-custom-size-container');
+    if (pageColorContainer) pageColorContainer.style.display = isApparel ? 'block' : 'none';
+    if (pageSizeContainer) pageSizeContainer.style.display = isApparel ? 'block' : 'none';
 
     // Clear Custom Design Studio page inputs
     const fileIn = document.getElementById('ds-file-input');
@@ -1726,7 +1856,7 @@ const designStudio = {
     // Update page header
     const label = document.getElementById('ds-product-type-label');
     const title = document.getElementById('ds-page-title');
-    if (label) label.textContent = this.PRODUCT_TYPE_MAP[productId]?.toUpperCase() + ' STUDIO';
+    if (label) label.textContent = this.activeProductType?.toUpperCase() + ' STUDIO';
     if (title) title.textContent = this.activeProductName;
 
     // Hide selected bar
@@ -1906,6 +2036,22 @@ const designStudio = {
     this.modalPhotoBothBase64 = null;
     this.modalActiveTab = 'photo';
 
+    // Reset garment selection state for modal
+    this.selectedGarmentColor = 'White';
+    this.selectedGarmentSize = null;
+
+    // Reset modal swatches UI active state styling
+    document.querySelectorAll('.ds-modal-color-swatches .color-swatch-option').forEach(s => {
+      if (s.getAttribute('data-color') === 'White') s.classList.add('active');
+      else s.classList.remove('active');
+    });
+    document.querySelectorAll('.ds-modal-size-swatches .size-swatch-option').forEach(s => s.classList.remove('active'));
+
+    // Toggle color/size containers visibility in the modal
+    const isApparel = this.activeProductType === 'tshirt' || this.activeProductType === 'polo' || this.activeProductType === 'gift_set';
+    const modalApparelContainer = document.getElementById('ds-modal-apparel-container');
+    if (modalApparelContainer) modalApparelContainer.style.display = isApparel ? 'block' : 'none';
+
     // Populate header
     const img = document.getElementById('ds-modal-design-img');
     const name = document.getElementById('ds-modal-design-name');
@@ -2050,6 +2196,21 @@ const designStudio = {
     }
 
     const activeId = Number(this.activeProductId);
+    const productType = getProductTypeById(activeId);
+    const isApparel = productType === 'tshirt' || productType === 'polo' || productType === 'gift_set';
+    
+    let garmentColor = '';
+    let garmentSize = '';
+    
+    if (isApparel) {
+      garmentColor = this.selectedGarmentColor || 'White';
+      garmentSize = this.selectedGarmentSize;
+      if (!garmentSize) {
+        if (status) status.textContent = '⚠ Please select a size (XS, S, M, L, XL, XXL).';
+        return;
+      }
+    }
+
     const catalogProduct = productCatalog.getProductById(activeId);
     const selected = this.selectedDesign;
     const productName = selected
@@ -2063,7 +2224,7 @@ const designStudio = {
       price: selected ? (parseFloat(selected.price) || catalogProduct?.price || 219) : (catalogProduct?.price || 219),
       originalPrice: selected ? (parseFloat(selected.original_price) || catalogProduct?.originalPrice || 299) : (catalogProduct?.originalPrice || 299),
       image: productImage,
-      category: this.PRODUCT_TYPE_MAP[activeId] || 'mug',
+      category: productType,
       cartPrice: catalogProduct?.cartPrice || null,
     };
 
@@ -2071,9 +2232,11 @@ const designStudio = {
       type: customizationType,
       data: customizationData,
       font,
-      color,
-      size: '',
-      summary: selected ? `${summary} | Design: ${selected.name}` : summary,
+      color: garmentColor,
+      size: garmentSize,
+      summary: selected 
+        ? `${summary} | Color: ${garmentColor} | Size: ${garmentSize} | Design: ${selected.name}` 
+        : `${summary} | Color: ${garmentColor} | Size: ${garmentSize}`,
       designId: selected?.id,
       designName: selected?.name,
       designImageUrl: selected?.image_url,
@@ -2254,6 +2417,23 @@ const designStudio = {
     if (status) status.textContent = '';
 
     const activeId = Number(this.activeProductId);
+    const productType = getProductTypeById(activeId);
+    const isApparel = productType === 'tshirt' || productType === 'polo' || productType === 'gift_set';
+    
+    let garmentColor = '';
+    let garmentSize = '';
+    
+    if (isApparel) {
+      garmentColor = this.selectedGarmentColor || 'White';
+      garmentSize = this.selectedGarmentSize;
+      if (!garmentSize) {
+        if (status) status.textContent = '⚠ Please select a size (XS, S, M, L, XL, XXL).';
+        return;
+      }
+    }
+
+    if (status) status.textContent = '';
+
     const catalogProduct = productCatalog.getProductById(activeId);
     const selected = this.selectedDesign;
     const productName = selected
@@ -2267,7 +2447,7 @@ const designStudio = {
       price: catalogProduct?.price || 219,
       originalPrice: catalogProduct?.originalPrice || 299,
       image: productImage,
-      category: this.PRODUCT_TYPE_MAP[activeId] || 'mug',
+      category: productType,
       cartPrice: catalogProduct?.cartPrice || null,
     };
 
@@ -2275,9 +2455,11 @@ const designStudio = {
       type: customizationType,
       data: customizationData,
       font,
-      color,
-      size: '',
-      summary: selected ? `${summary} | Design: ${selected.name}` : summary,
+      color: garmentColor,
+      size: garmentSize,
+      summary: selected 
+        ? `${summary} | Color: ${garmentColor} | Size: ${garmentSize} | Design: ${selected.name}` 
+        : `${summary} | Color: ${garmentColor} | Size: ${garmentSize}`,
       designId: selected?.id,
       designName: selected?.name,
       designImageUrl: selected?.image_url,

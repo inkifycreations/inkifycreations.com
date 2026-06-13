@@ -569,6 +569,30 @@
                 </div>
               </div>
 
+              <!-- Garment Color & Size Selection (Apparel only) -->
+              <div class="form-group" id="ds-custom-color-container" style="display: none; margin-top: 24px; margin-bottom: 20px;">
+                <label style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; display:block; margin-bottom:10px;">Select Fabric Color</label>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;" class="ds-color-swatches">
+                  <div class="color-swatch-option active" data-color="White" style="background-color: #ffffff;" title="White"></div>
+                  <div class="color-swatch-option" data-color="Light Yellow" style="background-color: #fef08a;" title="Light Yellow"></div>
+                  <div class="color-swatch-option" data-color="Light Pink" style="background-color: #fbcfe8;" title="Light Pink"></div>
+                  <div class="color-swatch-option" data-color="Sky Blue" style="background-color: #bae6fd;" title="Sky Blue"></div>
+                  <div class="color-swatch-option" data-color="Gray" style="background-color: #9ca3af;" title="Gray"></div>
+                  <div class="color-swatch-option" data-color="Light Green" style="background-color: #bbf7d0;" title="Light Green"></div>
+                </div>
+              </div>
+              <div class="form-group" id="ds-custom-size-container" style="display: none; margin-bottom: 24px;">
+                <label style="color:var(--text-secondary); font-size:0.82rem; font-weight:600; display:block; margin-bottom:10px;">Select Garment Size</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;" class="ds-size-swatches">
+                  <div class="size-swatch-option" data-size="XS">XS</div>
+                  <div class="size-swatch-option" data-size="S">S</div>
+                  <div class="size-swatch-option" data-size="M">M</div>
+                  <div class="size-swatch-option" data-size="L">L</div>
+                  <div class="size-swatch-option" data-size="XL">XL</div>
+                  <div class="size-swatch-option" data-size="XXL">XXL</div>
+                </div>
+              </div>
+
               <!-- CTA -->
               <div style="margin-top:28px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
                 <button class="btn-primary" id="ds-custom-add-btn" onclick="designStudio.addCustomToCart()"
@@ -1655,6 +1679,34 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Garment Color & Size (only for Apparel) -->
+      <div id="ds-modal-apparel-container" style="display: none; padding: 20px 28px 0; border-top: 1px dashed rgba(255, 255, 255, 0.08); margin-top: 16px;">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+          <div>
+            <label style="color:var(--text-secondary); font-size:0.8rem; font-weight:600; display:block; margin-bottom:8px;">Select Fabric Color</label>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;" class="ds-modal-color-swatches">
+              <div class="color-swatch-option active" data-color="White" style="background-color: #ffffff;" title="White"></div>
+              <div class="color-swatch-option" data-color="Light Yellow" style="background-color: #fef08a;" title="Light Yellow"></div>
+              <div class="color-swatch-option" data-color="Light Pink" style="background-color: #fbcfe8;" title="Light Pink"></div>
+              <div class="color-swatch-option" data-color="Sky Blue" style="background-color: #bae6fd;" title="Sky Blue"></div>
+              <div class="color-swatch-option" data-color="Gray" style="background-color: #9ca3af;" title="Gray"></div>
+              <div class="color-swatch-option" data-color="Light Green" style="background-color: #bbf7d0;" title="Light Green"></div>
+            </div>
+          </div>
+          <div>
+            <label style="color:var(--text-secondary); font-size:0.8rem; font-weight:600; display:block; margin-bottom:8px;">Select Garment Size</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;" class="ds-modal-size-swatches">
+              <div class="size-swatch-option" data-size="XS">XS</div>
+              <div class="size-swatch-option" data-size="S">S</div>
+              <div class="size-swatch-option" data-size="M">M</div>
+              <div class="size-swatch-option" data-size="L">L</div>
+              <div class="size-swatch-option" data-size="XL">XL</div>
+              <div class="size-swatch-option" data-size="XXL">XXL</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Status message -->
