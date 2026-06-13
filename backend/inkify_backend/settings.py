@@ -176,7 +176,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [PROJECT_ROOT]
-STATIC_ROOT = PROJECT_ROOT.parent / 'staticfiles'
+STATIC_ROOT = PROJECT_ROOT / 'staticfiles'
 
 # Media files (uploaded design images managed via Django admin)
 MEDIA_URL = '/media/'
