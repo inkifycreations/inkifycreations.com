@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 "original_price": 1500.00,
                 "price": 1149.00,
                 "cart_price": 1199.00,
-                "image": "assets/gift_box.jpg",
+                "image": "assets/gift_box.png",
                 "description": "Premium velvet-feel signature gift box containing T-Shirt, Polo, Mug, & Cap printed with your story."
             }
         ]

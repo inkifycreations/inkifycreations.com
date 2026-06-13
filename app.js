@@ -556,7 +556,7 @@ let CATALOG = [
     originalPrice: 1500,
     price: 999,
     cartPrice: 1199,
-    image: "assets/gift_box.jpg",
+    image: "assets/gift_box.png",
     description: "Premium velvet-feel signature gift box containing T-Shirt, Polo, Mug, & Cap printed with your story."
   }
 ];

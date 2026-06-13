@@ -30,7 +30,7 @@ class InkifyAPITests(APITestCase):
             original_price=1500.00,
             price=999.00,
             cart_price=1199.00,
-            image="assets/gift_box.jpg",
+            image="assets/gift_box.png",
             description="Premium velvet-feel signature gift box containing full set."
         )
         self.mobile = "9876543210"
