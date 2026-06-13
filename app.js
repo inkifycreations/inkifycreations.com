@@ -41,6 +41,41 @@ const STATE = {
 // set the full backend URL so fetch() goes to the Django server.
 const API_BASE_URL = window.API_BASE_URL || '/api';
 
+// Compress image before saving to base64
+function asyncCompressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 // Get formatted delivery date string (D/M/YYYY)
 function getDeliveryDateString(daysAhead = 5) {
   const date = new Date();
@@ -1935,31 +1970,27 @@ const designStudio = {
   handleModalPhotoUpload(input) {
     const file = input.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.modalPhotoBase64 = e.target.result;
+    asyncCompressImage(file).then(base64 => {
+      this.modalPhotoBase64 = base64;
       const preview = document.getElementById('ds-modal-photo-preview');
       const img = document.getElementById('ds-modal-photo-preview-img');
       const nameLbl = document.getElementById('ds-modal-photo-name');
       if (preview) preview.style.display = 'block';
-      if (img) img.src = e.target.result;
+      if (img) img.src = base64;
       if (nameLbl) nameLbl.textContent = file.name;
-    };
-    reader.readAsDataURL(file);
+    }).catch(err => customAlert("Error processing image. Please try another one."));
   },
 
   handleModalPhotoUploadBoth(input) {
     const file = input.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.modalPhotoBothBase64 = e.target.result;
+    asyncCompressImage(file).then(base64 => {
+      this.modalPhotoBothBase64 = base64;
       const preview = document.getElementById('ds-modal-photo-preview-both');
       const img = document.getElementById('ds-modal-photo-preview-img-both');
       if (preview) preview.style.display = 'block';
-      if (img) img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+      if (img) img.src = base64;
+    }).catch(err => customAlert("Error processing image. Please try another one."));
   },
 
   clearModalPhoto() {
@@ -2147,33 +2178,29 @@ const designStudio = {
   handlePhotoUpload(input) {
     const file = input.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.customPhotoBase64 = e.target.result;
+    asyncCompressImage(file).then(base64 => {
+      this.customPhotoBase64 = base64;
       const preview = document.getElementById('ds-photo-preview');
       const img = document.getElementById('ds-photo-preview-img');
       const name = document.getElementById('ds-photo-name');
       if (preview) preview.style.display = 'block';
-      if (img) img.src = e.target.result;
+      if (img) img.src = base64;
       if (name) name.textContent = file.name;
       this.updateMockupPreview();
-    };
-    reader.readAsDataURL(file);
+    }).catch(err => customAlert("Error processing image. Please try another one."));
   },
 
   handlePhotoUploadBoth(input) {
     const file = input.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.customPhotoBothBase64 = e.target.result;
+    asyncCompressImage(file).then(base64 => {
+      this.customPhotoBothBase64 = base64;
       const preview = document.getElementById('ds-photo-preview-both');
       const img = document.getElementById('ds-photo-preview-img-both');
       if (preview) preview.style.display = 'block';
-      if (img) img.src = e.target.result;
+      if (img) img.src = base64;
       this.updateMockupPreview();
-    };
-    reader.readAsDataURL(file);
+    }).catch(err => customAlert("Error processing image. Please try another one."));
   },
 
   addCustomToCart() {
@@ -2797,6 +2824,11 @@ const cartManager = {
         headers: headers,
         body: JSON.stringify(orderPayload)
       });
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(`Server returned a non-JSON response (Status ${response.status}). If you attached a photo, it might be too large.`);
+      }
 
       const data = await response.json();
       if (!response.ok) {
