@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Restrict allowed hosts — set DJANGO_ALLOWED_HOSTS env var in production
 # e.g. DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
