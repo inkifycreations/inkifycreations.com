@@ -687,18 +687,27 @@ class OrderCreateView(APIView):
                 'customization': customization
             })
 
+        # Calculate referral/coupon discount (₹50 if gifting set is in cart, ₹0 otherwise)
+        referral_discount = Decimal('0.00')
+        if is_code_applied:
+            is_gifting_set_order = any(item['product'].id == 5 for item in payload_items)
+            if is_gifting_set_order:
+                referral_discount = Decimal('50.00')
+
+        subtotal_after_discount = max(Decimal('0.00'), subtotal - referral_discount)
+
         # Allow wallet balance to be used on checkout
         wallet_used = Decimal(str(data.get('wallet_used', '0') or '0'))
         if user and wallet_used > Decimal('0.00'):
             # Rule FR-06: Wallet cannot pay 100% of order. Minimum ₹50 paid via real payment method.
-            max_wallet_allowed = max(Decimal('0.00'), subtotal - Decimal('50.00'))
+            max_wallet_allowed = max(Decimal('0.00'), subtotal_after_discount - Decimal('50.00'))
             wallet_used = min(wallet_used, user.wallet_balance, max_wallet_allowed)
             user.wallet_balance -= wallet_used
             user.save(update_fields=['wallet_balance'])
         else:
             wallet_used = Decimal('0.00')
 
-        final_amount = subtotal - wallet_used
+        final_amount = subtotal_after_discount - wallet_used
         if final_amount < Decimal('0.00'):
             final_amount = Decimal('0.00')
 

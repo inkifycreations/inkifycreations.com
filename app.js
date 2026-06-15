@@ -2628,11 +2628,8 @@ const cartManager = {
         STATE.activeReferralCode = code;
         STATE.activeReferralUser = data.referrer;
 
-        msg.innerHTML = `<i class="fa-solid fa-square-check"></i> Code Applied! You'll earn ₹10 cashback in your wallet after delivery.`;
-        msg.className = "coupon-status-msg success";
-        msg.style.display = "block";
-
         this.calculateTotals();
+        this.renderCart();
       } else {
         throw new Error(data.error || "Invalid coupon code.");
       }
@@ -2684,7 +2681,14 @@ const cartManager = {
     });
 
     if (STATE.activeReferralCode) {
-      walletCredit = 10;
+      const hasGiftingSet = STATE.cart.some(item => Number(item.product.id) === 5);
+      if (hasGiftingSet) {
+        referralDiscount = 50;
+        walletCredit = 50;
+      } else {
+        referralDiscount = 0;
+        walletCredit = 10;
+      }
     }
 
     let grandTotal = subtotal - referralDiscount;
@@ -2704,7 +2708,12 @@ const cartManager = {
     const walletUseRow = document.getElementById('summary-wallet-use-row');
     const walletUseVal = document.getElementById('summary-wallet-use-val');
 
-    discRow.style.display = 'none';
+    if (referralDiscount > 0) {
+      discVal.textContent = `-₹${referralDiscount}`;
+      discRow.style.display = 'flex';
+    } else {
+      discRow.style.display = 'none';
+    }
 
     if (walletCredit > 0) {
       walletVal.textContent = `+₹${walletCredit}`;
@@ -2759,8 +2768,14 @@ const cartManager = {
 
     if (STATE.activeReferralCode) {
       couponInput.value = STATE.activeReferralCode;
-      couponMsg.innerHTML = `<i class="fa-solid fa-square-check"></i> Code Applied! You will earn ₹10 cashback in your wallet after delivery.`;
-      couponMsg.className = "coupon-status-msg success";
+      const hasGiftingSet = STATE.cart.some(item => Number(item.product.id) === 5);
+      if (hasGiftingSet) {
+        couponMsg.innerHTML = `<i class="fa-solid fa-square-check"></i> Referral code active! ₹50 discount applied + ₹50 wallet credit!`;
+        couponMsg.className = "coupon-status-msg success";
+      } else {
+        couponMsg.innerHTML = `Referral code active! Add 'The Purple Gifting Set' to unlock ₹50 discount + ₹50 wallet credit!`;
+        couponMsg.className = "coupon-status-msg error";
+      }
       couponMsg.style.display = "block";
     } else {
       couponInput.value = "";

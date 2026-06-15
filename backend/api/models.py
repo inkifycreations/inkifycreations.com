@@ -411,38 +411,42 @@ def order_post_save(sender, instance, created, **kwargs):
                 ref_owner_query = ref_owner_query.exclude(pk=buyer.pk)
             referrer = ref_owner_query.first()
             
+            # Determine cashback amount (₹50 if gifting set is in the order, ₹10 otherwise)
+            is_gifting_set = instance.items.filter(product_id=5).exists()
+            cashback_amount = Decimal('50.00') if is_gifting_set else Decimal('10.00')
+            
             # 1. Credit the buyer (only if registered user)
             if buyer:
-                buyer.wallet_balance += Decimal('10.00')
+                buyer.wallet_balance += cashback_amount
                 buyer.save(update_fields=['wallet_balance'])
                 
                 # Create WalletTransaction for buyer
                 WalletTransaction.objects.create(
                     user=buyer,
                     order=instance,
-                    amount=Decimal('10.00'),
+                    amount=cashback_amount,
                     type='referral_credit' if referrer else 'coupon_credit',
                     status='completed',
                     linked_code=instance.referral_code,
                     linked_user=referrer,
-                    note=f"₹10 cashback reward for using code {instance.referral_code} on order #{instance.tracking_id}."
+                    note=f"₹{cashback_amount} cashback reward for using code {instance.referral_code} on order #{instance.tracking_id}."
                 )
 
             # 2. Credit the referrer (if valid user referral code applied)
             if referrer:
-                referrer.wallet_balance += Decimal('10.00')
+                referrer.wallet_balance += cashback_amount
                 referrer.save(update_fields=['wallet_balance'])
                 
                 # Create WalletTransaction for referrer
                 WalletTransaction.objects.create(
                     user=referrer,
                     order=instance,
-                    amount=Decimal('10.00'),
+                    amount=cashback_amount,
                     type='referral_credit',
                     status='completed',
                     linked_code=instance.referral_code,
                     linked_user=buyer,
-                    note=f"₹10 referral reward for order #{instance.tracking_id} placed by {buyer.name or buyer.mobile if buyer else 'Guest'}."
+                    note=f"₹{cashback_amount} referral reward for order #{instance.tracking_id} placed by {buyer.name or buyer.mobile if buyer else 'Guest'}."
                 )
 
             # Prevent signal loop using query update

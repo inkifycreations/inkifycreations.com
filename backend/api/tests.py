@@ -604,5 +604,106 @@ class InkifyAPITests(APITestCase):
         self.assertEqual(response2.data[0]['trending_tagline'], "Limited Edition Blueprint")
         self.assertIn("test_trending", response2.data[0]['trending_image_url'])
 
+    def test_gifting_set_referral_reward_and_discount(self):
+        # Alice registers and places a first order to activate her code
+        first_user_mobile = '9333333333'
+        first_user_name = 'Alice'
+
+        auth_url = reverse('register_login')
+        response = self.client.post(auth_url, {'mobile': first_user_mobile, 'name': first_user_name}, format='json')
+        first_token = response.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + first_token)
+        order_url = reverse('order_create')
+        order_payload = {
+            'customer_name': first_user_name,
+            'customer_phone': first_user_mobile,
+            'customer_email': 'alice@example.com',
+            'shipping_address': '1 Referral Lane, City',
+            'amount': 399.00,
+            'payment_mode': 'Cash on Delivery',
+            'items': [
+                {
+                    'product_id': self.product.id,
+                    'quantity': 1,
+                    'price': 399.00,
+                    'customization': {
+                        'type': 'text',
+                        'data': 'Alice Design',
+                        'summary': 'Custom Text'
+                    }
+                }
+            ]
+        }
+        order_response = self.client.post(order_url, order_payload, format='json')
+        
+        # Transition Alice's order to Completed
+        first_order = Order.objects.get(tracking_id=order_response.data['tracking_id'])
+        first_order.status = "Completed"
+        first_order.save()
+        
+        alice = User.objects.get(mobile=first_user_mobile)
+        alice_referral_code = alice.referral_code
+
+        # Bob registers and applies Alice's referral code with the Signature Gifting Set (ID 5) in cart
+        second_user_mobile = '9444444444'
+        second_user_name = 'Bob'
+
+        self.client.credentials()  # clear auth
+        response = self.client.post(auth_url, {'mobile': second_user_mobile, 'name': second_user_name}, format='json')
+        second_token = response.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + second_token)
+        referral_order_payload = {
+            'customer_name': second_user_name,
+            'customer_phone': second_user_mobile,
+            'customer_email': 'bob@example.com',
+            'shipping_address': '2 Affiliate Road, City',
+            'amount': 1199.00,
+            'payment_mode': 'Cash on Delivery',
+            'referral_code': alice_referral_code,
+            'items': [
+                {
+                    'product_id': self.set_product.id, # Purple Gifting Set (ID 5)
+                    'quantity': 1,
+                    'price': 1199.00,
+                    'customization': {
+                        'type': 'text',
+                        'data': 'Bob Design',
+                        'summary': 'Custom Text'
+                    }
+                }
+            ]
+        }
+        referral_response = self.client.post(order_url, referral_order_payload, format='json')
+        self.assertEqual(referral_response.status_code, status.HTTP_201_CREATED)
+        
+        # Verify direct discount of ₹50 is applied immediately to Bob's order amount
+        # Subtotal: 1199.00 - 50.00 discount = 1149.00
+        self.assertEqual(Decimal(referral_response.data['amount']), Decimal('1149.00'))
+
+        # Complete Bob's order
+        bob_order = Order.objects.get(tracking_id=referral_response.data['tracking_id'])
+        bob_order.status = "Completed"
+        bob_order.save()
+
+        # Both Alice and Bob should receive ₹50 cashback (due to Gifting Set)
+        bob = User.objects.get(mobile=second_user_mobile)
+        bob.refresh_from_db()
+        self.assertEqual(bob.wallet_balance, Decimal('50.00'))
+        
+        alice.refresh_from_db()
+        self.assertEqual(alice.wallet_balance, Decimal('50.00'))
+
+        # Cancel Bob's order: verify reversal of ₹50 rewards
+        bob_order.status = "Cancelled"
+        bob_order.save()
+
+        bob.refresh_from_db()
+        self.assertEqual(bob.wallet_balance, Decimal('0.00'))
+        
+        alice.refresh_from_db()
+        self.assertEqual(alice.wallet_balance, Decimal('0.00'))
+
 
 
