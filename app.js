@@ -1974,7 +1974,6 @@ const designStudio = {
     designs.forEach(d => { this._designMap[d.id] = d; });
 
     grid.innerHTML = designs.map(d => {
-      const save = Math.round((d.original_price - d.price) / d.original_price * 100);
       const isSelected = this.selectedDesign && this.selectedDesign.id === d.id;
       return `
         <div class="ds-card ${isSelected ? 'ds-selected' : ''}" id="ds-card-${d.id}" onclick="designStudio.selectDesignById(${d.id})">
@@ -1983,11 +1982,6 @@ const designStudio = {
           <div class="ds-card-info">
             <p class="ds-card-category">${d.category_label}</p>
             <h3 class="ds-card-name">${d.name}</h3>
-            <div class="ds-card-price-row">
-              <span class="ds-card-price">₹${d.price}</span>
-              <span class="ds-card-original">₹${d.original_price}</span>
-              <span class="ds-card-save">SAVE ${save}%</span>
-            </div>
             <button class="ds-card-select-btn">${isSelected ? '<i class="fa-solid fa-check"></i> Selected' : 'Select This Design'}</button>
           </div>
         </div>
@@ -2275,7 +2269,6 @@ const designStudio = {
           </div>
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
-          <span id="ds-bar-price" style="font-size:1.1rem;font-weight:800;color:#fff;"></span>
           <button class="btn-primary" onclick="designStudio.promptCustomForSelectedDesign()" style="padding:12px 28px;font-size:0.9rem;font-weight:700;border-radius:25px;">
             Use with Upload/Text <i class="fa-solid fa-arrow-right" style="margin-left:6px;"></i>
           </button>
@@ -2287,7 +2280,6 @@ const designStudio = {
     document.getElementById('ds-bar-img').src = design.image_url;
     document.getElementById('ds-bar-img').alt = design.name;
     document.getElementById('ds-bar-name').textContent = design.name;
-    document.getElementById('ds-bar-price').textContent = `₹${design.price}`;
 
     requestAnimationFrame(() => bar.classList.add('visible'));
   },
@@ -4053,7 +4045,6 @@ const trendingPopup = {
       grid.innerHTML = products.map(p => {
         const imgSrc = p.trending_image_url || p.image || '';
         const tagline = p.trending_tagline || p.description || 'Premium quality, made to order.';
-        const price = p.price ? `₹${parseFloat(p.price).toFixed(2)}` : '';
         return `
           <div class="trending-card" onclick="trendingPopup._onCardClick(${p.id})" title="Customize ${p.name}">
             <span class="trending-badge"><i class="fa-solid fa-fire" style="margin-right:4px;"></i>Trending</span>
@@ -4064,7 +4055,6 @@ const trendingPopup = {
             </div>
             <div class="trending-name">${p.name}</div>
             <div class="trending-tagline">${tagline}</div>
-            ${price ? `<div style="font-size:1rem;font-weight:800;color:var(--accent-light);margin-bottom:14px;">${price}</div>` : ''}
             <button class="trending-action-btn" onclick="event.stopPropagation();trendingPopup._onCardClick(${p.id})">
               <i class="fa-solid fa-wand-magic-sparkles"></i> Customize Now
             </button>
