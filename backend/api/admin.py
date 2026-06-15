@@ -77,12 +77,11 @@ class ProductDesignAdmin(admin.ModelAdmin):
 
 @admin.register(TrendingDesign)
 class TrendingDesignAdmin(admin.ModelAdmin):
-    list_display = ('name', 'tagline', 'sort_order', 'is_active', 'image_preview')
+    list_display = ('name', 'tagline', 'price', 'original_price', 'product_id', 'sort_order', 'is_active', 'image_preview')
     list_filter = ('is_active',)
     search_fields = ('name', 'tagline')
     list_editable = ('sort_order', 'is_active')
     ordering = ('sort_order', '-created_at')
-    exclude = ('product',)
 
     def image_preview(self, obj):
         if obj.image:

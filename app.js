@@ -4045,6 +4045,7 @@ const trendingPopup = {
       grid.innerHTML = products.map(p => {
         const imgSrc = p.trending_image_url || p.image || '';
         const tagline = p.trending_tagline || p.description || 'Premium quality, made to order.';
+        const price = p.price ? `₹${parseFloat(p.price).toFixed(2)}` : '';
         return `
           <div class="trending-card" onclick="trendingPopup._onCardClick(${p.id})" title="Customize ${p.name}">
             <span class="trending-badge"><i class="fa-solid fa-fire" style="margin-right:4px;"></i>Trending</span>
@@ -4055,6 +4056,7 @@ const trendingPopup = {
             </div>
             <div class="trending-name">${p.name}</div>
             <div class="trending-tagline">${tagline}</div>
+            ${price ? `<div style="font-size:1rem;font-weight:800;color:var(--accent-light);margin-bottom:14px;">${price}</div>` : ''}
             <button class="trending-action-btn" onclick="event.stopPropagation();trendingPopup._onCardClick(${p.id})">
               <i class="fa-solid fa-wand-magic-sparkles"></i> Customize Now
             </button>

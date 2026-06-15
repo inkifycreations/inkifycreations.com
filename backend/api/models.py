@@ -283,13 +283,15 @@ class ProductReview(models.Model):
 
 class TrendingDesign(models.Model):
     """
-    A trending design template linked to a Product, with a custom tagline,
-    image, and ordering for display in the Hot Collections / Trending Vibe Blueprints.
+    A trending design template with custom tagline, name, image, price, and product ID.
+    Used for advertisement purposes.
     """
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, related_name="trending_designs")
-    name = models.CharField(max_length=100, blank=True, help_text="Custom name for this trending design (blank to use product's name)")
-    tagline = models.CharField(max_length=255, blank=True, help_text="Catchy tagline for this trending design (blank to use product's description)")
+    name = models.CharField(max_length=100, help_text="Name of the trending design")
+    tagline = models.CharField(max_length=255, blank=True, help_text="Tagline or short description")
     image = models.ImageField(upload_to='trending/', help_text="Upload high-quality image for the trending blueprints display")
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Price to display (blank to hide)")
+    original_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Original price to show strike-through (optional)")
+    product_id = models.IntegerField(null=True, blank=True, help_text="ID of the product to customize when clicked (e.g. 1 for T-Shirt, 4 for Mug)")
     sort_order = models.PositiveIntegerField(default=0, help_text="Lower numbers appear first")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -300,12 +302,10 @@ class TrendingDesign(models.Model):
         verbose_name_plural = "Trending Designs"
 
     def __str__(self) -> str:
-        product_name = self.product.name if self.product else "No Product"
-        return f"[{product_name}] {self.name or 'Trending Design'}"
+        return self.name
 
     def __repr__(self) -> str:
-        product_name = self.product.name if self.product else None
-        return f"<TrendingDesign id={self.id!r} product={product_name!r} name={self.name!r}>"
+        return f"<TrendingDesign id={self.id!r} name={self.name!r}>"
 
 
 

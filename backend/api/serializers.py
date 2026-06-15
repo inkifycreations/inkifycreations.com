@@ -130,13 +130,13 @@ class ProductReviewSerializer(serializers.ModelSerializer):
 
 
 class TrendingDesignSerializer(serializers.ModelSerializer):
-    id = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
+    id = serializers.IntegerField(source='product_id', allow_null=True, read_only=True)
+    name = serializers.CharField(read_only=True)
     price = serializers.SerializerMethodField()
     trending_image_url = serializers.SerializerMethodField()
-    trending_tagline = serializers.SerializerMethodField()
+    trending_tagline = serializers.CharField(source='tagline', read_only=True)
     image = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
+    description = serializers.CharField(source='tagline', read_only=True)
     average_rating = serializers.SerializerMethodField()
     reviews_count = serializers.SerializerMethodField()
 
@@ -147,16 +147,8 @@ class TrendingDesignSerializer(serializers.ModelSerializer):
             'image', 'description', 'average_rating', 'reviews_count'
         ]
 
-    def get_id(self, obj):
-        return obj.product.id if obj.product else obj.id
-
-    def get_name(self, obj):
-        if obj.name:
-            return obj.name
-        return obj.product.name if obj.product else "Trending Design"
-
     def get_price(self, obj):
-        return obj.product.price if obj.product else None
+        return str(obj.price) if obj.price is not None else None
 
     def get_trending_image_url(self, obj):
         request = self.context.get('request')
@@ -166,26 +158,12 @@ class TrendingDesignSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
-    def get_trending_tagline(self, obj):
-        if obj.tagline:
-            return obj.tagline
-        return obj.product.description if obj.product else ""
-
     def get_image(self, obj):
-        return obj.product.image if obj.product else ""
-
-    def get_description(self, obj):
-        return obj.product.description if obj.product else ""
+        return self.get_trending_image_url(obj)
 
     def get_average_rating(self, obj):
-        if obj.product:
-            from django.db.models import Avg
-            avg = ProductReview.objects.filter(product=obj.product).aggregate(Avg('rating'))['rating__avg']
-            return round(avg, 1) if avg is not None else 0.0
-        return 0.0
+        return 5.0
 
     def get_reviews_count(self, obj):
-        if obj.product:
-            return ProductReview.objects.filter(product=obj.product).count()
         return 0
 
