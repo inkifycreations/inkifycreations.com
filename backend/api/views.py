@@ -362,12 +362,6 @@ def validate_referral_coupon_code(code: str, user) -> tuple[bool, str, Any]:
     if user and referrer.pk == user.pk:
         return False, "You cannot use your own referral code.", None
         
-    # Rule FR-04: Referral code can only be used on first-time orders (excluding cancelled)
-    if user:
-        prior_orders = Order.objects.filter(user=user).exclude(status__in=['Cancelled', 'Refunded', 'Returned'])
-        if prior_orders.exists():
-            return False, "Referral code can only be used on your first order.", None
-            
     # Rule FR-10: Same code not reused by same customer
     if user:
         if ReferralUsageLog.objects.filter(referral_code=code, used_by=user).exists():
