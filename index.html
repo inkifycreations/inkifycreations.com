@@ -257,11 +257,10 @@
                 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-light); font-weight: bold; display: block; margin-bottom: 8px;">Earn
                 Unlimited Cash</span>
               <h3 style="font-size: 1.8rem; font-weight: 700; margin: 0 0 10px 0; color: white; line-height: 1.2;">Refer
-                Friends. Earn 50 for Every Successful Referral.</h3>
-              <p style="font-size: 1rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">Earn 50 wallet cash
+                Friends. Earn &#8377;10 for Every Successful Referral.</h3>
+              <p style="font-size: 1rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">Earn &#8377;10 wallet cashback
                 on every single referral order. There's no limit refer as many friends as you can. Simply place your
-                first order today to activate your profile, get your unique referral code, and start your high-paying
-                side hustle!</p>
+                first order today to activate your profile, get your unique referral code, and start earning!</p>
             </div>
             <div class="referral-banner-action" style="flex-shrink: 0;">
               <button class="btn-primary" onclick="appRouter.navigate('products')"
@@ -987,10 +986,8 @@
               <!-- Referral business strategy explainer -->
               <div
                 style="background: rgba(147, 51, 234, 0.05); border: 1px dashed rgba(147, 51, 234, 0.2); padding: 12px; border-radius: 8px; margin-top: 14px; font-size: 0.78rem; color: var(--text-secondary);">
-                <span style="font-weight: 600; color: var(--accent-light); display: block; margin-bottom: 4px;">Referral
-                  Hack Active!</span>
-                Buy the <strong>Whole Set</strong>. Enter your friend's referral code to pay 1149 for the set and earn
-                50 back into your wallet. The referrer also earns 50 in their wallet.
+                <span style="font-weight: 600; color: var(--accent-light); display: block; margin-bottom: 4px;">Referral Cashback</span>
+                Enter a referral or coupon code during checkout to earn <strong>&#8377;10 cashback</strong> in your wallet when your order is completed. The referrer also earns &#8377;10!
               </div>
             </div>
 
@@ -1318,8 +1315,8 @@
           <span
             style="font-weight: 700; color: var(--accent-light); display: block; margin-bottom: 6px; font-family: var(--font-display);"><i
               class="fa-solid fa-gift"></i> How to earn wallet cash?</span>
-          Share your referral code with friends. When they buy the <strong>Purple Gift Set</strong> using your code,
-          they save 100 (paying 1099) and get 50 in their wallet. You also earn 50 in your wallet!
+          Share your referral code with friends. When they place any custom order using your code,
+          they get &#8377;10 cashback in their wallet. You also earn &#8377;10 in your wallet!
           <div
             style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
             <span style="font-size: 0.8rem;">Your Affiliate Code: <strong
@@ -1328,6 +1325,19 @@
             <button class="btn-primary"
               style="padding: 6px 12px; font-size: 0.75rem; min-height: auto; border-radius: 6px;"
               onclick="walletManager.copyReferralCode()">Copy Code</button>
+          </div>
+        </div>
+
+        <!-- Wallet Transaction History -->
+        <div style="margin-top: 24px; text-align: left;">
+          <h4 style="font-family: var(--font-display); font-weight: 700; color: white; font-size: 0.9rem; margin-bottom: 12px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+            Transaction History
+          </h4>
+          <div id="wallet-transactions-list" style="max-height: 180px; overflow-y: auto; padding-right: 4px;">
+            <!-- Populated dynamically via JS -->
+            <div style="text-align:center; padding:15px; color:var(--text-secondary); font-size:0.85rem;">
+              Loading transactions...
+            </div>
           </div>
         </div>
       </div>
@@ -2223,9 +2233,9 @@
         <div style="background: linear-gradient(135deg, rgba(108,99,255,0.18), rgba(13,11,23,0.7)); border: 1px solid rgba(168,85,247,0.35); border-radius: 16px; padding: 24px; text-align: center; position: relative; overflow: hidden;">
           <div style="position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(168,85,247,0.18) 0%, transparent 70%); pointer-events: none;"></div>
           <i class="fa-solid fa-sack-dollar" style="font-size: 2.4rem; color: var(--accent-light); margin-bottom: 10px; display: block; text-shadow: 0 0 20px rgba(168,85,247,0.5);"></i>
-          <div style="font-size: 3rem; font-weight: 800; color: white; font-family: var(--font-display); line-height: 1;">&#8377;50</div>
-          <div style="font-size: 0.9rem; color: var(--accent-light); font-weight: 600; margin-top: 4px;">Per Referral &bull; No Limit &bull; Instant Wallet Credit</div>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px; margin-bottom: 0;">Every time someone uses your referral code when placing a first-time order, <strong style="color: white;">&#8377;50</strong> lands in your Inkify wallet automatically.</p>
+          <div style="font-size: 3rem; font-weight: 800; color: white; font-family: var(--font-display); line-height: 1;">&#8377;10</div>
+          <div style="font-size: 0.9rem; color: var(--accent-light); font-weight: 600; margin-top: 4px;">Per Referral &bull; No Limit &bull; Wallet Cashback</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px; margin-bottom: 0;">Every time someone uses your referral code when placing their first order, <strong style="color: white;">&#8377;10</strong> lands in your Inkify wallet on order delivery.</p>
         </div>
 
         <!-- How It Works Steps -->
@@ -2238,7 +2248,7 @@
               <div style="background: var(--accent-dark); color: var(--accent-light); min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; box-shadow: 0 0 10px rgba(168,85,247,0.3);">1</div>
               <div>
                 <h5 style="color: white; font-weight: 600; margin: 0 0 2px; font-size: 0.88rem;">Place Your First Order</h5>
-                <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Your unique referral code activates the moment you complete your first Inkify order.</p>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Your unique referral code activates the moment your first order status transitions to Completed.</p>
               </div>
             </div>
             <div style="display: flex; gap: 12px; align-items: flex-start;">
@@ -2252,14 +2262,14 @@
               <div style="background: var(--accent-dark); color: var(--accent-light); min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; box-shadow: 0 0 10px rgba(168,85,247,0.3);">3</div>
               <div>
                 <h5 style="color: white; font-weight: 600; margin: 0 0 2px; font-size: 0.88rem;">Friend Places Order with Your Code</h5>
-                <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">When someone enters your referral code at checkout, they save &#8377;100 on the Signature Gift Set (pays &#8377;1,099 instead of &#8377;1,199).</p>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">When someone enters your referral code at checkout, they'll unlock ₹10 cashback once their order is completed.</p>
               </div>
             </div>
             <div style="display: flex; gap: 12px; align-items: flex-start;">
               <div style="background: var(--accent-dark); color: var(--accent-light); min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; box-shadow: 0 0 10px rgba(168,85,247,0.3);">4</div>
               <div>
-                <h5 style="color: white; font-weight: 600; margin: 0 0 2px; font-size: 0.88rem;">Both Parties Earn &#8377;50</h5>
-                <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;"><strong style="color: white;">You</strong> get &#8377;50 in your wallet. <strong style="color: white;">Your friend</strong> gets &#8377;50 in their wallet too. Win-win!</p>
+                <h5 style="color: white; font-weight: 600; margin: 0 0 2px; font-size: 0.88rem;">Both Parties Earn &#8377;10</h5>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;"><strong style="color: white;">You</strong> get &#8377;10 in your wallet. <strong style="color: white;">Your friend</strong> gets &#8377;10 in their wallet too. Win-win!</p>
               </div>
             </div>
           </div>
@@ -2270,7 +2280,7 @@
           <div style="background: rgba(16,185,129,0.05); padding: 14px; border-radius: 12px; border: 1px solid rgba(16,185,129,0.2);">
             <i class="fa-solid fa-infinity" style="color: var(--success); font-size: 1.3rem; margin-bottom: 6px; display: block;"></i>
             <h5 style="color: white; font-weight: 700; font-size: 0.88rem; margin: 0 0 4px;">No Cap on Earnings</h5>
-            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Refer 10 friends, earn &#8377;500. Refer 100, earn &#8377;5,000. There is no maximum limit.</p>
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Refer 50 friends, earn &#8377;500. Refer 500, earn &#8377;5,000. There is no maximum limit.</p>
           </div>
           <div style="background: rgba(168,85,247,0.06); padding: 14px; border-radius: 12px; border: 1px solid rgba(168,85,247,0.2);">
             <i class="fa-solid fa-wallet" style="color: var(--accent-light); font-size: 1.3rem; margin-bottom: 6px; display: block;"></i>

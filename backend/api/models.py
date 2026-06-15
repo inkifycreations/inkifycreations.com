@@ -125,6 +125,10 @@ class Order(models.Model):
         ("Printing", "Printing"),
         ("Dispatched", "Dispatched"),
         ("Delivery", "Out for Delivery"),
+        ("Completed", "Completed"),
+        ("Cancelled", "Cancelled"),
+        ("Refunded", "Refunded"),
+        ("Returned", "Returned"),
     ]
 
     tracking_id = models.CharField(max_length=50, unique=True, default=generate_tracking_id, editable=False)
@@ -137,11 +141,14 @@ class Order(models.Model):
     payment_mode = models.CharField(max_length=50)
     referral_code = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Placed")
+    reward_credited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     est_delivery = models.CharField(max_length=50)
 
     def get_simulated_status(self) -> str:
-        """Dynamically calculate order status based on time elapsed since creation."""
+        """Dynamically calculate order status unless it has reached a finalized state."""
+        if self.status in ["Completed", "Cancelled", "Refunded", "Returned"]:
+            return self.status
         elapsed = (timezone.now() - self.created_at).total_seconds()
         if elapsed < 15:
             return "Placed"
@@ -306,6 +313,195 @@ class TrendingDesign(models.Model):
 
     def __repr__(self) -> str:
         return f"<TrendingDesign id={self.id!r} name={self.name!r}>"
+
+
+class WalletTransaction(models.Model):
+    """Logs user wallet credit, debit, withdrawal, and reversal transactions."""
+
+    TYPE_CHOICES = [
+        ('referral_credit', 'Referral Credit'),
+        ('coupon_credit', 'Coupon Credit'),
+        ('reversal', 'Reversal'),
+        ('withdrawal', 'Withdrawal'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('reversed', 'Reversed'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="wallet_transactions")
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name="wallet_transactions")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    type = models.CharField(max_length=30, choices=TYPE_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='completed')
+    linked_code = models.CharField(max_length=50, blank=True, default='')
+    linked_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="referral_earnings")
+    note = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"WalletTransaction {self.id}: {self.user.mobile} - {self.type} - ₹{self.amount}"
+
+    def __repr__(self) -> str:
+        return f"<WalletTransaction id={self.id} user={self.user.mobile} type={self.type} amount={self.amount}>"
+
+
+class ReferralUsageLog(models.Model):
+    """Tracks usage of coupon or referral codes per user to prevent duplicate abuse."""
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('credited', 'Credited'),
+        ('reversed', 'Reversed'),
+    ]
+
+    referral_code = models.CharField(max_length=50, db_index=True)
+    used_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="referral_usages")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="referral_usages")
+    reward_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"ReferralUsage {self.referral_code} used by {self.used_by.mobile} (Order #{self.order.tracking_id})"
+
+    def __repr__(self) -> str:
+        return f"<ReferralUsageLog code={self.referral_code} user={self.used_by.mobile} status={self.reward_status}>"
+
+
+# Signal receivers to trigger wallet rewards and reversals on Order status updates
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+
+@receiver(pre_save, sender=Order)
+def order_pre_save(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            instance._old_status = Order.objects.get(pk=instance.pk).status
+        except Order.DoesNotExist:
+            instance._old_status = None
+    else:
+        instance._old_status = None
+
+
+@receiver(post_save, sender=Order)
+def order_post_save(sender, instance, created, **kwargs):
+    old_status = getattr(instance, '_old_status', None)
+    new_status = instance.status
+
+    # Transition to Completed: credit wallet cashback
+    if new_status == "Completed" and old_status != "Completed":
+        # Generate referral code for user if they don't have one yet
+        buyer = instance.user
+        if buyer and not buyer.referral_code:
+            buyer.referral_code = generate_referral_code(buyer.name or buyer.mobile)
+            buyer.save(update_fields=['referral_code'])
+
+        if instance.referral_code and not instance.reward_credited:
+            from decimal import Decimal
+            from django.contrib.auth import get_user_model
+            
+            User = get_user_model()
+            code = instance.referral_code.strip()
+            
+            # Find the referrer (owner of referral_code), excluding the buyer to prevent self-referral
+            ref_owner_query = User.objects.filter(referral_code__iexact=code)
+            if buyer:
+                ref_owner_query = ref_owner_query.exclude(pk=buyer.pk)
+            referrer = ref_owner_query.first()
+            
+            # 1. Credit the buyer (only if registered user)
+            if buyer:
+                buyer.wallet_balance += Decimal('10.00')
+                buyer.save(update_fields=['wallet_balance'])
+                
+                # Create WalletTransaction for buyer
+                WalletTransaction.objects.create(
+                    user=buyer,
+                    order=instance,
+                    amount=Decimal('10.00'),
+                    type='referral_credit' if referrer else 'coupon_credit',
+                    status='completed',
+                    linked_code=instance.referral_code,
+                    linked_user=referrer,
+                    note=f"₹10 cashback reward for using code {instance.referral_code} on order #{instance.tracking_id}."
+                )
+
+            # 2. Credit the referrer (if valid user referral code applied)
+            if referrer:
+                referrer.wallet_balance += Decimal('10.00')
+                referrer.save(update_fields=['wallet_balance'])
+                
+                # Create WalletTransaction for referrer
+                WalletTransaction.objects.create(
+                    user=referrer,
+                    order=instance,
+                    amount=Decimal('10.00'),
+                    type='referral_credit',
+                    status='completed',
+                    linked_code=instance.referral_code,
+                    linked_user=buyer,
+                    note=f"₹10 referral reward for order #{instance.tracking_id} placed by {buyer.name or buyer.mobile if buyer else 'Guest'}."
+                )
+
+            # Prevent signal loop using query update
+            Order.objects.filter(pk=instance.pk).update(reward_credited=True)
+            instance.reward_credited = True
+            
+            # Update log in ReferralUsageLog
+            ReferralUsageLog.objects.filter(order=instance).update(reward_status='credited')
+
+    # Transition to Cancelled/Refunded/Returned: reverse credits and refund payments
+    elif new_status in ["Cancelled", "Refunded", "Returned"] and old_status not in ["Cancelled", "Refunded", "Returned"]:
+        from decimal import Decimal
+        
+        # 1. Reverse credits
+        if instance.reward_credited:
+            txns = WalletTransaction.objects.filter(order=instance, type__in=['referral_credit', 'coupon_credit'], status='completed')
+            for txn in txns:
+                u = txn.user
+                u.wallet_balance = max(Decimal('0.00'), u.wallet_balance - txn.amount)
+                u.save(update_fields=['wallet_balance'])
+                
+                WalletTransaction.objects.create(
+                    user=u,
+                    order=instance,
+                    amount=-txn.amount,
+                    type='reversal',
+                    status='completed',
+                    linked_code=txn.linked_code,
+                    note=f"Reversal of ₹{txn.amount} reward from order #{instance.tracking_id} due to order status: {new_status}."
+                )
+                
+                txn.status = 'reversed'
+                txn.save(update_fields=['status'])
+            
+            Order.objects.filter(pk=instance.pk).update(reward_credited=False)
+            instance.reward_credited = False
+            
+            ReferralUsageLog.objects.filter(order=instance).update(reward_status='reversed')
+
+        # 2. Refund wallet payment
+        wallet_payment_txn = WalletTransaction.objects.filter(order=instance, type='withdrawal', status='completed').first()
+        if wallet_payment_txn:
+            u = wallet_payment_txn.user
+            refund_amount = abs(wallet_payment_txn.amount)
+            u.wallet_balance += refund_amount
+            u.save(update_fields=['wallet_balance'])
+            
+            WalletTransaction.objects.create(
+                user=u,
+                order=instance,
+                amount=refund_amount,
+                type='reversal',
+                status='completed',
+                note=f"Refund of ₹{refund_amount} wallet payment for order #{instance.tracking_id} due to cancellation."
+            )
+            
+            wallet_payment_txn.status = 'reversed'
+            wallet_payment_txn.save(update_fields=['status'])
+
 
 
 

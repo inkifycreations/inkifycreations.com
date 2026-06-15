@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, RegisterLoginView, ProductListView, OrderCreateView, OrderTrackView, UserOrdersListView, WalletWithdrawView, ReferralCodeVerifyView, UserProfileView, ClientErrorLogView, ProductDesignListView, TrendingProductListView, ProductDetailView, ProductReviewListCreateView, ReviewHelpfulToggleView, StaffDashboardPageView, StaffStatsView, StaffOrdersView, StaffOrderStatusUpdateView, StaffCustomersView
+from .views import RegisterView, LoginView, RegisterLoginView, ProductListView, OrderCreateView, OrderTrackView, UserOrdersListView, WalletWithdrawView, ReferralCodeVerifyView, UserProfileView, ClientErrorLogView, ProductDesignListView, TrendingProductListView, ProductDetailView, ProductReviewListCreateView, ReviewHelpfulToggleView, StaffDashboardPageView, StaffStatsView, StaffOrdersView, StaffOrderStatusUpdateView, StaffCustomersView, WalletTransactionsListView, WalletBalanceView
 
 urlpatterns = [
     path('auth/register/', RegisterView.as_view(), name='auth_register'),
@@ -10,6 +10,8 @@ urlpatterns = [
     path('orders/track/<str:tracking_id>/', OrderTrackView.as_view(), name='order_track'),
     path('orders/my/', UserOrdersListView.as_view(), name='user_orders'),
     path('wallet/withdraw/', WalletWithdrawView.as_view(), name='wallet_withdraw'),
+    path('wallet/transactions/', WalletTransactionsListView.as_view(), name='wallet_transactions'),
+    path('wallet/balance/', WalletBalanceView.as_view(), name='wallet_balance'),
     path('referrals/verify/<str:code>/', ReferralCodeVerifyView.as_view(), name='referral_verify'),
     path('user/profile/', UserProfileView.as_view(), name='user_profile'),
     path('log-error/', ClientErrorLogView.as_view(), name='client_error_log'),

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Product, Order, OrderItem, ProductDesign, ProductReview, TrendingDesign
+from .models import CustomUser, Product, Order, OrderItem, ProductDesign, ProductReview, TrendingDesign, WalletTransaction
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,13 +60,26 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'tracking_id', 'customer_name', 'customer_phone',
             'customer_email', 'shipping_address', 'amount',
-            'payment_mode', 'referral_code', 'status',
+            'payment_mode', 'referral_code', 'status', 'reward_credited',
             'created_at', 'est_delivery', 'items'
         ]
 
     def get_status(self, obj):
         # Return the dynamically simulated status
         return obj.get_simulated_status()
+
+
+class WalletTransactionSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.name', read_only=True)
+    user_mobile = serializers.CharField(source='user.mobile', read_only=True)
+    linked_username = serializers.CharField(source='linked_user.name', read_only=True)
+
+    class Meta:
+        model = WalletTransaction
+        fields = [
+            'id', 'username', 'user_mobile', 'amount', 'type',
+            'status', 'linked_code', 'linked_username', 'note', 'created_at'
+        ]
 
 
 class ProductDesignSerializer(serializers.ModelSerializer):

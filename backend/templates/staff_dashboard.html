@@ -344,7 +344,7 @@
           });
 
           // Dropdown status options
-          const statuses = ["Placed", "Printing", "Dispatched", "Delivery"];
+          const statuses = ["Placed", "Printing", "Dispatched", "Delivery", "Completed", "Cancelled", "Refunded", "Returned"];
           let optionsHtml = '';
           statuses.forEach(s => {
             const label = s === 'Delivery' ? 'Out for Delivery' : s;

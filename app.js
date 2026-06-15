@@ -2612,29 +2612,23 @@ const cartManager = {
       return;
     }
 
-    // Check if they have the Whole Set in their cart
-    const hasWholeSet = STATE.cart.some(item => item.product.id === 5);
-
-    if (!hasWholeSet) {
-      msg.textContent = "Referral code active! Add 'The Purple Gifting Set' to unlock ₹100 discount + ₹50 wallet credit!";
-      msg.className = "coupon-status-msg error";
-      msg.style.display = "block";
-      return;
-    }
-
     msg.textContent = "Verifying coupon code...";
     msg.className = "coupon-status-msg info";
     msg.style.display = "block";
 
     try {
-      const response = await fetch(`${API_BASE_URL}/referrals/verify/${code}/`);
+      const headers = { 'Content-Type': 'application/json' };
+      if (STATE.currentUser && STATE.currentUser.token) {
+        headers['Authorization'] = `Token ${STATE.currentUser.token}`;
+      }
+      const response = await fetch(`${API_BASE_URL}/referrals/verify/${code}/`, { headers });
       const data = await response.json();
 
       if (response.ok && data.valid) {
         STATE.activeReferralCode = code;
         STATE.activeReferralUser = data.referrer;
 
-        msg.innerHTML = `<i class="fa-solid fa-square-check"></i> Code Applied! You pay ₹1149 for the Whole Set. Buyer & Referrer earn ₹50 back.`;
+        msg.innerHTML = `<i class="fa-solid fa-square-check"></i> Code Applied! You'll earn ₹10 cashback in your wallet after delivery.`;
         msg.className = "coupon-status-msg success";
         msg.style.display = "block";
 
@@ -2687,12 +2681,11 @@ const cartManager = {
         price = Number(item.product.id) === 5 ? 1199 : 219;
       }
       subtotal += price * item.quantity;
-
-      if (Number(item.product.id) === 5 && STATE.activeReferralCode) {
-        referralDiscount += 50 * item.quantity; // ₹50 direct discount when a valid referral code applies to the Whole Set
-        walletCredit += 50 * item.quantity; // buyer earns ₹50 into wallet
-      }
     });
+
+    if (STATE.activeReferralCode) {
+      walletCredit = 10;
+    }
 
     let grandTotal = subtotal - referralDiscount;
     if (STATE.currentUser && STATE.useWalletCredit && Number(STATE.currentUser.wallet_balance) > 0) {
@@ -2711,13 +2704,12 @@ const cartManager = {
     const walletUseRow = document.getElementById('summary-wallet-use-row');
     const walletUseVal = document.getElementById('summary-wallet-use-val');
 
-    if (referralDiscount > 0) {
-      discVal.textContent = `-₹${referralDiscount}`;
-      discRow.style.display = 'flex';
+    discRow.style.display = 'none';
+
+    if (walletCredit > 0) {
       walletVal.textContent = `+₹${walletCredit}`;
       walletRow.style.display = 'flex';
     } else {
-      discRow.style.display = 'none';
       walletRow.style.display = 'none';
     }
 
@@ -2759,21 +2751,15 @@ const cartManager = {
     countIndicator.textContent = `(${STATE.cart.reduce((sum, item) => sum + item.quantity, 0)} items)`;
 
     // Sync Referral Coupon UI state based on active global coupon and cart contents
-    const hasWholeSet = STATE.cart.some(item => item.product.id === 5);
     const couponInput = document.getElementById('checkout-coupon');
     const couponMsg = document.getElementById('coupon-msg');
     const walletPanel = document.getElementById('wallet-usage-panel');
     const walletAvailable = document.getElementById('checkout-wallet-available');
     const walletCheckbox = document.getElementById('wallet-use-checkbox');
 
-    if (!hasWholeSet) {
-      STATE.activeReferralCode = null;
-      STATE.activeReferralUser = null;
-    }
-
     if (STATE.activeReferralCode) {
       couponInput.value = STATE.activeReferralCode;
-      couponMsg.innerHTML = `<i class="fa-solid fa-square-check"></i> Code Applied! You pay ₹1099 for the Whole Set and earn ₹50 back into your wallet.`;
+      couponMsg.innerHTML = `<i class="fa-solid fa-square-check"></i> Code Applied! You will earn ₹10 cashback in your wallet after delivery.`;
       couponMsg.className = "coupon-status-msg success";
       couponMsg.style.display = "block";
     } else {
@@ -3158,7 +3144,7 @@ const trackingManager = {
     document.getElementById('track-delivery-val').textContent = order.estDelivery;
     document.getElementById('track-payment-val').textContent = order.paymentMode;
 
-    // Map order timeline status to index (Placed: 0, Printing: 1, Dispatched: 2, OutForDelivery: 3)
+    // Map order timeline status to index
     let statusIndex = 0;
     let statusStr = "Order Placed";
 
@@ -3174,6 +3160,18 @@ const trackingManager = {
     } else if (order.status === 'Delivery') {
       statusIndex = 3;
       statusStr = "Out for Delivery";
+    } else if (order.status === 'Completed') {
+      statusIndex = 4;
+      statusStr = "Delivered & Completed";
+    } else if (order.status === 'Cancelled') {
+      statusIndex = -1;
+      statusStr = "Order Cancelled";
+    } else if (order.status === 'Refunded') {
+      statusIndex = -1;
+      statusStr = "Order Refunded";
+    } else if (order.status === 'Returned') {
+      statusIndex = -1;
+      statusStr = "Order Returned";
     }
 
     document.getElementById('track-status-val').textContent = statusStr;
@@ -3184,7 +3182,9 @@ const trackingManager = {
       const node = document.getElementById(`step-${index}`);
       node.className = "step-node"; // reset
 
-      if (index < statusIndex) {
+      if (statusIndex === -1) {
+        // Cancelled/Refunded/Returned
+      } else if (index < statusIndex) {
         node.classList.add('completed');
       } else if (index === statusIndex) {
         node.classList.add('active');
@@ -3193,16 +3193,32 @@ const trackingManager = {
 
     // Stepper line fill percent
     const lineFill = document.getElementById('track-stepper-fill');
-    if (window.innerWidth <= 768) {
-      // Mobile vertical stepper line
-      const percent = (statusIndex / 3) * 80;
-      lineFill.style.height = `${percent}%`;
-      lineFill.style.width = `4px`;
+    if (statusIndex === -1) {
+      if (lineFill) {
+        lineFill.style.height = '0%';
+        lineFill.style.width = '0%';
+      }
     } else {
-      // Desktop horizontal stepper line
-      const percent = (statusIndex / 3) * 80 + 10;
-      lineFill.style.width = `${percent}%`;
-      lineFill.style.height = `4px`;
+      const displayIndex = Math.min(statusIndex, 3);
+      if (window.innerWidth <= 768) {
+        // Mobile vertical stepper line
+        const percent = (displayIndex / 3) * 80;
+        if (statusIndex === 4) {
+          lineFill.style.height = '100%';
+        } else {
+          lineFill.style.height = `${percent}%`;
+        }
+        lineFill.style.width = `4px`;
+      } else {
+        // Desktop horizontal stepper line
+        const percent = (displayIndex / 3) * 80 + 10;
+        if (statusIndex === 4) {
+          lineFill.style.width = '100%';
+        } else {
+          lineFill.style.width = `${percent}%`;
+        }
+        lineFill.style.height = `4px`;
+      }
     }
 
     // Render blueprint spec designs
@@ -3266,11 +3282,73 @@ const walletManager = {
     this.renderModal();
     await this.fetchProfile();
     this.renderModal();
+    try {
+      const txns = await this.fetchTransactions();
+      this.renderTransactions(txns);
+    } catch (e) {}
   },
 
   closeModal() {
     const modal = document.getElementById('wallet-modal-overlay');
     if (modal) modal.classList.remove('active');
+  },
+
+  async fetchTransactions() {
+    if (!STATE.currentUser || !STATE.currentUser.token) return [];
+    try {
+      const response = await fetch(`${API_BASE_URL}/wallet/transactions/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${STATE.currentUser.token}`
+        }
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (err) {
+      console.warn("Failed to fetch wallet transactions", err);
+    }
+    return [];
+  },
+
+  renderTransactions(txns) {
+    const listEl = document.getElementById('wallet-transactions-list');
+    if (!listEl) return;
+    
+    if (txns.length === 0) {
+      listEl.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary); font-size:0.85rem;">No transaction history.</div>`;
+      return;
+    }
+    
+    let html = '';
+    txns.forEach(txn => {
+      const date = new Date(txn.created_at).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+      });
+      const amountNum = parseFloat(txn.amount);
+      const isCredit = amountNum > 0;
+      const amtStr = (isCredit ? '+' : '') + `₹${amountNum.toFixed(2)}`;
+      const color = isCredit ? 'var(--success)' : 'var(--error)';
+      
+      let typeLabel = txn.type;
+      if (txn.type === 'referral_credit') typeLabel = 'Referral Reward';
+      else if (txn.type === 'coupon_credit') typeLabel = 'Coupon Reward';
+      else if (txn.type === 'reversal') typeLabel = 'Reversal';
+      else if (txn.type === 'withdrawal') typeLabel = 'Withdrawal';
+      
+      html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div>
+            <div style="font-weight:600; font-size:0.85rem; color:white;">${typeLabel}</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:2px;">${date}</div>
+            ${txn.note ? `<div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px; max-width:260px; line-height:1.3;">${txn.note}</div>` : ''}
+          </div>
+          <div style="font-weight:700; font-size:0.9rem; color:${color};">${amtStr}</div>
+        </div>
+      `;
+    });
+    listEl.innerHTML = html;
   },
 
   renderModal() {

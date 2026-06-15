@@ -153,15 +153,13 @@ class InkifyAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_referral_code_generation_and_wallet_credits(self):
-        # Customer A registers and places a first order to generate their code
+        # Alice registers and places a first order
         first_user_mobile = '9111111111'
         first_user_name = 'Alice'
 
         auth_url = reverse('register_login')
         response = self.client.post(auth_url, {'mobile': first_user_mobile, 'name': first_user_name}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('referral_code', response.data['user'])
-        self.assertIsNone(response.data['user']['referral_code'])
         first_token = response.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + first_token)
@@ -181,21 +179,33 @@ class InkifyAPITests(APITestCase):
                     'price': 399.00,
                     'customization': {
                         'type': 'text',
-                        'data': 'Alice Code',
+                        'data': 'Alice Design',
                         'font': 'sans-serif',
-                        'summary': 'Custom Text: "Alice Code"'
+                        'summary': 'Custom Text'
                     }
                 }
             ]
         }
         order_response = self.client.post(order_url, order_payload, format='json')
         self.assertEqual(order_response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('user', order_response.data)
-        self.assertIn('referral_code', order_response.data['user'])
-        self.assertIsNotNone(order_response.data['user']['referral_code'])
-        self.assertEqual(Decimal(order_response.data['user']['wallet_balance']), Decimal('0.00'))
+        
+        # Verify Alice does not have a referral code yet (order placed, not completed)
+        alice = User.objects.get(mobile=first_user_mobile)
+        self.assertIsNone(alice.referral_code)
+        
+        # Transition Alice's order to Completed
+        first_order = Order.objects.get(tracking_id=order_response.data['tracking_id'])
+        first_order.status = "Completed"
+        first_order.save()
+        
+        # Verify Alice now has a referral code generated, and wallet is 0 (she didn't use any code)
+        alice.refresh_from_db()
+        self.assertIsNotNone(alice.referral_code)
+        self.assertEqual(alice.wallet_balance, Decimal('0.00'))
+        
+        alice_referral_code = alice.referral_code
 
-        # Customer B registers and uses customer A's code for the set product
+        # Bob registers and wants to use Alice's referral code
         second_user_mobile = '9222222222'
         second_user_name = 'Bob'
 
@@ -203,40 +213,144 @@ class InkifyAPITests(APITestCase):
         response = self.client.post(auth_url, {'mobile': second_user_mobile, 'name': second_user_name}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         second_token = response.data['token']
-        second_referral_code = order_response.data['user']['referral_code']
 
+        # Bob tries to apply Alice's code
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + second_token)
         referral_order_payload = {
             'customer_name': second_user_name,
             'customer_phone': second_user_mobile,
             'customer_email': 'bob@example.com',
             'shipping_address': '2 Affiliate Road, City - 110001',
-            'amount': 1199.00,
+            'amount': 399.00,
             'payment_mode': 'Cash on Delivery',
             'est_delivery': '30th May 2026',
-            'referral_code': second_referral_code,
+            'referral_code': alice_referral_code,
             'items': [
                 {
-                    'product_id': self.set_product.id,
+                    'product_id': self.product.id,
                     'quantity': 1,
-                    'price': 1199.00,
+                    'price': 399.00,
                     'customization': {
                         'type': 'text',
-                        'data': 'Referral Set',
+                        'data': 'Bob Design',
                         'font': 'sans-serif',
-                        'summary': 'Premium Set Purchase'
+                        'summary': 'Custom Text'
                     }
                 }
             ]
         }
         referral_response = self.client.post(order_url, referral_order_payload, format='json')
         self.assertEqual(referral_response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Decimal(referral_response.data['amount']), Decimal('1099.00'))
-        self.assertEqual(Decimal(referral_response.data['user']['wallet_balance']), Decimal('50.00'))
+        # Verify no direct discount
+        self.assertEqual(Decimal(referral_response.data['amount']), Decimal('399.00'))
+        
+        # Verify wallet balances are still 0 (order is not yet completed)
+        bob = User.objects.get(mobile=second_user_mobile)
+        self.assertEqual(bob.wallet_balance, Decimal('0.00'))
+        alice.refresh_from_db()
+        self.assertEqual(alice.wallet_balance, Decimal('0.00'))
 
-        # Referrer should also receive wallet credit
-        first_user = User.objects.get(mobile=first_user_mobile)
-        self.assertEqual(first_user.wallet_balance, Decimal('50.00'))
+        # Complete Bob's order
+        bob_order = Order.objects.get(tracking_id=referral_response.data['tracking_id'])
+        bob_order.status = "Completed"
+        bob_order.save()
+
+        # Both Alice and Bob should get ₹10 cashback
+        bob.refresh_from_db()
+        self.assertEqual(bob.wallet_balance, Decimal('10.00'))
+        alice.refresh_from_db()
+        self.assertEqual(alice.wallet_balance, Decimal('10.00'))
+
+        # Now cancel Bob's order: verify reversal of rewards
+        bob_order.status = "Cancelled"
+        bob_order.save()
+
+        bob.refresh_from_db()
+        self.assertEqual(bob.wallet_balance, Decimal('0.00'))
+        alice.refresh_from_db()
+        self.assertEqual(alice.wallet_balance, Decimal('0.00'))
+
+    def test_self_referral_check(self):
+        # Alice registers and places order to activate her code
+        first_user_mobile = '9111111111'
+        auth_url = reverse('register_login')
+        response = self.client.post(auth_url, {'mobile': first_user_mobile, 'name': 'Alice'}, format='json')
+        token = response.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        
+        alice = User.objects.get(mobile=first_user_mobile)
+        alice.referral_code = "ALICE12345"
+        alice.save()
+        
+        # Alice tries to use her own referral code
+        order_url = reverse('order_create')
+        order_payload = {
+            'customer_name': 'Alice',
+            'customer_phone': first_user_mobile,
+            'customer_email': 'alice@example.com',
+            'shipping_address': '1 Referral Lane, City',
+            'amount': 399.00,
+            'payment_mode': 'Cash on Delivery',
+            'referral_code': 'ALICE12345',
+            'items': [{'product_id': self.product.id, 'quantity': 1, 'price': 399.00, 'customization': {'type':'text','data':'Alice','summary':'Test'}}]
+        }
+        res = self.client.post(order_url, order_payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("own referral code", res.data["error"])
+
+    def test_min_payment_amount_wallet_use(self):
+        # Authenticate first
+        auth_url = reverse('register_login')
+        auth_response = self.client.post(auth_url, {'mobile': self.mobile, 'name': self.name}, format='json')
+        token = auth_response.data["token"]
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+
+        # Set user wallet balance to 100
+        user = User.objects.get(mobile=self.mobile)
+        user.wallet_balance = Decimal('100.00')
+        user.save()
+
+        # Place order for 399, trying to use 100 wallet balance (grand total 299, min cash payment is 50, which is satisfied)
+        order_url = reverse('order_create')
+        order_payload = {
+            'customer_name': self.name,
+            'customer_phone': self.mobile,
+            'customer_email': 'test@example.com',
+            'shipping_address': '123 Test St, Test City',
+            'amount': 399.00,
+            'payment_mode': 'Cash on Delivery',
+            'wallet_used': '100.00',
+            'items': [{'product_id': self.product.id, 'quantity': 1, 'price': 399.00, 'customization': {'type':'text','data':'Test','summary':'Test'}}]
+        }
+        res1 = self.client.post(order_url, order_payload, format='json')
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Decimal(res1.data['amount']), Decimal('299.00'))
+        user.refresh_from_db()
+        self.assertEqual(user.wallet_balance, Decimal('0.00'))
+
+        # Set user wallet balance to 100 again
+        user.wallet_balance = Decimal('100.00')
+        user.save()
+
+        # Try to pay for a 70 product using 60 wallet balance (so grand total is 10, but min cash payment is 50, so max wallet allowed is 20)
+        product_70 = Product.objects.create(id=22, name="Small Item", category="Test", original_price=70, price=70, image="test.png", description="test")
+        order_payload_clamped = {
+            'customer_name': self.name,
+            'customer_phone': self.mobile,
+            'customer_email': 'test@example.com',
+            'shipping_address': '123 Test St, Test City',
+            'amount': 70.00,
+            'payment_mode': 'Cash on Delivery',
+            'wallet_used': '60.00',
+            'items': [{'product_id': product_70.id, 'quantity': 1, 'price': 70.00, 'customization': {'type':'text','data':'Test','summary':'Test'}}]
+        }
+        res2 = self.client.post(order_url, order_payload_clamped, format='json')
+        self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
+        # Should be clamped to pay exactly 50 in cash (70 - 20 wallet)
+        self.assertEqual(Decimal(res2.data['amount']), Decimal('50.00'))
+        user.refresh_from_db()
+        # Used 20, remaining 80
+        self.assertEqual(user.wallet_balance, Decimal('80.00'))
 
     def test_user_profile_endpoint(self):
         # Unauthenticated request should be blocked
@@ -473,7 +587,7 @@ class InkifyAPITests(APITestCase):
             content_type='image/png'
         )
         trending_design = TrendingDesign.objects.create(
-            product=self.product,
+            product_id=self.product.id,
             name="Exclusive Trending Art",
             tagline="Limited Edition Blueprint",
             image=test_image,

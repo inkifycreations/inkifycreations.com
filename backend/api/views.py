@@ -22,8 +22,8 @@ from django.db import close_old_connections
 
 
 
-from .models import Product, Order, OrderItem, generate_referral_code, WalletWithdrawal, ProductDesign, CustomUser, ProductReview, TrendingDesign
-from .serializers import CustomUserSerializer, ProductSerializer, OrderSerializer, ProductDesignSerializer, ProductReviewSerializer, TrendingDesignSerializer
+from .models import Product, Order, OrderItem, generate_referral_code, WalletWithdrawal, ProductDesign, CustomUser, ProductReview, TrendingDesign, WalletTransaction, ReferralUsageLog
+from .serializers import CustomUserSerializer, ProductSerializer, OrderSerializer, ProductDesignSerializer, ProductReviewSerializer, TrendingDesignSerializer, WalletTransactionSerializer
 
 # User is already defined on line 7
 
@@ -335,6 +335,52 @@ def send_withdrawal_notifications_bg(withdrawal_id):
         close_old_connections()
 
 
+def validate_referral_coupon_code(code: str, user) -> tuple[bool, str, Any]:
+    """
+    Validates a referral or coupon code.
+    Returns (is_valid, error_message, eligible_referrer).
+    """
+    code = code.strip().upper()
+    if not code:
+        return False, "Please enter a valid code.", None
+        
+    # Check if code belongs to an Affiliate Partner (ends with 99)
+    if code.endswith('99') and len(code) >= 3:
+        if user:
+            if ReferralUsageLog.objects.filter(referral_code=code, used_by=user).exists():
+                return False, "You have already used this coupon code.", None
+        return True, "", None
+        
+    # User Referral Code checks
+    referrer_obj = User.objects.filter(referral_code__iexact=code).first()
+    if not referrer_obj:
+        return False, "Invalid referral code.", None
+        
+    referrer = referrer_obj
+    
+    # Rule FR-01: No self-referral
+    if user and referrer.pk == user.pk:
+        return False, "You cannot use your own referral code.", None
+        
+    # Rule FR-04: Referral code can only be used on first-time orders (excluding cancelled)
+    if user:
+        prior_orders = Order.objects.filter(user=user).exclude(status__in=['Cancelled', 'Refunded', 'Returned'])
+        if prior_orders.exists():
+            return False, "Referral code can only be used on your first order.", None
+            
+    # Rule FR-10: Same code not reused by same customer
+    if user:
+        if ReferralUsageLog.objects.filter(referral_code=code, used_by=user).exists():
+            return False, "You have already used this referral code.", None
+            
+    # Rule FR-08: Referrer must have placed at least 1 completed order to activate code
+    referrer_completed_orders = Order.objects.filter(user=referrer, status='Completed')
+    if not referrer_completed_orders.exists():
+        return False, "This referral code is not yet active.", None
+        
+    return True, "", referrer
+
+
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
@@ -602,26 +648,25 @@ class OrderCreateView(APIView):
         if request.user and request.user.is_authenticated:
             user = request.user
 
-        # If authenticated and they do not yet have a referral code, generate one now
-        if user and not user.referral_code:
-            user.referral_code = generate_referral_code(user.name or user.mobile)
-            user.save(update_fields=['referral_code'])
-
-        # Calculate order totals from trusted product pricing and apply referral rules securely
-        subtotal = Decimal('0.00')
-        referral_discount = Decimal('0.00')
-        buyer_wallet_credit = Decimal('0.00')
-        referrer_wallet_credit = Decimal('0.00')
-        payload_items = []
-        eligible_referrer = None
-
-        # Find valid referrer if referral code was supplied
-        eligible_referrer = None
+        # Validate referral/coupon code if supplied
+        is_code_applied = False
         if referral_code:
-            ref_code_query = User.objects.filter(referral_code__iexact=referral_code)
-            if user:
-                ref_code_query = ref_code_query.exclude(pk=user.pk)
-            eligible_referrer = ref_code_query.first()
+            if not user:
+                return Response(
+                    {"error": "Please log in to apply referral or coupon codes."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            is_valid, error_msg, referrer = validate_referral_coupon_code(referral_code, user)
+            if not is_valid:
+                return Response(
+                    {"error": error_msg},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            is_code_applied = True
+
+        # Calculate order totals from trusted product pricing
+        subtotal = Decimal('0.00')
+        payload_items = []
 
         for item in items_data:
             product_id = item.get('product_id')
@@ -642,30 +687,18 @@ class OrderCreateView(APIView):
                 'customization': customization
             })
 
-        # Apply referral coupon discount when a valid code is present and the Purple Gift Set is included
-        set_qty = sum(item['quantity'] for item in payload_items if item['product'].id == 5)
-        is_valid_referral = False
-        if referral_code:
-            code_upper = referral_code.strip().upper()
-            if code_upper.endswith('99') or eligible_referrer is not None:
-                is_valid_referral = True
-
-        if is_valid_referral and set_qty > 0:
-            referral_discount = Decimal('100.00') * set_qty
-            buyer_wallet_credit = Decimal('50.00') * set_qty
-            if eligible_referrer:
-                referrer_wallet_credit = Decimal('50.00') * set_qty
-
-        # Allow wallet balance to be used on the next order and deduct it before creating the final order amount
+        # Allow wallet balance to be used on checkout
         wallet_used = Decimal(str(data.get('wallet_used', '0') or '0'))
         if user and wallet_used > Decimal('0.00'):
-            wallet_used = min(wallet_used, user.wallet_balance, subtotal - referral_discount)
+            # Rule FR-06: Wallet cannot pay 100% of order. Minimum ₹50 paid via real payment method.
+            max_wallet_allowed = max(Decimal('0.00'), subtotal - Decimal('50.00'))
+            wallet_used = min(wallet_used, user.wallet_balance, max_wallet_allowed)
             user.wallet_balance -= wallet_used
             user.save(update_fields=['wallet_balance'])
         else:
             wallet_used = Decimal('0.00')
 
-        final_amount = subtotal - referral_discount - wallet_used
+        final_amount = subtotal - wallet_used
         if final_amount < Decimal('0.00'):
             final_amount = Decimal('0.00')
 
@@ -680,20 +713,30 @@ class OrderCreateView(APIView):
             shipping_address=shipping_address,
             amount=final_amount,
             payment_mode=payment_mode,
-            referral_code=referral_code if is_valid_referral and set_qty > 0 else None,
+            referral_code=referral_code.strip().upper() if is_code_applied else None,
             est_delivery=est_delivery,
             status='Placed'
         )
 
-        # Credit wallets only after order creation to ensure transaction safety
-        if user and buyer_wallet_credit > Decimal('0.00'):
-            user.wallet_balance += buyer_wallet_credit
-            user.save(update_fields=['wallet_balance'])
+        # Log wallet payment/withdrawal transaction
+        if user and wallet_used > Decimal('0.00'):
+            WalletTransaction.objects.create(
+                user=user,
+                order=order,
+                amount=-wallet_used,
+                type='withdrawal',
+                status='completed',
+                note=f"Used ₹{wallet_used} from wallet to pay for order #{order.tracking_id}."
+            )
 
-        if eligible_referrer and referrer_wallet_credit > Decimal('0.00'):
-            eligible_referrer_obj = cast(CustomUser, eligible_referrer)
-            eligible_referrer_obj.wallet_balance += referrer_wallet_credit
-            eligible_referrer_obj.save(update_fields=['wallet_balance'])
+        # Log referral code usage
+        if is_code_applied:
+            ReferralUsageLog.objects.create(
+                referral_code=referral_code.strip().upper(),
+                used_by=user,
+                order=order,
+                reward_status='pending'
+            )
 
         # Create OrderItems
         for payload_item in payload_items:
@@ -780,6 +823,15 @@ class WalletWithdrawView(APIView):
             ifsc_code=ifsc_code
         )
 
+        # Create WalletTransaction log
+        WalletTransaction.objects.create(
+            user=user,
+            amount=-withdrawn_amount,
+            type='withdrawal',
+            status='completed',
+            note=f"Bank withdrawal request to {bank_name} A/C ending ...{account_number[-4:] if len(account_number) >= 4 else account_number}."
+        )
+
         user.wallet_balance = Decimal('0.00')
         user.save(update_fields=['wallet_balance'])
 
@@ -794,6 +846,26 @@ class WalletWithdrawView(APIView):
             "message": f"₹{withdrawn_amount} has been withdrawn from your wallet.",
             "wallet_balance": str(user.wallet_balance)
         }, status=status.HTTP_200_OK)
+
+
+class WalletTransactionsListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        txns = WalletTransaction.objects.filter(user=request.user).order_by('-created_at')
+        serializer = WalletTransactionSerializer(txns, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WalletBalanceView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "wallet_balance": str(request.user.wallet_balance),
+            "referral_code": request.user.referral_code
+        }, status=status.HTTP_200_OK)
+
 
 class OrderTrackView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -817,16 +889,15 @@ class ReferralCodeVerifyView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, code):
-        code = code.strip().upper()
-        if code.endswith('99') and len(code) >= 3:
-            return Response({"valid": True, "referrer": "Affiliate Partner"})
-        
-        referrer_obj = User.objects.filter(referral_code__iexact=code).first()
-        if referrer_obj:
-            referrer = cast(CustomUser, referrer_obj)
-            return Response({"valid": True, "referrer": referrer.name or referrer.mobile})
-        
-        return Response({"valid": False, "error": "Invalid referral code."})
+        user = request.user if request.user and request.user.is_authenticated else None
+        is_valid, error_msg, referrer = validate_referral_coupon_code(code, user)
+        if is_valid:
+            ref_name = "Affiliate Partner"
+            if referrer:
+                ref_name = referrer.name or referrer.mobile
+            return Response({"valid": True, "referrer": ref_name})
+        else:
+            return Response({"valid": False, "error": error_msg})
 
 class UserProfileView(APIView):
     permission_classes = [permissions.IsAuthenticated]
