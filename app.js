@@ -2686,7 +2686,7 @@ const cartManager = {
         referralDiscount = 50;
         walletCredit = 50;
       } else {
-        referralDiscount = 0;
+        referralDiscount = 10;
         walletCredit = 10;
       }
     }
@@ -2771,11 +2771,10 @@ const cartManager = {
       const hasGiftingSet = STATE.cart.some(item => Number(item.product.id) === 5);
       if (hasGiftingSet) {
         couponMsg.innerHTML = `<i class="fa-solid fa-square-check"></i> Referral code active! ₹50 discount applied + ₹50 wallet credit!`;
-        couponMsg.className = "coupon-status-msg success";
       } else {
-        couponMsg.innerHTML = `Referral code active! Add 'The Purple Gifting Set' to unlock ₹50 discount + ₹50 wallet credit!`;
-        couponMsg.className = "coupon-status-msg error";
+        couponMsg.innerHTML = `<i class="fa-solid fa-square-check"></i> Referral code active! ₹10 discount applied + ₹10 wallet credit! (Add 'The Purple Gifting Set' to unlock ₹50 discount + ₹50 wallet credit!)`;
       }
+      couponMsg.className = "coupon-status-msg success";
       couponMsg.style.display = "block";
     } else {
       couponInput.value = "";

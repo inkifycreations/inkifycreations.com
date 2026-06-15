@@ -687,12 +687,14 @@ class OrderCreateView(APIView):
                 'customization': customization
             })
 
-        # Calculate referral/coupon discount (₹50 if gifting set is in cart, ₹0 otherwise)
+        # Calculate referral/coupon discount (₹50 if gifting set is in cart, ₹10 otherwise)
         referral_discount = Decimal('0.00')
         if is_code_applied:
             is_gifting_set_order = any(item['product'].id == 5 for item in payload_items)
             if is_gifting_set_order:
                 referral_discount = Decimal('50.00')
+            else:
+                referral_discount = Decimal('10.00')
 
         subtotal_after_discount = max(Decimal('0.00'), subtotal - referral_discount)
 

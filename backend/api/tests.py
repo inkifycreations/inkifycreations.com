@@ -241,8 +241,8 @@ class InkifyAPITests(APITestCase):
         }
         referral_response = self.client.post(order_url, referral_order_payload, format='json')
         self.assertEqual(referral_response.status_code, status.HTTP_201_CREATED)
-        # Verify no direct discount
-        self.assertEqual(Decimal(referral_response.data['amount']), Decimal('399.00'))
+        # Verify direct discount of ₹10 is applied
+        self.assertEqual(Decimal(referral_response.data['amount']), Decimal('389.00'))
         
         # Verify wallet balances are still 0 (order is not yet completed)
         bob = User.objects.get(mobile=second_user_mobile)
