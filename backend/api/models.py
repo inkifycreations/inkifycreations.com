@@ -300,10 +300,12 @@ class TrendingDesign(models.Model):
         verbose_name_plural = "Trending Designs"
 
     def __str__(self) -> str:
-        return f"[{self.product.name}] {self.name or 'Trending Design'}"
+        product_name = self.product.name if self.product else "No Product"
+        return f"[{product_name}] {self.name or 'Trending Design'}"
 
     def __repr__(self) -> str:
-        return f"<TrendingDesign id={self.id!r} product={self.product.name!r} name={self.name!r}>"
+        product_name = self.product.name if self.product else None
+        return f"<TrendingDesign id={self.id!r} product={product_name!r} name={self.name!r}>"
 
 
 
