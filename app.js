@@ -519,7 +519,7 @@ let CATALOG = [
     category: "Apparel",
     originalPrice: 500,
     price: 399,
-    image: "assets/tshirt.png",
+    image: "assets/tshirt.webp",
     description: "Ultra-soft 220 GSM combed cotton. Shown customized with bold neon 'Inkify Creations' typography."
   },
   {
@@ -528,7 +528,7 @@ let CATALOG = [
     category: "Apparel",
     originalPrice: 650,
     price: 499,
-    image: "assets/polo tshirt.png",
+    image: "assets/polo_tshirt.webp",
     description: "Smooth premium pique polo with custom embroidery-style print and breathable performance fabric."
   },
   {
@@ -537,7 +537,7 @@ let CATALOG = [
     category: "Accessories",
     originalPrice: 350,
     price: 249,
-    image: "assets/cap.png",
+    image: "assets/cap.webp",
     description: "Premium structured cap with custom front panel printing and reinforced stitching."
   },
   {
@@ -546,7 +546,7 @@ let CATALOG = [
     category: "Drinkware",
     originalPrice: 299,
     price: 239,
-    image: "assets/mugcat.png",
+    image: "assets/mugcat.webp",
     description: "High-gloss ceramic mug with vivid personal photo printing for your favorite mornings."
   },
   {
@@ -556,7 +556,7 @@ let CATALOG = [
     originalPrice: 1500,
     price: 999,
     cartPrice: 1199,
-    image: "assets/gift_box.png",
+    image: "assets/gift_box.webp",
     description: "Premium velvet-feel signature gift box containing T-Shirt, Polo, Mug, & Cap printed with your story."
   }
 ];
@@ -1169,12 +1169,12 @@ const productCatalog = {
 
       const cardHtml = `
         <div class="product-card glass-panel ${isSet ? 'whole-set-card' : ''}">
-          ${isSet ? `<div class="whole-set-image">${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}">`}</div>` : ''}
+          ${isSet ? `<div class="whole-set-image">${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}" loading="lazy" data-product-id="${product.id}">`}</div>` : ''}
           
           ${isSet ? '<div class="whole-set-content">' : ''}
             ${!isSet ? `
               <div class="product-image-container">
-                ${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}" class="product-image">`}
+                ${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}" class="product-image" loading="lazy" data-product-id="${product.id}">`}
               </div>
             ` : ''}
             
@@ -1210,9 +1210,9 @@ const productCatalog = {
       // Full catalog page displays standard grid cards
       if (!isSet) {
         const standardCardHtml = `
-          <div class="product-card glass-panel">
+          <div class="product-card glass-panel" data-product-id="${product.id}">
             <div class="product-image-container">
-              ${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}" class="product-image">`}
+              ${product.image.startsWith('<svg') ? product.image : `<img src="${appRouter.getAssetUrl(product.image)}" alt="${product.name}" class="product-image" loading="lazy" data-product-id="${product.id}">`}
             </div>
             <div class="product-info">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">

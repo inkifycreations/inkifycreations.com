@@ -44,9 +44,13 @@
   <link rel="icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon">
   <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon">
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <!-- Core Premium Style -->
-  <link rel="stylesheet" href="{% static 'index.css' %}?v=600">
+  <link rel="stylesheet" href="{% static 'index.css' %}?v=601">
+  <!-- Preload critical LCP images (hero carousel slides 1 & 2) -->
+  <link rel="preload" as="image" href="{% static 'assets/brand_identity.webp' %}" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="{% static 'assets/gift_box.webp' %}" type="image/webp">
 
 </head>
 
@@ -120,7 +124,10 @@
 
           <!-- Slide 1: Brand Identity -->
           <div class="carousel-slide active" data-index="0">
-            <img src="{% static 'assets/brand_identity.png' %}" alt="Stop Wearing Their Brands" class="slide-bg">
+            <picture>
+              <source srcset="{% static 'assets/brand_identity.webp' %}" type="image/webp">
+              <img src="{% static 'assets/brand_identity.png' %}" alt="Stop Wearing Their Brands" class="slide-bg" width="1600" height="900" fetchpriority="high">
+            </picture>
             <div class="carousel-overlay"></div>
             <div class="container slide-content-wrapper">
               <div class="slide-content">
@@ -142,7 +149,10 @@
 
           <!-- Slide 2: Gifting Box -->
           <div class="carousel-slide" data-index="1">
-            <img src="{% static 'assets/gift_box.png' %}" alt="Yours Story Premium Box" class="slide-bg">
+            <picture>
+              <source srcset="{% static 'assets/gift_box.webp' %}" type="image/webp">
+              <img src="{% static 'assets/gift_box.png' %}" alt="Yours Story Premium Box" class="slide-bg" width="1600" height="900" loading="lazy">
+            </picture>
             <div class="carousel-overlay"></div>
             <div class="container slide-content-wrapper">
               <div class="slide-content">
@@ -165,7 +175,10 @@
           <!-- Slide : Mug-->
           <div class="carousel-slide" data-index="2">
 
-            <img src="{% static 'assets/mug_photo_print_original.png' %}" alt="High-Gloss Ceramic Mug" class="slide-bg">
+            <picture>
+              <source srcset="{% static 'assets/mug_photo_print_original.webp' %}" type="image/webp">
+              <img src="{% static 'assets/mug_photo_print_original.png' %}" alt="High-Gloss Ceramic Mug" class="slide-bg" width="1600" height="900" loading="lazy">
+            </picture>
             <div class="carousel-overlay"></div>
             <div class="container slide-content-wrapper">
               <div class="slide-content">
@@ -187,8 +200,11 @@
           <!-- Slide 4: Anime / Superhero Tees -->
           <div class="carousel-slide" data-index="3">
 
-            <img src="{% static 'assets/hero_tshirt_print.png' %}" alt="Custom Celebrity and Superhero Wear"
-              class="slide-bg">
+            <picture>
+              <source srcset="{% static 'assets/hero_tshirt_print.webp' %}" type="image/webp">
+              <img src="{% static 'assets/hero_tshirt_print.png' %}" alt="Custom Celebrity and Superhero Wear"
+              class="slide-bg" width="1600" height="900" loading="lazy">
+            </picture>
             <div class="carousel-overlay"></div>
             <div class="container slide-content-wrapper">
               <div class="slide-content">
@@ -785,7 +801,10 @@
           </div>
 
           <div class="about-image-right">
-            <img src="{% static 'assets/gift_box.png' %}" alt="Premium Purple Gift Set Box">
+            <picture>
+          <source srcset="{% static 'assets/gift_box.webp' %}" type="image/webp">
+          <img src="{% static 'assets/gift_box.png' %}" alt="Premium Purple Gift Set Box" loading="lazy" width="600" height="600">
+        </picture>
           </div>
         </div>
 
@@ -2294,7 +2313,7 @@
   <script>
     window.BASE_STATIC_URL = "{% static 'app.js' %}".replace('app.js', '');
   </script>
-  <script src="{% static 'app.js' %}?v=603" defer></script>
+  <script src="{% static 'app.js' %}?v=604" defer></script>
 
 </body>
 

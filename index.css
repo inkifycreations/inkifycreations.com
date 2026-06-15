@@ -412,6 +412,7 @@ main {
   transform: translateY(15px);
   transition: opacity 0.4s ease, transform 0.4s ease;
   width: 100%;
+  content-visibility: auto;
 }
 
 .view-section.active {
@@ -448,6 +449,9 @@ main {
   display: flex;
   align-items: center;
   z-index: 1;
+  will-change: opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .carousel-slide.active {
@@ -464,8 +468,10 @@ main {
   object-fit: cover;
   object-position: center;
   filter: brightness(0.65) contrast(1.05);
-  transform: scale(1.05);
+  /* Reduce scale animation on mobile — very expensive */
+  transform: scale(1.03);
   transition: transform 6s ease-out;
+  will-change: transform;
 }
 
 .carousel-slide.active .slide-bg {
@@ -4412,4 +4418,61 @@ footer {
     height: 64px;
     font-size: 1.6rem;
   }
+}
+
+/* ===== MOBILE PERFORMANCE OPTIMIZATIONS ===== */
+/* Disable expensive animations on small/low-power devices */
+@media (max-width: 768px) {
+  /* Kill the Ken Burns zoom animation on mobile — triggers costly repaints */
+  .slide-bg {
+    transform: scale(1) !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
+  /* Reduce backdrop-filter on glass panels — very GPU-heavy on mobile */
+  .glass-panel {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Simplify header blur on mobile */
+  .main-header {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Remove hover transform effects on touch — prevents phantom hover states */
+  .btn-primary:hover,
+  .btn-outline:hover,
+  .btn-secondary:hover {
+    transform: none;
+  }
+
+  /* Prevent text size adjustment flash on orientation change */
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Prevent blue highlight flash on tap */
+  button, a, [onclick] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Improve scroll performance */
+  .hero-carousel-container,
+  .modal-overlay,
+  main {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Disable all animated pulse glows on mobile — very costly */
+@media (max-width: 768px) {
+  @keyframes pulse-glow { from, to { box-shadow: none; } }
+  @keyframes floatAnimation { from, to { transform: translateY(0); } }
+  @keyframes phone-ring { from, to { transform: rotate(0deg); } }
+  @keyframes bulk-glow-pulse { from, to { opacity: 0.6; } }
 }
