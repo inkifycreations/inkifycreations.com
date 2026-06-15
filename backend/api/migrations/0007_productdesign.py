@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=120)),
                 ('category', models.CharField(choices=[('birthday', 'Birthday'), ('love', 'Love & Anniversary'), ('family', 'Family & Parents'), ('friends', 'Friends'), ('cats', 'Cats & Pets'), ('general', 'General & Holiday'), ('motivational', 'Motivational'), ('custom', 'Custom / Other')], default='general', max_length=30)),
                 ('image', models.ImageField(help_text='Upload the design wrap image', upload_to='designs/')),
-                ('price', models.DecimalField(decimal_places=2, default=Decimal('239.00'), max_digits=10)),
+                ('price', models.DecimalField(decimal_places=2, default=Decimal('259.00'), max_digits=10)),
                 ('original_price', models.DecimalField(decimal_places=2, default=Decimal('299.00'), max_digits=10)),
                 ('description', models.TextField(blank=True, default='')),
                 ('sort_order', models.PositiveIntegerField(default=0, help_text='Lower numbers appear first')),

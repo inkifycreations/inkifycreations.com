@@ -116,7 +116,7 @@ class Command(BaseCommand):
                 name=name,
                 category=category,
                 description=f'Beautiful {category} design for {product_type}.',
-                price=239 if product_type == 'mug' else (349 if product_type == 'tshirt' else (599 if product_type == 'polo' else 299)),
+                price=259 if product_type == 'mug' else (349 if product_type == 'tshirt' else (599 if product_type == 'polo' else 299)),
                 original_price=299 if product_type == 'mug' else (499 if product_type == 'tshirt' else (799 if product_type == 'polo' else 399)),
                 sort_order=created,
                 is_active=True,

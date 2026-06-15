@@ -4,7 +4,7 @@
  */
 
 // --- GLOBAL ERROR LOGGING ---
-window.onerror = function(message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
   try {
     const errorData = {
       message: message || '',
@@ -18,8 +18,8 @@ window.onerror = function(message, source, lineno, colno, error) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(errorData)
-    }).catch(err => {});
-  } catch (e) {}
+    }).catch(err => { });
+  } catch (e) { }
   return false;
 };
 
@@ -533,19 +533,19 @@ let CATALOG = [
   },
   {
     id: 3,
-    name: "Structured Cap",
-    category: "Accessories",
-    originalPrice: 350,
-    price: 249,
-    image: "assets/cap.webp",
-    description: "Premium structured cap with custom front panel printing and reinforced stitching."
+    name: "HydroVibe Stainless Steel Bottle",
+    category: "Drinkware",
+    originalPrice: 400,
+    price: 359,
+    image: "assets/bottle.png",
+    description: "Premium grade 750ml double-walled stainless steel bottle. Leakproof, sweat-proof, and perfect for the gym or office. Shown customized with sleek vector engravings.."
   },
   {
     id: 4,
     name: "Photo Print Mug",
     category: "Drinkware",
-    originalPrice: 299,
-    price: 239,
+    originalPrice: 350,
+    price: 259,
     image: "assets/mugcat.webp",
     description: "High-gloss ceramic mug with vivid personal photo printing for your favorite mornings."
   },
@@ -554,7 +554,7 @@ let CATALOG = [
     name: "The Purple Gifting Set",
     category: "Signature Bundle",
     originalPrice: 1500,
-    price: 999,
+    price: 1049,
     cartPrice: 1199,
     image: "assets/gift_box.webp",
     description: "Premium velvet-feel signature gift box containing T-Shirt, Polo, Mug, & Cap printed with your story."
@@ -653,7 +653,7 @@ const appRouter = {
         newPath += '/';
       }
       newPath += (viewId === 'home' ? '' : viewId);
-      
+
       // If path is just "/" let's keep it clean, otherwise ensure no trailing double slashes
       if (newPath.startsWith('//')) {
         newPath = newPath.substring(1);
@@ -1094,7 +1094,7 @@ const productCatalog = {
     await this.fetchCatalog();
     this.renderGrids();
 
-    
+
 
     // Wire up apparel color selector swatches (scoped to customizer modal)
     const colorContainer = document.getElementById('customizer-color-swatches');
@@ -1423,7 +1423,7 @@ const productCatalog = {
     this.selectedFileBase64 = null;
     const fileInput = document.getElementById('customizer-file-input');
     if (fileInput) fileInput.value = '';
-    
+
     // Hide photo preview info row
     const previewInfo = document.getElementById('customizer-photo-preview-info');
     if (previewInfo) previewInfo.style.display = 'none';
@@ -1557,13 +1557,13 @@ function getProductTypeById(productId) {
   };
   const activeId = Number(productId);
   if (hardcodedMap[activeId]) return hardcodedMap[activeId];
-  
+
   const product = CATALOG.find(p => Number(p.id) === activeId);
   if (!product) return 'mug';
-  
+
   const category = (product.category || '').toLowerCase().trim();
   const name = (product.name || '').toLowerCase().trim();
-  
+
   if (category === 'signature bundle' || name.includes('gift') || name.includes('set') || name.includes('box')) {
     return 'gift_set';
   }
@@ -1589,10 +1589,10 @@ function getProductLabelById(productId) {
   };
   const activeId = Number(productId);
   if (hardcodedLabels[activeId]) return hardcodedLabels[activeId];
-  
+
   const product = CATALOG.find(p => Number(p.id) === activeId);
   if (!product) return 'Designs';
-  
+
   const type = getProductTypeById(activeId);
   if (type === 'tshirt') return 'T-Shirt Designs';
   if (type === 'polo') return 'Polo T-Shirt Designs';
@@ -2205,10 +2205,10 @@ const designStudio = {
     const activeId = Number(this.activeProductId);
     const productType = getProductTypeById(activeId);
     const isApparel = productType === 'tshirt' || productType === 'polo' || productType === 'gift_set';
-    
+
     let garmentColor = '';
     let garmentSize = '';
-    
+
     if (isApparel) {
       garmentColor = this.selectedGarmentColor || 'White';
       garmentSize = this.selectedGarmentSize;
@@ -2241,8 +2241,8 @@ const designStudio = {
       font,
       color: garmentColor,
       size: garmentSize,
-      summary: selected 
-        ? `${summary} | Color: ${garmentColor} | Size: ${garmentSize} | Design: ${selected.name}` 
+      summary: selected
+        ? `${summary} | Color: ${garmentColor} | Size: ${garmentSize} | Design: ${selected.name}`
         : `${summary} | Color: ${garmentColor} | Size: ${garmentSize}`,
       designId: selected?.id,
       designName: selected?.name,
@@ -2424,10 +2424,10 @@ const designStudio = {
     const activeId = Number(this.activeProductId);
     const productType = getProductTypeById(activeId);
     const isApparel = productType === 'tshirt' || productType === 'polo' || productType === 'gift_set';
-    
+
     let garmentColor = '';
     let garmentSize = '';
-    
+
     if (isApparel) {
       garmentColor = this.selectedGarmentColor || 'White';
       garmentSize = this.selectedGarmentSize;
@@ -2462,8 +2462,8 @@ const designStudio = {
       font,
       color: garmentColor,
       size: garmentSize,
-      summary: selected 
-        ? `${summary} | Color: ${garmentColor} | Size: ${garmentSize} | Design: ${selected.name}` 
+      summary: selected
+        ? `${summary} | Color: ${garmentColor} | Size: ${garmentSize} | Design: ${selected.name}`
         : `${summary} | Color: ${garmentColor} | Size: ${garmentSize}`,
       designId: selected?.id,
       designName: selected?.name,
@@ -2969,7 +2969,7 @@ const cartManager = {
       finalName = document.getElementById('shipping-name').value.trim();
       finalPhone = document.getElementById('shipping-phone').value.trim();
       finalEmail = document.getElementById('shipping-email').value.trim();
-      
+
       const street = document.getElementById('shipping-street').value.trim();
       const city = document.getElementById('shipping-city').value.trim();
       const pincode = document.getElementById('shipping-pincode').value.trim();
@@ -3299,7 +3299,7 @@ const walletManager = {
     try {
       const txns = await this.fetchTransactions();
       this.renderTransactions(txns);
-    } catch (e) {}
+    } catch (e) { }
   },
 
   closeModal() {
@@ -3329,12 +3329,12 @@ const walletManager = {
   renderTransactions(txns) {
     const listEl = document.getElementById('wallet-transactions-list');
     if (!listEl) return;
-    
+
     if (txns.length === 0) {
       listEl.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary); font-size:0.85rem;">No transaction history.</div>`;
       return;
     }
-    
+
     let html = '';
     txns.forEach(txn => {
       const date = new Date(txn.created_at).toLocaleDateString('en-IN', {
@@ -3344,13 +3344,13 @@ const walletManager = {
       const isCredit = amountNum > 0;
       const amtStr = (isCredit ? '+' : '') + `₹${amountNum.toFixed(2)}`;
       const color = isCredit ? 'var(--success)' : 'var(--error)';
-      
+
       let typeLabel = txn.type;
       if (txn.type === 'referral_credit') typeLabel = 'Referral Reward';
       else if (txn.type === 'coupon_credit') typeLabel = 'Coupon Reward';
       else if (txn.type === 'reversal') typeLabel = 'Reversal';
       else if (txn.type === 'withdrawal') typeLabel = 'Withdrawal';
-      
+
       html += `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
           <div>
@@ -3376,7 +3376,7 @@ const walletManager = {
 
     const balance = Number(STATE.currentUser.wallet_balance || 0);
     balanceEl.textContent = `₹${balance.toFixed(2)}`;
-    
+
     // Referral code display
     if (refCodeEl) {
       refCodeEl.textContent = STATE.currentUser.referral_code || 'Will generate after first purchase';
@@ -4143,8 +4143,8 @@ const trendingPopup = {
             <span class="trending-badge"><i class="fa-solid fa-fire" style="margin-right:4px;"></i>Trending</span>
             <div class="trending-img-container">
               ${imgSrc
-                ? `<img class="trending-img" src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\' style=\\'font-size:3rem;color:rgba(255,255,255,0.1)\\'></i>'">`
-                : `<i class="fa-solid fa-image" style="font-size:3rem;color:rgba(255,255,255,0.1);"></i>`}
+            ? `<img class="trending-img" src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\' style=\\'font-size:3rem;color:rgba(255,255,255,0.1)\\'></i>'">`
+            : `<i class="fa-solid fa-image" style="font-size:3rem;color:rgba(255,255,255,0.1);"></i>`}
             </div>
             <div class="trending-name">${p.name}</div>
             <div class="trending-tagline">${tagline}</div>
@@ -4204,7 +4204,7 @@ const reviewsController = {
       verified: false,
       sort: 'most_recent'
     };
-    
+
     // Reset inputs
     const verifiedFilter = document.getElementById('review-verified-filter');
     if (verifiedFilter) verifiedFilter.checked = false;
@@ -4216,7 +4216,7 @@ const reviewsController = {
 
   async fetchAndRender() {
     if (!this.productId) return;
-    
+
     try {
       let url = `/api/products/${this.productId}/reviews/?sort=${this.currentFilters.sort}`;
       if (this.currentFilters.verified) {
@@ -4233,7 +4233,7 @@ const reviewsController = {
 
       const res = await fetch(url, { headers });
       if (!res.ok) throw new Error("Failed to load reviews");
-      
+
       const data = await res.json();
       this.avgRating = data.average_rating || 0.0;
       this.totalCount = data.total || 0;
@@ -4271,10 +4271,10 @@ const reviewsController = {
       const fillBar = document.getElementById(`dist-fill-${star}`);
       const percentText = document.getElementById(`dist-percent-${star}`);
       const row = document.getElementById(`dist-row-${star}`);
-      
+
       if (fillBar) fillBar.style.width = `${distData.percent}%`;
       if (percentText) percentText.textContent = `${Math.round(distData.percent)}%`;
-      
+
       // Toggle active class on rows
       if (row) {
         if (this.currentFilters.star === star) {
@@ -4289,7 +4289,7 @@ const reviewsController = {
   renderFilterBadges() {
     const container = document.getElementById('reviews-active-filters');
     if (!container) return;
-    
+
     container.innerHTML = '';
     if (this.currentFilters.star) {
       const badge = document.createElement('div');
@@ -4374,7 +4374,7 @@ const reviewsController = {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
-    
+
     let html = '';
     for (let i = 0; i < fullStars; i++) {
       html += '<i class="fa-solid fa-star"></i>';
@@ -4447,11 +4447,11 @@ const reviewsController = {
     // Reset form fields
     const form = document.getElementById('write-review-form');
     if (form) form.reset();
-    
+
     this.writeRating = 5;
     this.setWriteRating(5);
     this.clearWriteImage();
-    
+
     const statusText = document.getElementById('write-review-status');
     if (statusText) statusText.textContent = '';
 
@@ -4494,7 +4494,7 @@ const reviewsController = {
       const previewContainer = document.getElementById('write-review-image-preview-container');
       const previewImg = document.getElementById('write-review-image-preview-img');
       const nameText = document.getElementById('write-review-image-name');
-      
+
       if (previewContainer) previewContainer.style.display = 'flex';
       if (previewImg) previewImg.src = e.target.result;
       if (nameText) nameText.textContent = file.name;
@@ -4547,7 +4547,7 @@ const reviewsController = {
       if (res.ok) {
         this.closeWriteModal();
         customAlert("Your review has been submitted successfully!", "Review Submitted");
-        
+
         // Refresh reviews list
         await this.fetchAndRender();
       } else {

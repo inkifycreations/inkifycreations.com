@@ -42,8 +42,8 @@ class Command(BaseCommand):
                 "name": "High-Gloss Ceramic Mug",
                 "category": "Drinkware",
                 "original_price": 350.00,
-                "price": 239.00,
-                "cart_price": 239.00,
+                "price": 259.00,
+                "cart_price": 259.00,
                 "image": "assets/mugcat.png",
                 "description": "High-gloss ceramic mug. Shown customized with Ghibli-inspired family artwork printing."
             },

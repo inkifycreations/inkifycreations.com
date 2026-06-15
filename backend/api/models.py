@@ -242,7 +242,7 @@ class ProductDesign(models.Model):
     name           = models.CharField(max_length=120)
     category       = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='general')
     image          = models.ImageField(upload_to='designs/', help_text="Upload the design wrap image")
-    price          = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('239.00'))
+    price          = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('259.00'))
     original_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('299.00'))
     description    = models.TextField(blank=True, default="")
     sort_order     = models.PositiveIntegerField(default=0, help_text="Lower numbers appear first")
