@@ -2483,6 +2483,16 @@ const cartManager = {
     const savedCart = localStorage.getItem('inkify_cart');
     if (savedCart) {
       STATE.cart = JSON.parse(savedCart);
+      // Sync loaded cart item prices with current CATALOG definitions
+      STATE.cart.forEach(item => {
+        const catalogItem = CATALOG.find(p => p.id === item.product.id);
+        if (catalogItem) {
+          item.product.price = catalogItem.price;
+          item.product.originalPrice = catalogItem.originalPrice;
+          item.product.cartPrice = catalogItem.cartPrice;
+        }
+      });
+      this.saveCart();
       this.updateBadge();
     }
   },
