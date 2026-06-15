@@ -286,7 +286,7 @@ class TrendingDesign(models.Model):
     A trending design template linked to a Product, with a custom tagline,
     image, and ordering for display in the Hot Collections / Trending Vibe Blueprints.
     """
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="trending_designs")
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, related_name="trending_designs")
     name = models.CharField(max_length=100, blank=True, help_text="Custom name for this trending design (blank to use product's name)")
     tagline = models.CharField(max_length=255, blank=True, help_text="Catchy tagline for this trending design (blank to use product's description)")
     image = models.ImageField(upload_to='trending/', help_text="Upload high-quality image for the trending blueprints display")

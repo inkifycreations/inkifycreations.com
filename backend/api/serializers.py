@@ -130,13 +130,13 @@ class ProductReviewSerializer(serializers.ModelSerializer):
 
 
 class TrendingDesignSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source='product.id', read_only=True)
+    id = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
-    price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2, read_only=True)
+    price = serializers.SerializerMethodField()
     trending_image_url = serializers.SerializerMethodField()
     trending_tagline = serializers.SerializerMethodField()
-    image = serializers.CharField(source='product.image', read_only=True)
-    description = serializers.CharField(source='product.description', read_only=True)
+    image = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
     average_rating = serializers.SerializerMethodField()
     reviews_count = serializers.SerializerMethodField()
 
@@ -147,8 +147,16 @@ class TrendingDesignSerializer(serializers.ModelSerializer):
             'image', 'description', 'average_rating', 'reviews_count'
         ]
 
+    def get_id(self, obj):
+        return obj.product.id if obj.product else obj.id
+
     def get_name(self, obj):
-        return obj.name if obj.name else obj.product.name
+        if obj.name:
+            return obj.name
+        return obj.product.name if obj.product else "Trending Design"
+
+    def get_price(self, obj):
+        return obj.product.price if obj.product else None
 
     def get_trending_image_url(self, obj):
         request = self.context.get('request')
@@ -159,13 +167,25 @@ class TrendingDesignSerializer(serializers.ModelSerializer):
         return None
 
     def get_trending_tagline(self, obj):
-        return obj.tagline if obj.tagline else obj.product.description
+        if obj.tagline:
+            return obj.tagline
+        return obj.product.description if obj.product else ""
+
+    def get_image(self, obj):
+        return obj.product.image if obj.product else ""
+
+    def get_description(self, obj):
+        return obj.product.description if obj.product else ""
 
     def get_average_rating(self, obj):
-        from django.db.models import Avg
-        avg = ProductReview.objects.filter(product=obj.product).aggregate(Avg('rating'))['rating__avg']
-        return round(avg, 1) if avg is not None else 0.0
+        if obj.product:
+            from django.db.models import Avg
+            avg = ProductReview.objects.filter(product=obj.product).aggregate(Avg('rating'))['rating__avg']
+            return round(avg, 1) if avg is not None else 0.0
+        return 0.0
 
     def get_reviews_count(self, obj):
-        return ProductReview.objects.filter(product=obj.product).count()
+        if obj.product:
+            return ProductReview.objects.filter(product=obj.product).count()
+        return 0
 
