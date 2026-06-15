@@ -546,6 +546,7 @@ let CATALOG = [
     category: "Drinkware",
     originalPrice: 350,
     price: 259,
+    cartPrice: 259,
     image: "assets/mugcat.webp",
     description: "High-gloss ceramic mug with vivid personal photo printing for your favorite mornings."
   },
