@@ -54,9 +54,12 @@ body {
   line-height: 1.6;
 }
 
-/* Locked when a modal/popup is open — toggled via JS classList */
-body.no-scroll {
+/* Locked when a modal/popup is open — toggled via JS classList or active modal presence */
+body.no-scroll,
+body:has(.modal-overlay.active),
+body:has(#trending-popup-overlay.active) {
   overflow: hidden;
+  height: 100vh;
 }
 
 
@@ -4460,10 +4463,10 @@ footer {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Improve scroll performance */
-  .hero-carousel-container,
-  .modal-overlay,
-  main {
+  /* Improve scroll performance on actual scrollable panels */
+  .modal-content,
+  .design-preview-modal,
+  #trending-popup-content {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
