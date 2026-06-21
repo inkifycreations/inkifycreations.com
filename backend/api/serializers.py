@@ -36,10 +36,10 @@ class ProductSerializer(serializers.ModelSerializer):
         return ProductReview.objects.filter(product=obj).count()
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-    product_id = serializers.IntegerField(source='product.id', read_only=False)
-    product_name = serializers.CharField(source='product.name', read_only=True)
-    product_image = serializers.CharField(source='product.image', read_only=True)
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False, allow_null=True)
+    product_id = serializers.SerializerMethodField()
+    product_name = serializers.SerializerMethodField()
+    product_image = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderItem
@@ -50,6 +50,15 @@ class OrderItemSerializer(serializers.ModelSerializer):
             'customization_color', 'customization_size', 'customization_summary'
         ]
         extra_kwargs = {'product': {'write_only': True}}
+
+    def get_product_id(self, obj):
+        return obj.product_id if obj.product_id else None
+
+    def get_product_name(self, obj):
+        return obj.product.name if obj.product else "Deleted Product"
+
+    def get_product_image(self, obj):
+        return obj.product.image if obj.product else None
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)

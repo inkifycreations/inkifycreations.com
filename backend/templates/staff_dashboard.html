@@ -402,6 +402,8 @@
           `;
           tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
+      } else {
+        tbody.innerHTML = `<tr><td colspan="7" style="padding: 40px; text-align: center; color: var(--error);">Error retrieving order manifest from server (Status: ${res.status}).</td></tr>`;
       }
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="7" style="padding: 40px; text-align: center; color: var(--error);">Error retrieving order manifest from server database.</td></tr>`;
@@ -431,6 +433,8 @@
             </tr>
           `;
         });
+      } else {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; text-align: center; color: var(--error);">Failed to load customer database (Status: ${res.status}).</td></tr>`;
       }
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; text-align: center; color: var(--error);">Failed to load customer database.</td></tr>`;
